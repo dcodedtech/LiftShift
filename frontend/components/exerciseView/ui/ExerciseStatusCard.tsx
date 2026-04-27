@@ -50,9 +50,7 @@ export const ExerciseStatusCard: React.FC<ExerciseStatusCardProps> = ({
     >
       <div className={`absolute inset-0 ${currentStatus.bgColor} pointer-events-none`} />
       <div className="relative z-10 flex items-start gap-2.5">
-        <div className={`p-2 rounded-lg bg-black/40 ${currentStatus.color} flex-shrink-0`}>
-          <currentStatus.icon size={20} />
-        </div>
+       
 
         <div className="min-w-0 flex-1 flex flex-col">
           <div className="flex items-center justify-between gap-2">

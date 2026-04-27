@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Calendar,
   ChevronRight,
+  Check,
   Clock,
+  Copy,
   Dumbbell,
   Hash,
   Timer,
@@ -11,6 +13,8 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import type { Session } from "../utils/historySessions";
+import type { WorkoutSet } from "../../../types";
+import { exportSetsAndCopyTextOnly } from "../../../utils/export/clipboardExport";
 import type { WeightUnit } from "../../../utils/storage/localStorage";
 import type { BodyMapGender } from "../../bodyMap/BodyMap";
 import type { TooltipState } from "./HistoryTooltipPortal";
@@ -56,6 +60,15 @@ export const HistorySessionHeaderCard: React.FC<
   setTooltip,
   toggleCollapsed,
 }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyWorkout = async () => {
+    const allSets: WorkoutSet[] = session.exercises.flatMap((ex) => ex.sets);
+    await exportSetsAndCopyTextOnly(allSets);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div
       id={`session-${session.key}`}
@@ -175,6 +188,22 @@ export const HistorySessionHeaderCard: React.FC<
                 <span>{sessionDurationText ?? "—"}</span>
               </div>
 
+              <div className="col-span-1 row-start-7 h-7 flex items-center gap-1 text-xs transition-all duration-300">
+                <button
+                  type="button"
+                  data-no-toggle
+                  onClick={handleCopyWorkout}
+                  className="flex items-center gap-1 text-blue-400 hover:text-blue-300 cursor-pointer"
+                >
+                  {copied ? (
+                    <Check className="w-3.5 h-3.5" aria-hidden />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" aria-hidden />
+                  )}
+                  <span>{copied ? "Copied" : "Copy Workout"}</span>
+                </button>
+              </div>
+
               <div className="col-span-3 row-start-8 flex items-center transition-all duration-300">
                 <MuscleSetsList headlessVolumes={sessionHeadlessVolumes} />
               </div>
@@ -284,6 +313,19 @@ export const HistorySessionHeaderCard: React.FC<
               </span>
             )}
           </span>
+          <button
+            type="button"
+            data-no-toggle
+            onClick={handleCopyWorkout}
+            className="inline-flex items-center gap-1 whitespace-nowrap text-xs sm:text-sm text-blue-400 hover:text-blue-300 transition-colors ml-2 cursor-pointer"
+          >
+            {copied ? (
+              <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden />
+            ) : (
+              <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden />
+            )}
+            <span>{copied ? "Copied" : "Copy workout"}</span>
+          </button>
         </div>
         <div className="pl-1 pt-1">
           <MuscleSetsList headlessVolumes={sessionHeadlessVolumes} />
