@@ -43,18 +43,22 @@ export const ActivityHeatmap = memo(({
           byDayKey.set(format(new Date(d.timestamp), 'yyyy-MM-dd'), d);
         }
 
-        const firstDate = new Date(dailyData[0].timestamp);
-        const lastDate = new Date(dailyData[dailyData.length - 1].timestamp);
+const firstDate = new Date(dailyData[0].timestamp);
+        const lastDateWithData = new Date(dailyData[dailyData.length - 1].timestamp);
+        const futureEnd = endOfMonth(today);
+        const lastDate = futureEnd.getTime() > lastDateWithData.getTime() ? futureEnd : lastDateWithData;
         const days = eachDayOfInterval({ start: firstDate, end: lastDate });
 
         return days.map((day) => {
           const key = format(day, 'yyyy-MM-dd');
           const activity = byDayKey.get(key);
+          const isFuture = day.getTime() > today.getTime();
           return {
             date: day,
             count: activity?.sets ?? 0,
             totalVolume: activity?.totalVolume ?? 0,
             title: activity?.workoutTitle ?? null,
+            isFuture,
           };
         });
       },
@@ -91,7 +95,8 @@ export const ActivityHeatmap = memo(({
 
       for (let i = 0; i < days.length; i++) {
         const day = days[i];
-        cells[i] = byKey.get(format(day, 'yyyy-MM-dd')) || { date: day, count: 0, title: null };
+        const existing = byKey.get(format(day, 'yyyy-MM-dd'));
+        cells[i] = existing || { date: day, count: 0, title: null, isFuture: day.getTime() > today.getTime() };
       }
 
       blocks.push({
@@ -126,19 +131,32 @@ export const ActivityHeatmap = memo(({
 
   if (heatmapData.length === 0) return null;
 
-const getColor = (count: number) => {
-    if (count === 0) return 'bg-slate-500/10';
+const getColor = (count: number, isFuture?: boolean) => {
+    if (isFuture) return 'bg-slate-700/30 border border-slate-600/30';
+    if (count === 0) return 'bg-slate-800/50';
 
-    if (count <= 5)   return 'bg-emerald-200/70';
-    if (count <= 10)  return 'bg-emerald-300/70';
-    if (count <= 20)  return 'bg-emerald-400/70';
-    if (count <= 35)  return 'bg-emerald-500/70';
-    if (count <= 50)  return 'bg-emerald-600/70';
-    if (count <= 75)  return 'bg-emerald-700/70';
-    if (count <= 100) return 'bg-emerald-800/70';
+    if (count <= 5)   return 'bg-emerald-500/30';
+    if (count <= 10)  return 'bg-emerald-500/50';
+    if (count <= 20)  return 'bg-emerald-500/70';
+    if (count <= 35)  return 'bg-emerald-500/85';
+    if (count <= 50)  return 'bg-emerald-500';
+    if (count <= 75)  return 'bg-emerald-400';
+    if (count <= 100) return 'bg-emerald-300';
 
-    return 'bg-emerald-900';
+    return 'bg-emerald-200';
   };
+
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const todayInRange = heatmapData.some(d => format(d.date, 'yyyy-MM-dd') === todayStr);
+
+  const getDayTextColor = (count: number, isFuture?: boolean) => {
+    if (isFuture) return 'text-slate-500';
+    if (count === 0) return 'text-slate-600';
+    if (count <= 10)  return 'text-emerald-300/70';
+    if (count <= 35)  return 'text-white';
+    return 'text-slate-900';
+  };
+
   const handleMouseEnter = (e: React.MouseEvent, day: any) => {
     if (!day || day.count === 0) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -189,14 +207,20 @@ const getColor = (count: number) => {
                 <div className="grid grid-cols-7 gap-1">
                   {month.cells.map((day, idx) => {
                     if (!day) return <div key={`${month.key}-empty-${idx}`} className="w-3 h-3" />;
+                    const dayNum = day.date.getDate();
+                    const isFuture = day.isFuture;
+                    const isToday = format(day.date, 'yyyy-MM-dd') === todayStr;
+                    const textColor = getDayTextColor(day.count, isFuture);
                     return (
                       <div
                         key={day.date.toISOString()}
-                        className={`w-3 h-3 rounded-sm ${getColor(day.count)} transition-all duration-300 ${day.count > 0 ? 'cursor-pointer hover:z-10' : 'cursor-default'}`}
-                        onClick={() => day.count > 0 && onDayClick?.(day.date)}
-                        onMouseEnter={(e) => day.count > 0 && handleMouseEnter(e, day)}
-                        onMouseLeave={(e) => day.count > 0 && setTooltip(null)}
-                      />
+                        className={`w-3 h-3 rounded-sm flex items-center justify-center text-[8px] font-medium ${getColor(day.count, isFuture)} ${textColor} transition-all duration-300 ${day.count > 0 && !isFuture ? 'cursor-pointer hover:z-10' : 'cursor-default'} ${isToday ? 'ring-2 ring-blue-400/70' : ''}`}
+                        onClick={() => day.count > 0 && !isFuture && onDayClick?.(day.date)}
+                        onMouseEnter={(e) => !isFuture && day.count > 0 && handleMouseEnter(e, day)}
+                        onMouseLeave={() => !isFuture && setTooltip(null)}
+                      >
+                        {dayNum <= 31 && dayNum}
+                      </div>
                     );
                   })}
                 </div>
