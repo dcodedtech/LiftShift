@@ -60,7 +60,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   secondarySetMultiplier = 0.5,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [aiAnalyzeOpen, setAiAnalyzeOpen] = useState(false);
   const { mode: themeMode } = useTheme();
 
   const effectiveNow = useMemo(() => now ?? getEffectiveNowFromWorkoutData(parsedData), [now, parsedData]);
@@ -316,8 +315,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       topExercisesInsight={topExercisesInsight}
       pieColors={PIE_COLORS}
       tooltipStyle={TooltipStyle as any}
-      aiAnalyzeOpen={aiAnalyzeOpen}
-      setAiAnalyzeOpen={setAiAnalyzeOpen}
       fullData={filteredData}
       exerciseStats={exerciseStats}
       themeMode={themeMode}

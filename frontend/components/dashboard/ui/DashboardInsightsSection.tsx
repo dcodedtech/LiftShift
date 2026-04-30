@@ -21,7 +21,6 @@ interface DashboardInsightsSectionProps {
   assetsMap?: Map<string, any> | null;
   assetsLowerMap?: Map<string, any> | null;
   dailyData: DailySummary[];
-  onAIAnalyze: () => void;
   timelineProgress: TimelineProgress;
 }
 
@@ -38,7 +37,6 @@ export const DashboardInsightsSection: React.FC<DashboardInsightsSectionProps> =
   assetsMap,
   assetsLowerMap,
   dailyData,
-  onAIAnalyze,
   timelineProgress,
 }) => (
   <>
@@ -47,10 +45,7 @@ export const DashboardInsightsSection: React.FC<DashboardInsightsSectionProps> =
       totalWorkouts={totalWorkouts}
       totalSets={totalSets}
       totalPRs={totalPrs}
-      onAIAnalyze={onAIAnalyze}
     />
-
-    <TrainingTimelineCard progress={timelineProgress} />
 
     <RecentPRsPanel prInsights={dashboardInsights.prInsights} weightUnit={weightUnit} now={effectiveNow} onExerciseClick={onExerciseClick} />
 
@@ -93,6 +88,8 @@ export const DashboardInsightsSection: React.FC<DashboardInsightsSectionProps> =
         </div>
       </div>
     )}
+
+    <TrainingTimelineCard progress={timelineProgress} />
 
     <ActivityHeatmap
       dailyData={dailyData}

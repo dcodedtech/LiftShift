@@ -7,7 +7,7 @@ import { DashboardHeaderBar } from './DashboardHeaderBar';
 import { DashboardInsightsSection } from './DashboardInsightsSection';
 import { DashboardPrimaryCharts } from './DashboardPrimaryCharts';
 import { DashboardSecondaryCharts } from './DashboardSecondaryCharts';
-import { AIAnalyzeModal } from '../../modals/aiAnalyze/AIAnalyzeModal';
+import { DashboardAIAnalysisCard } from './DashboardAIAnalysisCard';
 
 interface DashboardLayoutProps {
   isMounted: boolean;
@@ -74,8 +74,6 @@ interface DashboardLayoutProps {
   topExercisesInsight: any;
   pieColors: string[];
   tooltipStyle: any;
-  aiAnalyzeOpen: boolean;
-  setAiAnalyzeOpen: (open: boolean) => void;
   fullData: WorkoutSet[];
   exerciseStats: ExerciseStats[];
   themeMode: string;
@@ -148,8 +146,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
     topExercisesInsight,
     pieColors,
     tooltipStyle,
-    aiAnalyzeOpen,
-    setAiAnalyzeOpen,
     fullData,
     exerciseStats,
     themeMode,
@@ -164,7 +160,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           totalWorkouts={totalWorkouts}
           filtersSlot={filtersSlot}
           stickyHeader={stickyHeader}
-          onAIAnalyze={() => setAiAnalyzeOpen(true)}
         />
 
         <DashboardInsightsSection
@@ -180,7 +175,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           assetsMap={assetsMap}
           assetsLowerMap={assetsLowerMap}
           dailyData={dailyData}
-          onAIAnalyze={() => setAiAnalyzeOpen(true)}
           timelineProgress={timelineProgress}
         />
 
@@ -219,6 +213,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           muscleVsLabel={muscleVsLabel}
           tooltipStyle={tooltipStyle}
         />
+
+        <DashboardAIAnalysisCard
+          fullData={fullData}
+          dailyData={dailyData}
+          exerciseStats={exerciseStats}
+          effectiveNow={effectiveNow}
+          themeMode={themeMode}
+        />
       </div>
 
       <div className="space-y-2">
@@ -250,16 +252,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           assetsLowerMap={assetsLowerMap}
         />
       </div>
-
-      <AIAnalyzeModal
-        isOpen={aiAnalyzeOpen}
-        onClose={() => setAiAnalyzeOpen(false)}
-        fullData={fullData}
-        dailyData={dailyData}
-        exerciseStats={exerciseStats}
-        effectiveNow={effectiveNow}
-        themeMode={themeMode}
-      />
     </>
   );
 };
