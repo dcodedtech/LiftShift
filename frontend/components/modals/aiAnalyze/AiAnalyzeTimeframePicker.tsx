@@ -10,13 +10,14 @@ export const AiAnalyzeTimeframePicker: React.FC<AiAnalyzeTimeframePickerProps> =
   months,
   setMonths,
 }) => (
-  <div className="space-y-2">
-    <div className="space-y-1">
-      <div className="text-xs font-medium text-slate-200">Timeframe</div>
-      <div className="text-[10px] text-slate-500">How much workout history to analyze</div>
-    </div>
+    <div className="space-y-2">
+      <div className="space-y-1">
+      <div className="text-xs font-medium text-slate-200">Analysis Context</div>
+      <div className="text-[10px] text-slate-500">Choose the workout range to export</div>
+      </div>
     <div className="flex flex-wrap gap-2">
       {([
+        { label: 'Last session', value: 'last_session' as const },
         { label: '1 month', value: 1 as const },
         { label: '3 months', value: 3 as const },
         { label: '6 months', value: 6 as const },

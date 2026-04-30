@@ -67,6 +67,7 @@ export const AIAnalyzeModal: React.FC<AIAnalyzeModalProps> = ({
         isReady={isReady}
         isGenerating={isGenerating}
         reCopyCopied={reCopyCopied}
+        rawOnly={selectedIds.length === 0}
         onGenerate={handleGenerate}
         onReCopy={handleReCopy}
         onOpenGemini={handleOpenGemini}

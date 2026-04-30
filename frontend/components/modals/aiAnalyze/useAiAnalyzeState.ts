@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { DailySummary, ExerciseStats, WorkoutSet } from '../../../types';
-import { exportPackageAndCopyText } from '../../../utils/export/clipboardExport';
+import { exportPackageAndCopyText, exportSetsAndCopyTextOnly, getSetsForExportScope } from '../../../utils/export/clipboardExport';
 import {
   ANALYSIS_MODULES,
   buildPromptTemplate,
@@ -33,7 +33,7 @@ export const useAiAnalyzeState = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [reCopyCopied, setReCopyCopied] = useState(false);
 
-  const lastGeneratedRef = useRef<{ months: TimeframeMonths; promptTemplate: string } | null>(null);
+  const lastGeneratedRef = useRef<{ months: TimeframeMonths; promptTemplate: string | null; rawOnly: boolean } | null>(null);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -109,21 +109,27 @@ export const useAiAnalyzeState = ({
   const handleGenerate = useCallback(async () => {
     if (isGenerating) return;
 
-    const promptTemplate = buildPromptTemplate({ months, selectedModules });
     setIsGenerating(true);
 
     try {
-      await exportPackageAndCopyText(
-        fullData,
-        dailyData,
-        exerciseStats,
-        months === 'all' ? 'all' : months,
-        new Date(),
-        effectiveNow,
-        promptTemplate
-      );
-
-      lastGeneratedRef.current = { months, promptTemplate };
+      const rawOnly = selectedModules.length === 0;
+      if (rawOnly) {
+        const scopedSets = getSetsForExportScope(fullData, months, effectiveNow);
+        await exportSetsAndCopyTextOnly(scopedSets);
+        lastGeneratedRef.current = { months, promptTemplate: null, rawOnly: true };
+      } else {
+        const promptTemplate = buildPromptTemplate({ months, selectedModules });
+        await exportPackageAndCopyText(
+          fullData,
+          dailyData,
+          exerciseStats,
+          months,
+          new Date(),
+          effectiveNow,
+          promptTemplate
+        );
+        lastGeneratedRef.current = { months, promptTemplate, rawOnly: false };
+      }
       setIsReady(true);
     } catch (e) {
       console.error('AI analysis export failed', e);
@@ -140,18 +146,23 @@ export const useAiAnalyzeState = ({
   const handleReCopy = useCallback(async () => {
     if (!lastGeneratedRef.current || isGenerating) return;
 
-    const { months: lastMonths, promptTemplate } = lastGeneratedRef.current;
+    const { months: lastMonths, promptTemplate, rawOnly } = lastGeneratedRef.current;
 
     try {
-      await exportPackageAndCopyText(
-        fullData,
-        dailyData,
-        exerciseStats,
-        lastMonths === 'all' ? 'all' : lastMonths,
-        new Date(),
-        effectiveNow,
-        promptTemplate
-      );
+      if (rawOnly || !promptTemplate) {
+        const scopedSets = getSetsForExportScope(fullData, lastMonths, effectiveNow);
+        await exportSetsAndCopyTextOnly(scopedSets);
+      } else {
+        await exportPackageAndCopyText(
+          fullData,
+          dailyData,
+          exerciseStats,
+          lastMonths,
+          new Date(),
+          effectiveNow,
+          promptTemplate
+        );
+      }
       setReCopyCopied(true);
       window.setTimeout(() => setReCopyCopied(false), 2000);
     } catch (e) {

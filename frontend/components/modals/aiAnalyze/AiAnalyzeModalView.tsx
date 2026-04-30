@@ -26,6 +26,7 @@ interface AiAnalyzeModalViewProps {
   isReady: boolean;
   isGenerating: boolean;
   reCopyCopied: boolean;
+  rawOnly: boolean;
   onGenerate: () => void;
   onReCopy: () => void;
   onOpenGemini: () => void;
@@ -46,6 +47,7 @@ export const AiAnalyzeModalView: React.FC<AiAnalyzeModalViewProps> = ({
   isReady,
   isGenerating,
   reCopyCopied,
+  rawOnly,
   onGenerate,
   onReCopy,
   onOpenGemini,
@@ -95,6 +97,7 @@ export const AiAnalyzeModalView: React.FC<AiAnalyzeModalViewProps> = ({
               isReady={isReady}
               isGenerating={isGenerating}
               reCopyCopied={reCopyCopied}
+              rawOnly={rawOnly}
               onGenerate={onGenerate}
               onOpenGemini={onOpenGemini}
               onReCopy={onReCopy}

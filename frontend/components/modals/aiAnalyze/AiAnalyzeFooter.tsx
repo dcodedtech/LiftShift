@@ -5,6 +5,7 @@ interface AiAnalyzeFooterProps {
   isReady: boolean;
   isGenerating: boolean;
   reCopyCopied: boolean;
+  rawOnly: boolean;
   onGenerate: () => void;
   onOpenGemini: () => void;
   onReCopy: () => void;
@@ -14,6 +15,7 @@ export const AiAnalyzeFooter: React.FC<AiAnalyzeFooterProps> = ({
   isReady,
   isGenerating,
   reCopyCopied,
+  rawOnly,
   onGenerate,
   onOpenGemini,
   onReCopy,
@@ -28,7 +30,7 @@ export const AiAnalyzeFooter: React.FC<AiAnalyzeFooterProps> = ({
           className="inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-semibold focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60 h-10 px-4 py-2 bg-transparent border border-purple-500/40 text-slate-200 hover:border-purple-400 hover:text-purple-200 hover:bg-purple-500/10 transition-all duration-200"
         >
           <Brain className="w-4 h-4" />
-          <span>{isGenerating ? 'Generating…' : 'Generate Prompt'}</span>
+          <span>{isGenerating ? (rawOnly ? 'Copying logs…' : 'Generating…') : (rawOnly ? 'Copy Raw Logs' : 'Generate Prompt')}</span>
         </button>
       ) : (
         <div className="flex items-center gap-2">

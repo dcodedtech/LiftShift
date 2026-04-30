@@ -1,4 +1,4 @@
-export type TimeframeMonths = 1 | 3 | 6 | 'all';
+export type TimeframeMonths = 1 | 3 | 6 | 'all' | 'last_session';
 
 export type AnalysisCategory = 'all' | 'program' | 'progress' | 'balance' | 'recovery' | 'health';
 
@@ -100,7 +100,11 @@ export const buildPromptTemplate = (args: {
   months: TimeframeMonths;
   selectedModules: AnalysisModule[];
 }) => {
-  const scopeLabel = args.months === 'all' ? 'all available history' : `the last ${args.months} month${args.months === 1 ? '' : 's'}`;
+  const scopeLabel = args.months === 'all'
+    ? 'all available history'
+    : args.months === 'last_session'
+      ? 'my last workout session only'
+      : `the last ${args.months} month${args.months === 1 ? '' : 's'}`;
 
   const focusLines = args.selectedModules
     .map((m) => `- ${m.label}: ${m.prompt}`)
