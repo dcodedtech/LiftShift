@@ -43,7 +43,7 @@ export const ActivityHeatmap = memo(({
           byDayKey.set(format(new Date(d.timestamp), 'yyyy-MM-dd'), d);
         }
 
-const firstDate = new Date(dailyData[0].timestamp);
+        const firstDate = new Date(dailyData[0].timestamp);
         const lastDateWithData = new Date(dailyData[dailyData.length - 1].timestamp);
         const futureEnd = endOfMonth(today);
         const lastDate = futureEnd.getTime() > lastDateWithData.getTime() ? futureEnd : lastDateWithData;
@@ -131,7 +131,10 @@ const firstDate = new Date(dailyData[0].timestamp);
 
   if (heatmapData.length === 0) return null;
 
-const getColor = (count: number, isFuture?: boolean) => {
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const todayInRange = heatmapData.some(d => format(d.date, 'yyyy-MM-dd') === todayStr);
+
+  const getColor = (count: number, isFuture?: boolean) => {
     if (isFuture) return 'bg-slate-700/30 border border-slate-600/30';
     if (count === 0) return 'bg-slate-800/50';
 
@@ -146,9 +149,6 @@ const getColor = (count: number, isFuture?: boolean) => {
     return 'bg-emerald-200';
   };
 
-  const todayStr = format(today, 'yyyy-MM-dd');
-  const todayInRange = heatmapData.some(d => format(d.date, 'yyyy-MM-dd') === todayStr);
-
   const getDayTextColor = (count: number, isFuture?: boolean) => {
     if (isFuture) return 'text-slate-500';
     if (count === 0) return 'text-slate-600';
@@ -156,6 +156,7 @@ const getColor = (count: number, isFuture?: boolean) => {
     if (count <= 35)  return 'text-white';
     return 'text-slate-900';
   };
+
 
   const handleMouseEnter = (e: React.MouseEvent, day: any) => {
     if (!day || day.count === 0) return;
@@ -170,62 +171,97 @@ const getColor = (count: number, isFuture?: boolean) => {
   };
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 p-4 sm:p-6 rounded-xl flex flex-col md:flex-row gap-4 sm:gap-6 overflow-hidden">
-      <div className="flex-shrink-0 flex flex-col justify-between min-w-full md:min-w-[180px] border-b md:border-b-0 md:border-r border-slate-800/50 pb-4 md:pb-0 md:pr-6 md:mr-2">
-        <div className="w-full h-full flex items-center">
-          <div className="w-full flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="p-1.5 rounded-lg bg-black/50 text-emerald-400 flex-shrink-0">
-                  <Target className="w-4 h-4" />
+    <div className="bg-black/70 border border-slate-700/50 p-4 sm:p-5 rounded-xl flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-hidden">
+      <div className="flex-shrink-0 min-w-[160px] lg:min-w-[200px] border-b lg:border-b-0 lg:border-r border-slate-700/50 pb-4 lg:pb-0 lg:pr-6">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+          <div className="col-span-2 flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <Target className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Consistency</span>
+          </div>
+          
+          <div className="col-span-1 row-span-1">
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-bold text-white">{streakInfo.consistencyScore}</span>
+              <span className="text-lg text-slate-500">%</span>
+            </div>
+            <div className="text-xs text-slate-500 mt-0.5">{streakInfo.avgWorkoutsPerWeek} days/wk</div>
+          </div>
+          
+          <div className="col-span-1 row-span-1 flex flex-col items-end">
+            <StreakBadge streak={streakInfo} />
+          </div>
+          
+          <div className="col-span-1 row-span-1">
+            <Sparkline data={consistencySparkline} color="#10b981" height={24} title="Workout consistency over last 8 weeks" />
+          </div>
+          
+          <div className="col-span-1 row-span-1 flex items-end justify-end">
+            {todayInRange && (
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                <span>Less</span>
+                <div className="flex gap-0.5">
+                  {['bg-slate-800/50', 'bg-emerald-500/30', 'bg-emerald-500/60', 'bg-emerald-500', 'bg-emerald-400'].map((c, i) => (
+                    <div key={i} className={`w-2.5 h-2.5 rounded ${c}`} />
+                  ))}
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 truncate">Consistency</span>
+                <span>More</span>
               </div>
-              <div className="text-2xl font-bold text-white tracking-tight leading-none">{streakInfo.consistencyScore}%</div>
-              <div className="text-[11px] text-slate-500 mt-1">{streakInfo.avgWorkoutsPerWeek}/wk avg</div>
-            </div>
-
-            <div className="flex-shrink-0">
-              <Sparkline data={consistencySparkline} color="#10b981" height={24} />
-            </div>
-
-            <div className="flex-shrink-0">
-              <StreakBadge streak={streakInfo} />
-            </div>
+            )}
           </div>
         </div>
       </div>
 
       <div className="flex-1 w-full overflow-x-auto pb-2 custom-scrollbar" ref={scrollContainerRef}>
         <div className="w-max">
-          <div className="flex items-start gap-4">
-            {monthBlocks.map((month) => (
-              <div key={month.key} className="flex flex-col items-center">
-                <div className="h-4 mb-2 flex items-center justify-center text-[10px] text-slate-500 whitespace-nowrap">
+          <div className="grid grid-flow-col grid-rows-[auto_auto] auto-cols-max items-start gap-x-3 gap-y-2">
+            {monthBlocks.map((month, monthIdx) => {
+              const isLatestMonth = monthIdx === monthBlocks.length - 1;
+              const cellSizeClass = isLatestMonth ? 'w-[18px] h-[18px]' : 'w-2 h-2';
+              const dayGapClass = isLatestMonth ? 'gap-1' : 'gap-[2px]';
+              const dayOfWeekLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+              return (
+              <div
+                key={month.key}
+                className={`flex flex-col items-center ${isLatestMonth ? 'row-span-2' : ''}`}
+                style={isLatestMonth ? { gridRow: '1 / span 2' } : undefined}
+              >
+                <div className="h-5 mb-1 flex items-center justify-center text-[10px] text-slate-500 font-medium whitespace-nowrap">
                   {month.label}
                 </div>
-                <div className="grid grid-cols-7 gap-1">
-                  {month.cells.map((day, idx) => {
-                    if (!day) return <div key={`${month.key}-empty-${idx}`} className="w-3 h-3" />;
-                    const dayNum = day.date.getDate();
-                    const isFuture = day.isFuture;
-                    const isToday = format(day.date, 'yyyy-MM-dd') === todayStr;
-                    const textColor = getDayTextColor(day.count, isFuture);
-                    return (
-                      <div
-                        key={day.date.toISOString()}
-                        className={`w-3 h-3 rounded-sm flex items-center justify-center text-[8px] font-medium ${getColor(day.count, isFuture)} ${textColor} transition-all duration-300 ${day.count > 0 && !isFuture ? 'cursor-pointer hover:z-10' : 'cursor-default'} ${isToday ? 'ring-2 ring-blue-400/70' : ''}`}
-                        onClick={() => day.count > 0 && !isFuture && onDayClick?.(day.date)}
-                        onMouseEnter={(e) => !isFuture && day.count > 0 && handleMouseEnter(e, day)}
-                        onMouseLeave={() => !isFuture && setTooltip(null)}
-                      >
-                        {dayNum <= 31 && dayNum}
+                {isLatestMonth && (
+                  <div className="grid grid-cols-7 gap-1 mb-1">
+                    {dayOfWeekLabels.map((label, i) => (
+                      <div key={i} className="w-[18px] h-3 flex items-center justify-center text-[9px] text-slate-600 font-medium">
+                        {label}
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
+                )}
+                <div className={`relative z-10 grid grid-cols-7 ${dayGapClass} justify-items-center items-center`}>
+                    {month.cells.map((day, idx) => {
+                      if (!day) return <div key={`${month.key}-empty-${idx}`} className={cellSizeClass} />;
+                      const dayNum = day.date.getDate();
+                      const isFuture = day.isFuture;
+                      const isToday = format(day.date, 'yyyy-MM-dd') === todayStr;
+                      const textColor = isLatestMonth ? getDayTextColor(day.count, isFuture) : '';
+                      return (
+                        <div
+                          key={day.date.toISOString()}
+                          className={`${cellSizeClass} rounded flex items-center justify-center text-[8px] font-medium ${getColor(day.count, isFuture)} ${textColor} transition-all duration-300 ${day.count > 0 && !isFuture ? 'cursor-pointer hover:ring-2 hover:ring-white/30' : 'cursor-default'} ${isToday ? 'ring-2 ring-blue-400/70' : ''}`}
+                          onClick={() => day.count > 0 && !isFuture && onDayClick?.(day.date)}
+                          onMouseEnter={(e) => !isFuture && handleMouseEnter(e, day)}
+                          onMouseLeave={() => !isFuture && setTooltip(null)}
+                        >
+                          {isLatestMonth && dayNum <= 31 && dayNum}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </div>
