@@ -194,7 +194,7 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
       </div>
 
       {/* Main layout: 3 columns on desktop, stacked on mobile */}
-      <div className="flex flex-col gap-2 lg:grid lg:grid-cols-3 lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-2 lg:h-[75vh] lg:min-h-0">
+      <div className="flex flex-col gap-2 lg:grid lg:grid-cols-3 lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-2 lg:h-[80vh] lg:min-h-0">
         {/* Column 1: Body Map (1/3 width, full height) */}
         <div className="h-[400px] sm:h-[450px] lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:h-full min-h-0">
           <MuscleAnalysisBodyMapPanel
