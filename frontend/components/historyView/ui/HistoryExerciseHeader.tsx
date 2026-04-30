@@ -52,8 +52,8 @@ export const HistoryExerciseHeader: React.FC<HistoryExerciseHeaderProps> = ({
       <div className="min-w-0 col-start-2 row-start-2 sm:flex-1">
         <div className="flex flex-wrap items-center gap-2 text-[11px] sm:text-sm text-slate-400 overflow-visible">
           {sparklineData.length >= 2 && (
-            <span className="inline-flex items-center opacity-70 pr-1" title="Volume trend (last 6 sessions)">
-              <Sparkline data={sparklineData} width={62} height={20} />
+            <span className="inline-flex items-center opacity-70 pr-1">
+              <Sparkline data={sparklineData} width={62} height={20} title="Volume trend over last 6 sessions" />
             </span>
           )}
           <span className="text-slate-300">

@@ -1,10 +1,11 @@
 import React, { useId } from 'react';
 
-export const Sparkline: React.FC<{ data: number[]; width?: number; height?: number; color?: string }> = ({
+export const Sparkline: React.FC<{ data: number[]; width?: number; height?: number; color?: string; title?: string }> = ({
   data,
   width = 60,
   height = 20,
   color = '#10b981',
+  title,
 }) => {
   if (data.length < 2) return null;
   const rawId = useId();
@@ -31,7 +32,8 @@ export const Sparkline: React.FC<{ data: number[]; width?: number; height?: numb
   const markerId = `sparkline-arrow-${safeId}`;
 
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+    <span title={title} className="inline-block cursor-help">
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
       <defs>
         <marker
           id={markerId}
@@ -57,5 +59,6 @@ export const Sparkline: React.FC<{ data: number[]; width?: number; height?: numb
         opacity="0.8"
       />
     </svg>
+    </span>
   );
 };
