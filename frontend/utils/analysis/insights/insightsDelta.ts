@@ -108,7 +108,7 @@ export const getRollingWindowComparison = (
   data: WorkoutSet[],
   windowDays: 7 | 30 | 365,
   now: Date = new Date(0),
-  minWorkoutsRequired: number = 2
+  minWorkoutsRequired: number = 1
 ): RollingWindowComparison => {
   const range = getRollingWindowRange(now, windowDays);
   const current = calculatePeriodStats(data, range.current.start, range.current.end);
