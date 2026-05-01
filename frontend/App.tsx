@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { WorkoutSet } from './types';
 import { Tab } from './app/navigation';
@@ -132,8 +132,6 @@ const App: React.FC = () => {
     setWeightUnit,
     bodyMapGender,
     setBodyMapGender,
-    dateMode,
-    setDateMode,
     exerciseTrendMode,
     setExerciseTrendMode,
     secondarySetMultiplier,
@@ -285,9 +283,10 @@ const App: React.FC = () => {
   } = useAppCalendarFilters({
     parsedData,
     effectiveNow: useMemo(() => {
+      // Always use actual current date for calendar
       const dataBasedNow = getEffectiveNowFromWorkoutData(parsedData, new Date(0));
-      return dateMode === 'actual' ? new Date() : dataBasedNow;
-    }, [parsedData, dateMode]),
+      return dataBasedNow.getTime() > 0 ? dataBasedNow : new Date();
+    }, [parsedData]),
   });
 
   const {
@@ -359,8 +358,37 @@ const App: React.FC = () => {
     parsedData,
     filteredData,
     filterCacheKey,
-    dateMode,
   });
+
+  // Track last auto-filtered max timestamp to prevent re-triggering
+  const lastAutoFilteredMaxTs = useRef<number>(0);
+  
+  // Auto-apply filter once per unique data load when stale
+  useEffect(() => {
+    if (!dataAgeInfo?.isStale) return;
+    if (hasActiveCalendarFilter) return; // Don't override user filter
+    if (parsedData.length === 0) return; // Wait for data
+    
+    // Find actual min/max dates from data
+    let minTs = Number.POSITIVE_INFINITY;
+    let maxTs = 0;
+    for (const s of parsedData) {
+      if (!s.parsedDate) continue;
+      const ts = s.parsedDate.getTime();
+      if (ts < minTs) minTs = ts;
+      if (ts > maxTs) maxTs = ts;
+    }
+    
+    // Only auto-filter if we haven't filtered this exact max timestamp before
+    // This handles: new uploads (different timestamp), clears (ref survives), reloads
+    if (!Number.isFinite(minTs) || maxTs <= 0 || lastAutoFilteredMaxTs.current === maxTs) return;
+    
+    lastAutoFilteredMaxTs.current = maxTs;
+    setSelectedRange({ 
+      start: new Date(minTs), 
+      end: new Date(maxTs) 
+    });
+  }, [dataAgeInfo?.isStale, hasActiveCalendarFilter, parsedData]);
 
   const filterControls = (
     <AppFilterControls
@@ -472,13 +500,10 @@ const App: React.FC = () => {
         onBodyMapGenderChange={setBodyMapGender}
         themeMode={mode}
         onThemeModeChange={setMode}
-        dateMode={dateMode}
-        onDateModeChange={setDateMode}
         exerciseTrendMode={exerciseTrendMode}
         onExerciseTrendModeChange={setExerciseTrendMode}
         secondarySetMultiplier={secondarySetMultiplier}
         onSecondarySetMultiplierChange={setSecondarySetMultiplier}
-        dataAgeInfo={dataAgeInfo}
       />
 
       <AppOnboardingLayer
