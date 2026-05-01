@@ -1,2 +1,2 @@
 export { BodyMapGenderSection, WeightUnitSection } from './UserPreferencesSectionsPrimary';
-export { DateModeSection, ThemeSection, TrendModeSection, SecondarySetMultiplierSection } from './UserPreferencesSectionsSecondary';
+export { ThemeSection, TrendModeSection, SecondarySetMultiplierSection } from './UserPreferencesSectionsSecondary';

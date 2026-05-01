@@ -1,11 +1,9 @@
 import React from 'react';
 import { Settings, X } from 'lucide-react';
-import { WeightUnit, DateMode, ThemeMode, ExerciseTrendMode } from '../../../utils/storage/localStorage';
+import { WeightUnit, ThemeMode, ExerciseTrendMode } from '../../../utils/storage/localStorage';
 import { BodyMapGender } from '../../bodyMap/BodyMap';
-import type { DataAgeInfo } from '../../../hooks/app';
 import {
   BodyMapGenderSection,
-  DateModeSection,
   ThemeSection,
   TrendModeSection,
   WeightUnitSection,
@@ -21,13 +19,10 @@ interface UserPreferencesModalProps {
   onBodyMapGenderChange: (gender: BodyMapGender) => void;
   themeMode: ThemeMode;
   onThemeModeChange: (mode: ThemeMode) => void;
-  dateMode: DateMode;
-  onDateModeChange: (mode: DateMode) => void;
   exerciseTrendMode: ExerciseTrendMode;
   onExerciseTrendModeChange: (mode: ExerciseTrendMode) => void;
   secondarySetMultiplier: number;
   onSecondarySetMultiplierChange: (value: number) => void;
-  dataAgeInfo?: DataAgeInfo;
 }
 
 export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
@@ -39,13 +34,10 @@ export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
   onBodyMapGenderChange,
   themeMode,
   onThemeModeChange,
-  dateMode,
-  onDateModeChange,
   exerciseTrendMode,
   onExerciseTrendModeChange,
   secondarySetMultiplier,
-  onSecondarySetMultiplierChange,
-  dataAgeInfo,
+  onSecondarySetMultiplierChange
 }) => {
   if (!isOpen) return null;
 
@@ -85,7 +77,6 @@ export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
                 <WeightUnitSection weightUnit={weightUnit} onWeightUnitChange={onWeightUnitChange} />
                 <BodyMapGenderSection bodyMapGender={bodyMapGender} onBodyMapGenderChange={onBodyMapGenderChange} />
               </div>
-              <DateModeSection dateMode={dateMode} onDateModeChange={onDateModeChange} dataAgeInfo={dataAgeInfo} />
               <TrendModeSection
                 exerciseTrendMode={exerciseTrendMode}
                 onExerciseTrendModeChange={onExerciseTrendModeChange}
