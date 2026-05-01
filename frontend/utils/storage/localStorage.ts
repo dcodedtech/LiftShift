@@ -89,13 +89,13 @@ export const getThemeMode = themeModeStorage.get;
 export const clearThemeMode = themeModeStorage.clear;
 
 // Date Mode
-// 'effective' = use the latest workout date as "now" (default, better for relative time displays)
-// 'actual' = use the real current date as "now"
+// 'effective' = use the latest workout date as "now" (for CSV imports, testing scenarios)
+// 'actual' = use the real current date as "now" (default, expected behavior)
 export type DateMode = 'effective' | 'actual';
 
 const dateModeStorage = createStorageManager<DateMode>({
   key: 'hevy_analytics_date_mode',
-  defaultValue: 'effective',
+  defaultValue: 'actual',
   validator: (v) => (v === 'effective' || v === 'actual') ? v : null,
 });
 
