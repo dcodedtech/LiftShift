@@ -43,22 +43,6 @@ https://liftshift.app
   <img src="./frontend/public/images/misc/6.avif" alt="UI Screenshot 6" />
 </div>
 
-<div align="center">
-  <img src="./frontend/public/images/misc/7.avif" alt="UI Screenshot 7" />
-</div>
-
-<div align="center">
-  <img src="./frontend/public/images/misc/8.avif" alt="UI Screenshot 8" />
-</div>
-
-<div align="center">
-  <img src="./frontend/public/images/misc/9.avif" alt="UI Screenshot 9" />
-</div>
-
-<div align="center">
-  <img src="./frontend/public/images/misc/10.avif" alt="UI Screenshot 10" />
-</div>
-
 
 ## Official Deployment
 
