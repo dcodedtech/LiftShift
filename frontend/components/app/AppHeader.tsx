@@ -5,6 +5,7 @@ import { Tab } from '../../app/navigation';
 import { SupportLinks } from '../layout/SupportLinks';
 import { ThemeToggleButton } from '../theme/ThemeToggleButton';
 import type { OnboardingFlow } from '../../app/onboarding/types';
+import { clearCSVData } from '../../utils/storage/localStorage';
 
 const DEMO_MODE_KEY = 'hevy_analytics_demo_mode';
 
@@ -34,7 +35,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onClearCalendarFilter,
 }) => {
   const handleExitDemo = () => {
-    localStorage.removeItem(DEMO_MODE_KEY);
+    clearCSVData();
     onSetOnboarding({ intent: 'update', step: 'platform' });
   };
 

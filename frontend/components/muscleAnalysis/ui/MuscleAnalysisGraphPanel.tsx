@@ -20,7 +20,6 @@ import {
   getVolumeZoneColor,
   getVolumeZone,
 } from "../../../utils/muscle/hypertrophy/muscleParams";
-import { weeklyStimulusFromThresholds } from "../../../utils/muscle/hypertrophy/hypertrophyCalculations";
 import { useIsMobile } from "../../insights/useIsMobile";
 
 const usePillSizing = (count: number) =>
@@ -40,19 +39,15 @@ interface CustomMuscleTooltipProps {
   active?: boolean;
   payload?: any[];
   label?: any;
-  volumeThresholds: { mv: number; mev: number; mrv: number; maxv: number };
 }
 
 const CustomMuscleTooltip: React.FC<CustomMuscleTooltipProps> = ({
   active,
   payload,
   label,
-  volumeThresholds,
 }) => {
   if (active && payload && payload.length) {
     const value = payload[0].value;
-    const zone = getVolumeZone(value, volumeThresholds);
-    const stimulus = calculateStimulusPercent(value, volumeThresholds);
 
     const ts = payload?.[0]?.payload?.timestamp;
     const labelText = Number.isFinite(ts)
@@ -76,15 +71,9 @@ const CustomMuscleTooltip: React.FC<CustomMuscleTooltipProps> = ({
         }}
       >
         <p className="text-slate-400 text-xs mb-1 font-mono">{labelText}</p>
-        <p className="text-xs text-slate-200 mb-1">
+        <p className="text-xs text-slate-200">
           {formatAxisNumber(value)} sets/wk
         </p>
-        <p className="text-[10px] mb-2 text-white">
-          {stimulus}% of wkly possible gains
-        </p>
-        <div className="text-[10px] text-slate-400 leading-relaxed">
-          {zone.explanation}
-        </div>
       </div>
     );
   }
@@ -105,23 +94,25 @@ interface MuscleAnalysisGraphPanelProps {
   legendTrendData: Array<{ period: string; timestamp: number; sets: number }>;
   windowedSelectionBreakdown: { totalSetsInWindow: number } | null;
   clearSelection: () => void;
+  /** Pre-computed hypertrophy score for the selected muscle (0-100) */
+  hypertrophyScore?: number;
 }
 
 const LEGEND_MAX_DISPLAY = 41; // Set a reasonable max for legend display - can be adjusted based on typical max volumes
 
 // Zone labels now imported from shared utility in muscleParams.ts
 
-/** Progress bar for weekly possible gains */
-const PossibleGainsBar: React.FC<{
-  percent: number;
+/** Progress bar for Hypertrophy Score */
+const HypertrophyScoreBar: React.FC<{
+  score: number;
   thresholds: { mv: number; mev: number; mrv: number; maxv: number };
   legendMax: number;
-}> = ({ percent, thresholds, legendMax }) => {
+}> = ({ score, thresholds, legendMax }) => {
   const isMobile = useIsMobile(768);
   const TOTAL_PILLS = isMobile ? 25 : 50;
   const pillData = usePillSizing(TOTAL_PILLS);
   const totalFlex = pillData.reduce((sum, p) => sum + p.flexGrow, 0);
-  const filledFlex = (percent / 100) * totalFlex;
+  const filledFlex = (score / 100) * totalFlex;
 
   let accumulatedFlex = 0;
 
@@ -129,8 +120,6 @@ const PossibleGainsBar: React.FC<{
     <div className="relative flex items-center text-[9px]">
       {Array.from({ length: TOTAL_PILLS }).map((_, idx) => {
         const position = (idx / (TOTAL_PILLS - 1)) * legendMax;
-        // Use maxv for color calculation to keep colors in green spectrum
-        // Don't extend color range beyond maxv even if legendMax is larger
         const color = getVolumeZoneColor(position, thresholds, thresholds.maxv);
         const { flexGrow, marginLeft } = pillData[idx];
 
@@ -171,17 +160,11 @@ const PossibleGainsBar: React.FC<{
           textShadow: "0 0 1px #000, 0 0 1px #000, 0 0 1px #000",
         }}
       >
-        {percent}% possible gains
+        {score}/100 Hypertrophy
       </span>
     </div>
   );
 };
-
-// Calculate percentage of weekly possible gains
-const calculateStimulusPercent = (
-  sets: number,
-  thresholds: { mv: number; mev: number; mrv: number; maxv: number },
-): number => weeklyStimulusFromThresholds(sets, thresholds);
 
 // Use shared getVolumeZone from muscleParams for single source of truth
 
@@ -209,6 +192,7 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
       legendTrendData,
       windowedSelectionBreakdown,
       clearSelection,
+      hypertrophyScore,
     }) => {
       const title = `Wkly sets for ${selectedMuscle ? ((HEADLESS_MUSCLE_NAMES as any)[selectedMuscle] ?? selectedMuscle) : 'Full Body'}`;
 
@@ -261,11 +245,8 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
           ? getZoneColor(weeklySetsSummary, volumeThresholds)
           : null;
 
-      // Calculate weekly possible gains (stimulus percentage)
-      const stimulusPercent =
-        weeklySetsSummary !== null
-          ? weeklyStimulusFromThresholds(weeklySetsSummary, volumeThresholds)
-          : null;
+      // Show hypertrophy score bar when score is available
+      const showScoreBar = hypertrophyScore !== undefined && hypertrophyScore > 0;
 
       // Legend is ALWAYS based on FILTER (not selected muscle) - use maxSets from headlessRatesMap
       const showOverdrive = legendMaxSets > zones.maxv;
@@ -486,10 +467,10 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
               </div>
             </div>
 
-            {stimulusPercent !== null && (
+            {showScoreBar && (
               <div className="relative w-full max-w-md mt-2">
-                <PossibleGainsBar
-                  percent={stimulusPercent}
+                <HypertrophyScoreBar
+                  score={hypertrophyScore}
                   thresholds={volumeThresholds}
                   legendMax={legendMax}
                 />
@@ -594,11 +575,7 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
                       width={30}
                     />
                     <RechartsTooltip
-                      content={
-                        <CustomMuscleTooltip
-                          volumeThresholds={volumeThresholds}
-                        />
-                      }
+                      content={<CustomMuscleTooltip />}
                     />
                     <Area
                       type="monotone"

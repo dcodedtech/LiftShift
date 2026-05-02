@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { WorkoutSet } from '../../../types';
 import { ViewHeader } from '../../layout/ViewHeader';
 import { Activity, Dumbbell } from 'lucide-react';
@@ -16,6 +16,9 @@ import { MuscleAnalysisExerciseListPanel } from './MuscleAnalysisExerciseListPan
 import { LifetimeAchievementCard } from './LifetimeAchievementCard';
 import { TooltipData } from '../../ui/Tooltip';
 import { prefetchHistoryData } from '../../../utils/prefetch/prefetchStrategies';
+import { calculateAllMuscleHypertrophyScores, FACTOR_WEIGHTS } from '../../../utils/muscle/hypertrophy/hypertrophyScore';
+import { weeklyStimulusFromThresholds } from '../../../utils/muscle/hypertrophy/hypertrophyCalculations';
+import { getVolumeThresholds } from '../../../utils/muscle/hypertrophy/muscleParams';
 
 interface MuscleAnalysisProps {
   data: WorkoutSet[];
@@ -142,6 +145,48 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
     filterCacheKey,
     secondarySetMultiplier,
   });
+
+  // Compute hypertrophy scores for all muscles (used by card, body map tooltip, graph)
+  const hypertrophyScores = useMemo(() => {
+    if (!data || !assetsMap || data.length === 0) return [];
+    const windowedData = windowStart
+      ? data.filter(s => s.parsedDate && s.parsedDate >= windowStart)
+      : data;
+    if (windowedData.length === 0) return [];
+
+    const refNow = effectiveNow ?? new Date();
+    const dataSpanDays = windowStart
+      ? Math.max(1, (refNow.getTime() - windowStart.getTime()) / (24 * 60 * 60 * 1000))
+      : 365;
+    const trendWindowDays = Math.round(Math.max(14, Math.min(730, dataSpanDays * 2)));
+
+    const scores = calculateAllMuscleHypertrophyScores(windowedData, assetsMap, trainingLevel, true, effectiveNow, trendWindowDays);
+
+    if (headlessRatesMap && headlessRatesMap.size > 0) {
+      for (const m of scores) {
+        const rate = headlessRatesMap.get(m.muscleId);
+        if (rate !== undefined) {
+          m.score.volumeScore = Math.round(weeklyStimulusFromThresholds(rate, getVolumeThresholds(trainingLevel)));
+          m.score.raw.weeklySets = Math.round(rate * 10) / 10;
+          m.score.totalScore = Math.round(
+            m.score.volumeScore * FACTOR_WEIGHTS.volumeScore +
+            m.score.progressiveOverload * FACTOR_WEIGHTS.progressiveOverload +
+            m.score.frequency * FACTOR_WEIGHTS.frequency
+          );
+        }
+      }
+      scores.sort((a, b) => b.score.totalScore - a.score.totalScore);
+    }
+    return scores;
+  }, [data, assetsMap, effectiveNow, windowStart, headlessRatesMap, trainingLevel]);
+
+  // Fast lookup map: muscleId → total hypertrophy score
+  const hypertrophyScoreMap = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const s of hypertrophyScores) m.set(s.muscleId, s.score.totalScore);
+    return m;
+  }, [hypertrophyScores]);
+
   const {
     handleMuscleClick,
     handleMuscleHover,
@@ -157,6 +202,7 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
     headlessRatesMap,
     setHoverTooltip,
     trainingLevel,
+    hypertrophyScoreMap,
   });
 
   const lifetimeAchievementData = useLifetimeAchievement({
@@ -231,6 +277,7 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
             legendTrendData={legendTrendData}
             windowedSelectionBreakdown={windowedSelectionBreakdown}
             clearSelection={clearSelection}
+            hypertrophyScore={selectedMuscle ? hypertrophyScoreMap.get(selectedMuscle) : undefined}
           />
         </div>
 
@@ -256,6 +303,13 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
               data={lifetimeAchievementData}
               selectedMuscleId={selectedMuscle}
               onMuscleClick={handleMuscleClick}
+              workoutData={data}
+              assetsMap={assetsMap}
+              effectiveNow={effectiveNow}
+              windowStart={windowStart}
+              headlessRatesMap={headlessRatesMap}
+              trainingLevel={trainingLevel}
+              hypertrophyScores={hypertrophyScores}
             />
           </div>
         )}

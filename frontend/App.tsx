@@ -215,6 +215,12 @@ const App: React.FC = () => {
 
   const mergeIntoCombinedData = useCallback(
     (source: 'hevy' | 'lyfta' | 'strong' | 'other', incoming: WorkoutSet[]) => {
+      const DEMO_MODE_KEY = 'hevy_analytics_demo_mode';
+      const isDemoMode = localStorage.getItem(DEMO_MODE_KEY) === '1';
+      if (isDemoMode && source !== 'other') {
+        localStorage.removeItem(DEMO_MODE_KEY);
+      }
+
       setDataBySource((prev) => {
         const existing = prev[source] ?? [];
         const nextSourceData = [...existing, ...incoming];
@@ -234,7 +240,10 @@ const App: React.FC = () => {
         }
 
         const deduped = Array.from(byKey.values());
-        const next = { ...prev, [source]: deduped };
+        let next = { ...prev, [source]: deduped };
+        if (isDemoMode && source !== 'other') {
+          delete (next as any).other;
+        }
         const combined = mergeDatasets(next);
         setParsedData(combined);
         if (combined.length > 0) setHasHydratedData(true);

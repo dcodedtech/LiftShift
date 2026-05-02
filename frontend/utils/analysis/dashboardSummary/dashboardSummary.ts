@@ -390,9 +390,9 @@ const pushPrCandidates = (input: DashboardSummaryInput, candidates: SummaryCandi
     candidates.push({
       category: 'pr',
       priority: 94,
-      text: `PR momentum is live: ${rolling7d.current.totalPRs} PR set${rolling7d.current.totalPRs === 1 ? '' : 's'} in the last 7 days${frequencyText}${recentPr ? `, led by ${sentenceCaseName(recentPr.exercise)}` : ''}.`,
+      text: ` PR momentum is live: ${rolling7d.current.totalPRs} PR set${rolling7d.current.totalPRs === 1 ? '' : 's'} in the last 7 days${frequencyText}${recentPr ? `, led by ${sentenceCaseName(recentPr.exercise)}` : ''}.`,
       segments: [
-        segText(`PR momentum is live: ${rolling7d.current.totalPRs} PR set${rolling7d.current.totalPRs === 1 ? '' : 's'} in the last 7 days${frequencyText}`),
+        segText(` PR momentum is live: ${rolling7d.current.totalPRs} PR set${rolling7d.current.totalPRs === 1 ? '' : 's'} in the last 7 days${frequencyText}`),
         ...(recentPr ? [segText(', led by '), segExercise(recentPr.exercise)] : []),
         segText('.'),
       ],
