@@ -3,11 +3,11 @@ import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, HelpCircle, Key, RefreshCw, Trash2, Upload } from 'lucide-react';
 import { UNIFORM_HEADER_BUTTON_CLASS, UNIFORM_HEADER_ICON_BUTTON_CLASS } from '../../../utils/ui/uiConstants';
 import { OnboardingModalShell } from '../ui/OnboardingModalShell';
-import { getLyfataApiKey } from '../../../utils/storage/dataSourceStorage';
+import { getLyftaApiKey } from '../../../utils/storage/hevyCredentialsStorage';
 
 type Intent = 'initial' | 'update';
 
-interface LyfataLoginModalProps {
+interface LyftaLoginModalProps {
   intent: Intent;
   errorMessage?: string | null;
   isLoading?: boolean;
@@ -22,7 +22,7 @@ interface LyfataLoginModalProps {
   onClose?: () => void;
 }
 
-export const LyfataLoginModal: React.FC<LyfataLoginModalProps> = ({
+export const LyftaLoginModal: React.FC<LyftaLoginModalProps> = ({
   intent,
   errorMessage,
   isLoading = false,
@@ -36,7 +36,7 @@ export const LyfataLoginModal: React.FC<LyfataLoginModalProps> = ({
   onBack,
   onClose,
 }) => {
-  const [apiKey, setApiKey] = useState(() => getLyfataApiKey() || '');
+  const [apiKey, setApiKey] = useState(() => getLyftaApiKey() || '');
   const [showLoginHelp, setShowLoginHelp] = useState(false);
 
   return (

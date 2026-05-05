@@ -1,12 +1,14 @@
 import { WorkoutSet } from '../../types';
 import {
-  getLyfataApiKey,
-  saveLyfataApiKey,
-  clearLyfataApiKey,
   saveLastLoginMethod,
   addCombinedDataSource,
   saveSetupComplete,
 } from '../../utils/storage/dataSourceStorage';
+import {
+  getLyftaApiKey,
+  saveLyftaApiKey,
+  clearLyftaApiKey,
+} from '../../utils/storage/hevyCredentialsStorage';
 import { lyfatBackendGetSets } from '../../utils/api/lyfataBackend';
 import { identifyPersonalRecords } from '../../utils/analysis/core';
 import { hydrateBackendWorkoutSetsWithSource } from '../../app/auth/hydrateBackendWorkoutSets';
@@ -16,7 +18,7 @@ import type { AppAuthHandlersDeps } from './appAuthTypes';
 
 
 export const runLyfatSyncSaved = (deps: AppAuthHandlersDeps): void => {
-  const apiKey = getLyfataApiKey();
+  const apiKey = getLyftaApiKey();
   if (!apiKey) return;
 
   trackEvent('lyfta_sync_start', { method: 'saved_api_key' });
@@ -44,7 +46,7 @@ export const runLyfatSyncSaved = (deps: AppAuthHandlersDeps): void => {
     })
     .catch((err) => {
       trackEvent('lyfta_sync_error', { method: 'saved_api_key' });
-      clearLyfataApiKey();
+      clearLyftaApiKey();
       deps.setLyfatLoginError(getLyfatErrorMessage(err));
     })
     .finally(() => {
@@ -62,7 +64,7 @@ export const runLyfatLogin = (deps: AppAuthHandlersDeps, apiKey: string): void =
   lyfatBackendGetSets<WorkoutSet>(apiKey)
     .then((resp) => {
       trackEvent('lyfta_sync_success', { method: 'api_key', workouts: resp.meta?.workouts });
-      saveLyfataApiKey(apiKey);
+      saveLyftaApiKey(apiKey);
       saveLastLoginMethod('lyfta', 'apiKey');
       const sets = resp.sets ?? [];
       const hydrated = hydrateBackendWorkoutSetsWithSource(sets, 'lyfta');

@@ -1,5 +1,5 @@
 import express from 'express';
-import { lyfatGetAllWorkouts, lyfatGetAllWorkoutSummaries, lyfatValidateApiKey } from '../lyfta';
+import { lyfatGetAllWorkouts, lyfatGetAllWorkoutSummaries, lyfatValidateApiKey, lyfatGetExerciseWeightUnits } from '../lyfta';
 import { mapLyfataWorkoutsToWorkoutSets } from '../mapLyfataWorkoutsToWorkoutSets';
 import { getClientIP, getCountryFromIP } from '../geoLocation';
 
@@ -44,7 +44,16 @@ export const createLyftaRouter = (opts: {
           lyfatGetAllWorkouts(apiKey),
           lyfatGetAllWorkoutSummaries(apiKey),
         ]);
-        const sets = mapLyfataWorkoutsToWorkoutSets(workouts, summaries);
+
+        const exerciseIds = new Set<string>();
+        for (const w of workouts) {
+          for (const ex of (w.exercises ?? [])) {
+            exerciseIds.add(String(ex.exercise_id));
+          }
+        }
+
+        const weightUnitMap = await lyfatGetExerciseWeightUnits(apiKey, [...exerciseIds]);
+        const sets = mapLyfataWorkoutsToWorkoutSets(workouts, summaries, weightUnitMap);
         return { workouts, sets };
       });
 

@@ -80,6 +80,7 @@ interface DashboardLayoutProps {
   themeMode: string;
   animationKeyframes: string;
   hypertrophyData: any[];
+  hypertrophyData30d?: any[];
   hypertrophyPeriod: '7d' | '30d';
   setHypertrophyPeriod: (v: '7d' | '30d') => void;
 }
@@ -156,6 +157,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
     themeMode,
     animationKeyframes,
     hypertrophyData,
+    hypertrophyData30d,
     hypertrophyPeriod,
     setHypertrophyPeriod,
   } = props;
@@ -232,6 +234,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           effectiveNow={effectiveNow}
           themeMode={themeMode}
           hypertrophyData={hypertrophyData}
+          hypertrophyData30d={hypertrophyData30d}
           hypertrophyPeriod={hypertrophyPeriod}
           setHypertrophyPeriod={setHypertrophyPeriod}
         />

@@ -1,8 +1,9 @@
 import React from 'react';
 import type { OnboardingFlow } from '../../app/onboarding/types';
 import { HevyLoginModal } from '../modals/auth/HevyLoginModal';
-import { LyfataLoginModal } from '../modals/auth/LyfataLoginModal';
-import { getHevyAuthToken, getHevyProApiKey, getLyfataApiKey } from '../../utils/storage/dataSourceStorage';
+import { LyftaLoginModal } from '../modals/auth/LyftaLoginModal';
+import { getHevyAuthToken } from '../../utils/storage/dataSourceStorage';
+import { getHevyProApiKey, getLyftaApiKey } from '../../utils/storage/hevyCredentialsStorage';
 import { getPreferencesConfirmed } from '../../utils/storage/localStorage';
 
 interface HevyLoginStepProps {
@@ -76,13 +77,13 @@ export const LyftaLoginStep: React.FC<LyftaLoginStepProps> = ({
   onOpenAddSourcePicker,
   backToCombinePicker = false,
 }) => (
-  <LyfataLoginModal
+  <LyftaLoginModal
     intent={intent}
     errorMessage={lyfatLoginError}
     isLoading={isAnalyzing}
     onLogin={onLyfatLogin}
     loginLabel={intent === 'initial' ? 'Continue' : 'Login with Lyfta'}
-    hasSavedSession={Boolean(getLyfataApiKey()) && getPreferencesConfirmed()}
+    hasSavedSession={Boolean(getLyftaApiKey()) && getPreferencesConfirmed()}
     onSyncSaved={onLyfatSyncSaved}
     onClearCache={onClearCacheAndRestart}
     onImportCsv={() => onSetOnboarding({ intent, step: 'lyfta_csv', platform: 'lyfta', backStep: 'lyfta_login' })}

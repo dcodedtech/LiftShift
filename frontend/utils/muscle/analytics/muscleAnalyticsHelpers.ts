@@ -4,7 +4,7 @@ import type { ExerciseAsset } from '../../data/exerciseAssets';
 import { roundTo } from '../../format/formatters';
 import { formatDayContraction } from '../../date/dateUtils';
 import { getMuscleContributionsFromAsset } from './muscleContributions';
-import { isWarmupSet } from '../../analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../analysis/classification';
 import { createExerciseNameResolver, type ExerciseNameResolver } from '../../exercise/exerciseNameResolver';
 import { stripExerciseSourceLabel } from '../../exercise/exerciseSourceLabel';
 import type { MuscleTimeSeriesEntry, MuscleTimeSeriesResult } from './muscleAnalytics';
@@ -87,6 +87,9 @@ export function buildSimpleDailyTimeSeries(
     const contributions = getMuscleContributionsFromAsset(asset, useGroups, { secondarySetMultiplier });
     if (contributions.length === 0) continue;
 
+    const factor = getWeeklyVolumeSetWeight(set);
+    if (factor <= 0) continue;
+
     const dayStart = startOfDay(set.parsedDate);
     const dateKey = format(dayStart, 'yyyy-MM-dd');
     const timestamp = dayStart.getTime();
@@ -99,7 +102,7 @@ export function buildSimpleDailyTimeSeries(
     }
 
     for (const { muscle, sets } of contributions) {
-      bucket.volumes.set(muscle, (bucket.volumes.get(muscle) ?? 0) + sets);
+      bucket.volumes.set(muscle, (bucket.volumes.get(muscle) ?? 0) + sets * factor);
     }
   }
 

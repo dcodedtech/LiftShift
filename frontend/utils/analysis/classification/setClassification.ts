@@ -23,6 +23,7 @@ export const getSetTypeId = (set: Pick<WorkoutSet, 'set_type'>): SetTypeId => {
   if (t === 'backoff' || t === 'back' || t === 'b' || (t.includes('back') && t.includes('off'))) return 'backoff';
   if (t === 'topset' || t === 'top' || t === 't') return 'topset';
   if (t === 'feederset' || t === 'feeder' || t === 'f') return 'feederset';
+  if (t === 'negative' || t === 'negatives' || t === 'eccentric' || t === 'n') return 'negative';
   if (t === 'partial' || t === 'p' || t.includes('partial')) return 'partial';
   return 'normal';
 };
@@ -89,13 +90,15 @@ export const getSetDisplayLabel = (
 };
 
 /**
- * Count working sets (excludes warmup sets by default).
+ * Count effective working sets using per-type hypertrophy factors.
  *
- * Strategy:
- * - Warmup sets don't count toward working sets
- * - Left/Right sets count as 0.5 each (a L/R pair = 1 set)
- *   This reflects that doing left arm + right arm is ONE bilateral set equivalent
- * - All other sets count as 1 set each
+ * Each set contributes its hypertrophyFactor (from SET_TYPE_CONFIG):
+ *   normal/topset/failure/amrap/cluster/giantset/superset/negative/partial = 1.0
+ *   left/right/dropset/backoff = 0.5 | myoreps/restpause = 0.5
+ *   warmup/feederset = 0.0
+ *
+ * Warmup sets are excluded by default (they carry factor 0.0 regardless).
+ * Unilateral sets can be promoted to full (1.0) via countUnilateralAsFull.
  */
 export const countSets = (
   sets: WorkoutSet[],
@@ -108,16 +111,15 @@ export const countSets = (
   let count = 0;
 
   for (const set of sets) {
-    // Skip warmup sets if requested
     if (excludeWarmup && isWarmupSet(set)) {
       continue;
     }
 
-    // L/R sets count as 0.5 each (pair = 1 set) unless override requested
-    if (!countUnilateralAsFull && isUnilateralSet(set)) {
-      count += 0.5;
+    const typeId = getSetTypeId(set);
+    if (countUnilateralAsFull && (typeId === 'left' || typeId === 'right')) {
+      count += 1;
     } else {
-      count++;
+      count += getSetTypeConfig(set).hypertrophyFactor;
     }
   }
 
@@ -133,14 +135,9 @@ export const getEffectiveSetCount = (sets: WorkoutSet[]): number => {
 };
 
 /**
- * Set weighting for weekly volume analytics:
- * - Normal working sets count as 1.0
- * - Warm-ups count as 0
- * - All other working set variations count as 0.5
+ * Per-set hypertrophy contribution factor for weekly volume analytics.
+ * Reads the hypertrophyFactor from each set type's config.
  */
 export const getWeeklyVolumeSetWeight = (set: Pick<WorkoutSet, 'set_type'>): number => {
-  const config = getSetTypeConfig(set);
-  if (!config.isWorkingSet) return 0;
-  if (config.id === 'normal') return 1;
-  return 0.5;
+  return getSetTypeConfig(set).hypertrophyFactor;
 };

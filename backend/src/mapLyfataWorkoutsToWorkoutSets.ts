@@ -36,23 +36,35 @@ const toNumber = (v: unknown, fallback = 0): number => {
   return Number.isFinite(n) ? n : fallback;
 };
 
+const LBS_TO_KG = 0.45359237;
+
+const LYFTA_SET_TYPE_MAP: Record<string, string> = {
+  '0': 'normal',
+  '1': 'warmup',
+  '2': 'right',
+  '3': 'left',
+  '4': 'failure',
+  '5': 'dropset',
+  '6': 'negative',
+  '7': 'partial',
+  '8': 'myoreps',
+  '9': 'feederset',
+  '10': 'topset',
+  '11': 'backoff',
+};
+
 const normalizeSetType = (value: unknown): string => {
-  const s = String(value ?? '').toLowerCase();
-
-  if (s === '0') return 'normal';
-  if (s === '1') return 'warmup';
-  if (s === '2') return 'right';
-  if (s === '3') return 'left';
-
-  return 'normal';
+  const s = String(value ?? '');
+  return LYFTA_SET_TYPE_MAP[s] || 'normal';
 };
 
 export const mapLyfataWorkoutsToWorkoutSets = (
   workouts: LyfatGetWorkoutsResponse['workouts'],
-  summaries: LyfatGetWorkoutSummaryResponse['workouts'] = []
+  summaries: LyfatGetWorkoutSummaryResponse['workouts'] = [],
+  weightUnitMap: Map<string, string> = new Map(),
 ): WorkoutSetDTO[] => {
   const out: WorkoutSetDTO[] = [];
-  
+
   // Create a map of workout ID to duration for quick lookup
   const durationMap = new Map<number, number>();
   for (const summary of summaries) {
@@ -65,27 +77,34 @@ export const mapLyfataWorkoutsToWorkoutSets = (
   for (const w of workouts) {
     const title = String(w.title ?? 'Workout');
     const start_time = parseDate(w.workout_perform_date);
-    
+
     // Calculate end_time based on duration from summary data
     const durationMinutes = durationMap.get(w.id) ?? 0;
     let end_time = start_time;
-    
+
     if (durationMinutes > 0 && w.workout_perform_date) {
       const startDate = new Date(w.workout_perform_date);
       if (!isNaN(startDate.getTime())) {
         end_time = new Date(startDate.getTime() + durationMinutes * 60 * 1000).toISOString();
       }
     }
-    
+
     const description = '';
 
     for (const [exerciseIndex, ex] of (w.exercises ?? []).entries()) {
       const exercise_title = String(ex.excercise_name ?? '').trim();
       const exercise_notes = '';
       const superset_id = '';
+      const exerciseWeightUnit = weightUnitMap.get(String(ex.exercise_id));
 
       const setsForExercise = [...(ex.sets ?? [])].reverse();
       setsForExercise.forEach((s, setIdx) => {
+        let weight = toNumber(s.weight, 0);
+
+        if (weight > 0 && exerciseWeightUnit === 'lb') {
+          weight = weight * LBS_TO_KG;
+        }
+
         out.push({
           title,
           start_time,
@@ -97,7 +116,7 @@ export const mapLyfataWorkoutsToWorkoutSets = (
           exercise_notes,
           set_index: (ex.sets?.length ?? 1) - 1 - setIdx,
           set_type: normalizeSetType(s.set_type_id),
-          weight_kg: toNumber(s.weight, 0),
+          weight_kg: weight,
           reps: toNumber(s.reps, 0),
           distance_km: toNumber(s.distance, 0),
           duration_seconds: toNumber(s.duration, ex.exercise_rest_time ?? 0),

@@ -5,7 +5,7 @@ import { computeWeeklySetsDelta } from '../utils/weeklySetsMetrics';
 import type { WeeklySetsWindow } from '../../../utils/muscle/analytics';
 import { computeDailySvgMuscleVolumes, computeWindowedExerciseBreakdown } from '../../../utils/muscle/volume';
 import { HEADLESS_ID_TO_DETAILED_SVG_IDS, HEADLESS_MUSCLE_IDS } from '../../../utils/muscle/mapping';
-import { isWarmupSet } from '../../../utils/analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../../utils/analysis/classification';
 import type { NormalizedMuscleGroup } from '../../../utils/muscle/analytics';
 import type { ExerciseAsset } from '../../../utils/data/exerciseAssets';
 import { computationCache } from '../../../utils/storage/computationCache';
@@ -18,6 +18,7 @@ interface UseMuscleTrendDataParams {
   data: WorkoutSet[];
   assetsMap: Map<string, ExerciseAsset> | null;
   windowStart: Date | null;
+  breakdownStart: Date | null;
   effectiveNow: Date;
   allTimeWindowStart: Date | null;
   weeklySetsWindow: WeeklySetsWindow;
@@ -35,6 +36,7 @@ export const useMuscleTrendData = ({
   data,
   assetsMap,
   windowStart,
+  breakdownStart,
   effectiveNow,
   allTimeWindowStart,
   weeklySetsWindow,
@@ -228,12 +230,12 @@ export const useMuscleTrendData = ({
   }, [assetsMap, data, windowStart, effectiveNow, weeklySetsWindow, filterCacheKey, secondarySetMultiplier]);
 
   const windowedSelectionBreakdown = useMemo(() => {
-    if (!assetsMap || !windowStart) return null;
+    if (!assetsMap || !breakdownStart) return null;
 
     const selectedKeysHash = selectedSubjectKeys.sort().join(',') || 'all';
     const cacheKey = muscleCacheKeys.exerciseBreakdownWithMultiplier(
       filterCacheKey,
-      windowStart.getTime(),
+      breakdownStart.getTime(),
       'headless',
       selectedKeysHash,
       secondarySetMultiplier
@@ -248,7 +250,7 @@ export const useMuscleTrendData = ({
         return computeWindowedExerciseBreakdown({
           data,
           assetsMap,
-          start: windowStart,
+          start: breakdownStart,
           end: effectiveNow,
           grouping: 'muscles',
           selectedSubjects: selectedForBreakdown,
@@ -257,12 +259,12 @@ export const useMuscleTrendData = ({
       },
       { ttl: 10 * 60 * 1000 }
     );
-  }, [assetsMap, windowStart, effectiveNow, selectedSubjectKeys, data, filterCacheKey, secondarySetMultiplier]);
+  }, [assetsMap, breakdownStart, effectiveNow, selectedSubjectKeys, data, filterCacheKey, secondarySetMultiplier]);
 
   const contributingExercises = useMemo(() => {
     if (!windowedSelectionBreakdown) return [];
     
-    const calculateExerciseStrengthTrend = (exerciseName: string): { diffPct: number | null; label: string | null } => {
+    const calculateExerciseStrengthTrend = (exerciseName: string): { diffPct: number | null; label: string | null } | null => {
       const exerciseSets = data.filter(s => 
         s.exercise_title === exerciseName && 
         !isWarmupSet(s) && 
@@ -287,6 +289,7 @@ export const useMuscleTrendData = ({
             volume: s.weight_kg * s.reps,
             isPr: s.isPr ?? false,
             prTypes: s.prTypes,
+            set_type: s.set_type,
           });
         } else {
           if (est1RM > existing.oneRepMax) {
@@ -298,6 +301,7 @@ export const useMuscleTrendData = ({
               volume: existing.volume + (s.weight_kg * s.reps),
               isPr: existing.isPr || (s.isPr ?? false),
               prTypes: [...new Set([...(existing.prTypes ?? []), ...(s.prTypes ?? [])])],
+              set_type: s.set_type,
             });
           }
         }
@@ -340,7 +344,11 @@ export const useMuscleTrendData = ({
   }, [windowedSelectionBreakdown, data]);
 
   const totalSets = useMemo(() => {
-    return data.reduce((acc, s) => (isWarmupSet(s) ? acc : acc + 1), 0);
+    let sum = 0;
+    for (const s of data) {
+      sum += getWeeklyVolumeSetWeight(s);
+    }
+    return sum;
   }, [data]);
 
   const musclesWorked = useMemo(() => {

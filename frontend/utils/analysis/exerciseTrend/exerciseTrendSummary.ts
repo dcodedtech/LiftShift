@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import type { ExerciseHistoryEntry, PrType } from '../../../types';
 import type { ExerciseSessionEntry } from '../exerciseTrend/exerciseTrendCore';
 import { calculateDirectionalStrengthScore } from '../../exercise/loadProgression';
+import { getWeeklyVolumeSetWeight } from '../classification/setClassification';
 
 export const summarizeExerciseHistory = (
   history: ExerciseHistoryEntry[],
@@ -39,7 +40,7 @@ export const summarizeExerciseHistory = (
       bySession.set(key, entry);
     }
 
-    entry.sets += h.side ? 0.5 : 1; // L/R sets count as 0.5 each (pair = 1 set)
+    entry.sets += getWeeklyVolumeSetWeight(h);
     entry.volume += h.volume || 0;
     entry.totalReps += h.reps || 0;
     entry.maxReps = Math.max(entry.maxReps, h.reps || 0);

@@ -76,7 +76,8 @@ export const useMuscleAnalysisHandlers = ({
       return;
     }
 
-    const rate = headlessRatesMap.get(muscleId) || 0;
+    const headlessId = getHeadlessIdForDetailedSvgId(muscleId!) ?? muscleId!;
+    const rate = headlessRatesMap.get(headlessId) || 0;
     const zone = getVolumeZone(rate, volumeThresholds);
     const hScore = hypertrophyScoreMap.get(muscleId);
     const scoreLine = hScore !== undefined ? `Hypertrophy Score: ${hScore}/100` : `No score yet`;
@@ -84,7 +85,7 @@ export const useMuscleAnalysisHandlers = ({
 
     setHoverTooltip({
       rect,
-      title: (HEADLESS_MUSCLE_NAMES as any)[muscleId] ?? muscleId,
+      title: (HEADLESS_MUSCLE_NAMES as any)[headlessId] ?? muscleId,
       body: bodyText,
       status: rate > 0 ? 'success' : 'default',
     });

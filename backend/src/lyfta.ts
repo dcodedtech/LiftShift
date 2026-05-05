@@ -164,6 +164,56 @@ export const lyfatGetWorkoutSummaries = async (
   return (await res.json()) as LyfatGetWorkoutSummaryResponse;
 };
 
+interface LyfatGetExerciseProgressResponse {
+  status: boolean;
+  weight_unit: string;
+  data: unknown[];
+}
+
+export const lyfatGetExerciseWeightUnit = async (
+  apiKey: string,
+  exerciseId: string | number,
+): Promise<string | null> => {
+  try {
+    const params = new URLSearchParams({
+      exercise_id: String(exerciseId),
+      duration: '1',
+    });
+    const res = await fetch(`${LYFTA_BASE_URL}/api/v1/exercises/progress?${params.toString()}`, {
+      method: 'GET',
+      headers: buildHeaders(apiKey),
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as LyfatGetExerciseProgressResponse;
+    const unit = String(json.weight_unit ?? '').toLowerCase();
+    if (unit === 'kg' || unit === 'lb' || unit === 'lbs') return unit;
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+export const lyfatGetExerciseWeightUnits = async (
+  apiKey: string,
+  exerciseIds: (string | number)[],
+): Promise<Map<string, string>> => {
+  const unitMap = new Map<string, string>();
+  const uniqueIds = [...new Set(exerciseIds.map(String))];
+
+  const results = await Promise.allSettled(
+    uniqueIds.map((id) => lyfatGetExerciseWeightUnit(apiKey, id)),
+  );
+
+  uniqueIds.forEach((id, i) => {
+    const result = results[i];
+    if (result.status === 'fulfilled' && result.value) {
+      unitMap.set(id, result.value);
+    }
+  });
+
+  return unitMap;
+};
+
 export const lyfatGetAllWorkoutSummaries = async (apiKey: string): Promise<LyfatGetWorkoutSummaryResponse['workouts']> => {
   const allSummaries: LyfatGetWorkoutSummaryResponse['workouts'] = [];
   let page = 1;

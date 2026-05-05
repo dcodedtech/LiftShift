@@ -147,15 +147,15 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
           <>
             <ResponsiveContainer width="100%" height="100%">
               <ReScatterChart margin={{ top: 28, right: 8, bottom: 28, left: 0 }}>
-                <XAxis type="number" dataKey="progress" domain={[0, 50]}
+                <XAxis type="number" dataKey="volume" domain={[0, 50]}
                   tick={{ fill: '#94a3b8', fontSize: 9 }} tickLine={false} axisLine={{ stroke: '#475569' }}
-                  label={{ value: 'Progress', position: 'bottom', offset: 5, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
-                <YAxis type="number" dataKey="volume" domain={[0, 50]}
+                  label={{ value: 'Volume', position: 'bottom', offset: 5, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
+                <YAxis type="number" dataKey="progress" domain={[0, 50]}
                   tick={{ fill: '#94a3b8', fontSize: 9 }} tickLine={false} axisLine={{ stroke: '#475569' }} width={28}
-                  label={{ value: 'Volume', angle: 0, position: 'insideTop', offset: -18, dx: +12, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
+                  label={{ value: 'Progress', angle: 0, position: 'insideTop', offset: -18, dx: +12, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
 
-                <ReferenceLine x={PROGRESS_MID} stroke="#475569" strokeDasharray="4 4" strokeWidth={1} />
-                <ReferenceLine y={VOLUME_MID} stroke="#475569" strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceLine x={VOLUME_MID} stroke="#475569" strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceLine y={PROGRESS_MID} stroke="#475569" strokeDasharray="4 4" strokeWidth={1} />
 
                 <RechartsTooltip content={<CustomScatterTooltip />} />
 

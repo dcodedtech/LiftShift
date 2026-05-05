@@ -67,6 +67,7 @@ const FactorProgressBar: React.FC<{
 
 interface HypertrophyBarCardProps {
   hypertrophyData: MuscleHypertrophyData[];
+  hypertrophyData30d?: MuscleHypertrophyData[];
   selectedMuscleId?: string | null;
   onMuscleClick?: (muscleId: string) => void;
   hypertrophyPeriod: '7d' | '30d';
@@ -93,6 +94,7 @@ const HypertrophySortSelect: React.FC<{
 
 export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
   hypertrophyData,
+  hypertrophyData30d,
   selectedMuscleId,
   onMuscleClick,
   hypertrophyPeriod,
@@ -105,6 +107,15 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
     const avgScore = hypertrophyData.reduce((sum, m) => sum + m.score.totalScore, 0) / hypertrophyData.length;
     return { avgScore, bestMuscle: hypertrophyData[0], count: hypertrophyData.length };
   }, [hypertrophyData]);
+
+  const prevPositionMap = useMemo(() => {
+    if (!hypertrophyData30d || hypertrophyPeriod !== '7d') return null;
+    const map = new Map<string, number>();
+    hypertrophyData30d.forEach((m, idx) => {
+      map.set(m.muscleId, idx + 1);
+    });
+    return map;
+  }, [hypertrophyData30d, hypertrophyPeriod]);
 
   const handleMouseEnter = (e: React.MouseEvent, m: MuscleHypertrophyData) => {
     const raw = m.score.raw;
@@ -199,9 +210,14 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
                 </div>
               ))}
             </div>
-            {hypertrophyData.map((m) => {
+            {hypertrophyData.map((m, idx) => {
               const isSelected = m.muscleId === selectedMuscleId;
               const rating = getScoreRating(m.score.totalScore);
+              const currentPos = idx + 1;
+              const prevPos = prevPositionMap?.get(m.muscleId);
+              const movedUp = prevPos !== undefined && currentPos < prevPos;
+              const movedDown = prevPos !== undefined && currentPos > prevPos;
+              const isNew = prevPos === undefined;
               return (
                 <div key={m.muscleId}
                   className="flex items-center gap-2 rounded px-1 py-0.5 -mx-1 group relative cursor-pointer"
@@ -217,10 +233,21 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
                   <span className={`text-[10px] font-semibold w-[10%] text-right flex-shrink-0 ${isSelected ? 'text-white' : 'text-slate-500'}`}>
                     {m.score.totalScore}%
                   </span>
-                  <span className="text-[9px] flex items-center gap-1 w-[20%] lg:w-[12%] flex-shrink-0" style={{ color: rating.color }}>
-                    <span className="truncate">{rating.label}</span>
-                    <TrendingUp className="w-3 h-3" />
-                  </span>
+                  {prevPositionMap ? (
+                    <span
+                      className="text-[9px] flex items-center gap-0.5 w-[15%] lg:w-[12%] flex-shrink-0"
+                      style={{ color: isNew || movedUp ? '#22c55e' : movedDown ? '#ef4444' : '#3b82f6' }}
+                      title={isNew ? 'NEW' : movedUp ? `↑ from #${prevPos}` : movedDown ? `↓ from #${prevPos}` : `= #${currentPos}`}
+                    >
+                      <span className="font-bold">{isNew || movedUp ? '↑' : movedDown ? '↓' : '='}</span>
+                      <span>{isNew ? 'NEW' : (movedUp || movedDown) ? `#${prevPos} → #${currentPos}` : `#${currentPos}`}</span>
+                    </span>
+                  ) : (
+                    <span className="text-[9px] flex items-center gap-1 w-[15%] lg:w-[12%] flex-shrink-0" style={{ color: rating.color }}>
+                      <span className="truncate">{rating.label}</span>
+                      <TrendingUp className="w-3 h-3" />
+                    </span>
+                  )}
                 </div>
               );
             })}

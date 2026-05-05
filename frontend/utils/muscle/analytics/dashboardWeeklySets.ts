@@ -1,12 +1,13 @@
 import { differenceInCalendarDays, subDays } from 'date-fns';
 import type { WorkoutSet } from '../../../types';
 import type { ExerciseAsset } from '../../data/exerciseAssets';
-import { MUSCLE_GROUP_TO_SVG_IDS, SVG_TO_MUSCLE_GROUP } from '../mapping/muscleMappingConstants';
+import { MUSCLE_GROUP_TO_SVG_IDS, SVG_TO_MUSCLE_GROUP, MUSCLE_ID_TO_DETAILED_SVG_IDS } from '../mapping/muscleMappingConstants';
 import { getSvgIdsForCsvMuscleName } from '../mapping/muscleMapping';
 import { getMuscleContributionsFromAsset } from './muscleContributions';
 import { normalizeMuscleGroup } from './muscleNormalization';
-import { isWarmupSet } from '../../analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../analysis/classification';
 import { createExerciseAssetLookup } from '../../exercise/exerciseAssetLookup';
+import { DETAILED_SVG_ID_TO_MUSCLE_ID } from '../mapping/muscleSvgMappings';
 
 export type WeeklySetsWindow = 'all' | '7d' | '30d' | '365d';
 export type WeeklySetsGrouping = 'groups' | 'muscles';
@@ -74,6 +75,7 @@ export const computeWeeklySetsDashboardData = (
   const lookup = createExerciseAssetLookup(assetsMap);
 
   const totals = new Map<string, number>();
+  const headlessTotals = new Map<string, { primary: number; secondary: number }>();
   for (const s of data) {
     if (isWarmupSet(s)) continue;
     const d = s.parsedDate;
@@ -89,17 +91,53 @@ export const computeWeeklySetsDashboardData = (
     const contributions = getMuscleContributionsFromAsset(asset, useGroups, { secondarySetMultiplier });
     if (contributions.length === 0) continue;
 
+    const factor = getWeeklyVolumeSetWeight(s);
+    if (factor <= 0) continue;
+
+    // Per-set dedup: track which headless muscles already got primary/secondary
+    const setPrimaries = new Set<string>();
+    const setSecondaries = new Set<string>();
+
     for (const c of contributions) {
-      totals.set(c.muscle, (totals.get(c.muscle) ?? 0) + c.sets);
+      totals.set(c.muscle, (totals.get(c.muscle) ?? 0) + c.sets * factor);
+
+      // Map raw muscle name to headless ID for deduplicated aggregate
+      const svgIds = getSvgIdsForCsvMuscleName(c.muscle);
+      for (const svgId of svgIds) {
+        const headlessId = (DETAILED_SVG_ID_TO_MUSCLE_ID as any)[svgId];
+        if (!headlessId) continue;
+        const cur = headlessTotals.get(headlessId) || { primary: 0, secondary: 0 };
+
+        const isPrimary = c.sets >= 1; // 1.0 = primary, < 1 = secondary
+        if (isPrimary) {
+          if (!setPrimaries.has(headlessId)) {
+            setPrimaries.add(headlessId);
+            cur.primary += factor;
+          }
+        } else {
+          if (!setPrimaries.has(headlessId) && !setSecondaries.has(headlessId)) {
+            setSecondaries.add(headlessId);
+            cur.secondary += c.sets * factor;
+          }
+        }
+        headlessTotals.set(headlessId, cur);
+      }
     }
   }
 
-  const days = Math.max(1, differenceInCalendarDays(now, windowStart) + 1);
-  const weeks = Math.max(1, days / 7);
+  const windowDays = window === 'all'
+    ? Math.max(1, differenceInCalendarDays(now, windowStart))
+    : parseInt(window, 10);
+  const weeks = Math.max(1, windowDays / 7);
 
   const weeklyRates = new Map<string, number>();
   for (const [k, v] of totals.entries()) {
     weeklyRates.set(k, Number((v / weeks).toFixed(1)));
+  }
+
+  const headlessRates = new Map<string, number>();
+  for (const [headlessId, { primary, secondary }] of headlessTotals.entries()) {
+    headlessRates.set(headlessId, Number(((primary + secondary) / weeks).toFixed(1)));
   }
 
   const volumes = new Map<string, number>();
@@ -115,15 +153,14 @@ export const computeWeeklySetsDashboardData = (
       if (val > maxVolume) maxVolume = val;
     }
   } else {
-    for (const [muscleName, val] of weeklyRates.entries()) {
-      const svgIds = getSvgIdsForCsvMuscleName(muscleName);
-      if (svgIds.length === 0) continue;
+    for (const [headlessId, rate] of headlessRates.entries()) {
+      const svgIds = (MUSCLE_ID_TO_DETAILED_SVG_IDS as any)[headlessId] as readonly string[] | undefined;
+      if (!svgIds || svgIds.length === 0) continue;
       for (const svgId of svgIds) {
-        // Multiple distinct subject keys can map to the same SVG id (e.g. synonyms like
-        // "Lats" vs "Latissimus Dorsi"). Accumulate so the heatmap reflects all work.
-        volumes.set(svgId, (volumes.get(svgId) ?? 0) + val);
+        volumes.set(svgId, (volumes.get(svgId) ?? 0) + rate);
       }
-      // maxVolume is based on the final per-svg value after any accumulation.
+      // maxVolume: each sub-part gets the same rate via distribution,
+      // but different headless muscles may partially overlap svgIds.
       for (const svgId of svgIds) {
         const next = volumes.get(svgId) ?? 0;
         if (next > maxVolume) maxVolume = next;
@@ -143,7 +180,7 @@ export const computeWeeklySetsDashboardData = (
 
   return {
     heatmap: { volumes, maxVolume: Math.max(maxVolume, 1) },
-    weeklyRatesBySubject: weeklyRates,
+    weeklyRatesBySubject: grouping === 'muscles' ? headlessRates : weeklyRates,
     weeks,
     windowStart,
   };

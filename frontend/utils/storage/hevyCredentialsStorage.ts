@@ -1,5 +1,7 @@
 const HEVY_USERNAME_KEY = 'hevy_username_or_email';
 const HEVY_PASSWORD_KEY = 'hevy_password';
+const HEVY_PRO_API_KEY = 'hevy_pro_api_key';
+const LYFTA_API_KEY = 'lyfta_api_key';
 
 export const saveHevyUsernameOrEmail = (value: string): void => {
   try {
@@ -48,4 +50,48 @@ export const clearHevyPassword = (): void => {
 export const clearHevyCredentials = (): void => {
   clearHevyUsernameOrEmail();
   clearHevyPassword();
+};
+
+export const saveHevyProApiKey = (apiKey: string): void => {
+  try {
+    localStorage.setItem(HEVY_PRO_API_KEY, apiKey);
+  } catch {
+  }
+};
+
+export const getHevyProApiKey = (): string | null => {
+  try {
+    return localStorage.getItem(HEVY_PRO_API_KEY);
+  } catch {
+    return null;
+  }
+};
+
+export const clearHevyProApiKey = (): void => {
+  try {
+    localStorage.removeItem(HEVY_PRO_API_KEY);
+  } catch {
+  }
+};
+
+export const saveLyftaApiKey = (apiKey: string): void => {
+  try {
+    localStorage.setItem(LYFTA_API_KEY, apiKey);
+  } catch {
+  }
+};
+
+export const getLyftaApiKey = (): string | null => {
+  try {
+    return localStorage.getItem(LYFTA_API_KEY);
+  } catch {
+    return null;
+  }
+};
+
+export const clearLyftaApiKey = (): void => {
+  try {
+    localStorage.removeItem(LYFTA_API_KEY);
+  } catch {
+  }
 };

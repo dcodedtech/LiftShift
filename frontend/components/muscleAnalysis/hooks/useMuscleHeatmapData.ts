@@ -114,10 +114,7 @@ export const useMuscleHeatmapData = ({
 
   const headlessRatesMap = useMemo(() => {
     if (!assetsMap || !windowStart) return new Map<string, number>();
-    const heatmap = weeklySetsDashboardMuscles?.heatmap;
-    if (!heatmap) return new Map<string, number>();
-
-    return toHeadlessVolumeMap(heatmap.volumes);
+    return weeklySetsDashboardMuscles?.weeklyRatesBySubject ?? new Map<string, number>();
   }, [assetsMap, windowStart, weeklySetsDashboardMuscles]);
 
   const radarData = useMemo(() => getHeadlessRadarSeries(headlessRatesMap), [headlessRatesMap]);

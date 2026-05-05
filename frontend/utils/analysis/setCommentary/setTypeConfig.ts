@@ -18,6 +18,7 @@ export type SetTypeId =
   | 'backoff'
   | 'topset'
   | 'feederset'
+  | 'negative'
   | 'partial';
 
 /**
@@ -31,7 +32,8 @@ export interface SetTypeConfig {
   bgColor: string;         // Background color class
   borderColor: string;     // Border color class
   description: string;     // Tooltip description
-  isWorkingSet: boolean;   // Whether this counts as a working set (not warmup)
+  isWorkingSet: boolean;     // Whether this counts as a working set (not warmup)
+  hypertrophyFactor: number; // Contribution factor (0-1) for weekly sets & hypertrophy calculations
 }
 
 /**
@@ -42,12 +44,13 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
   normal: {
     id: 'normal',
     label: 'Working Set',
-    shortLabel: '',  // No indicator for normal sets - shows number
+    shortLabel: '',
     color: 'text-white',
     bgColor: 'bg-black/50',
     borderColor: 'border-slate-700',
     description: 'Standard working set',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
   },
   warmup: {
     id: 'warmup',
@@ -58,6 +61,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-amber-500/50',
     description: 'Warm-up set - not counted in working set totals',
     isWorkingSet: false,
+    hypertrophyFactor: 0.0,
   },
   left: {
     id: 'left',
@@ -68,6 +72,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-sky-500/50',
     description: 'Left side unilateral set',
     isWorkingSet: true,
+    hypertrophyFactor: 0.5,
   },
   right: {
     id: 'right',
@@ -78,6 +83,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-violet-500/50',
     description: 'Right side unilateral set',
     isWorkingSet: true,
+    hypertrophyFactor: 0.5,
   },
   dropset: {
     id: 'dropset',
@@ -88,6 +94,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-rose-500/50',
     description: 'Drop set - reduced weight continuation',
     isWorkingSet: true,
+    hypertrophyFactor: 0.5,
   },
   failure: {
     id: 'failure',
@@ -98,6 +105,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-red-500/50',
     description: 'Set taken to muscular failure',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
   },
   amrap: {
     id: 'amrap',
@@ -108,6 +116,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-orange-500/50',
     description: 'As Many Reps As Possible',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
   },
   restpause: {
     id: 'restpause',
@@ -118,6 +127,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-cyan-500/50',
     description: 'Rest-pause technique set',
     isWorkingSet: true,
+    hypertrophyFactor: 0.5,
   },
   myoreps: {
     id: 'myoreps',
@@ -126,8 +136,9 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     color: 'text-purple-400',
     bgColor: 'bg-purple-500/20',
     borderColor: 'border-purple-500/50',
-    description: 'Myo reps activation set',
+    description: 'Myo reps mini-set',
     isWorkingSet: true,
+    hypertrophyFactor: 0.5,
   },
   cluster: {
     id: 'cluster',
@@ -138,6 +149,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-teal-500/50',
     description: 'Cluster set with intra-set rest',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
   },
   giantset: {
     id: 'giantset',
@@ -148,6 +160,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-indigo-500/50',
     description: 'Part of a giant set circuit',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
   },
   superset: {
     id: 'superset',
@@ -158,6 +171,73 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-fuchsia-500/50',
     description: 'Part of a superset pair',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
+  },
+  amrap: {
+    id: 'amrap',
+    label: 'AMRAP',
+    shortLabel: 'A',
+    color: 'text-orange-400',
+    bgColor: 'bg-orange-500/20',
+    borderColor: 'border-orange-500/50',
+    description: 'As Many Reps As Possible',
+    isWorkingSet: true,
+    hypertrophyFactor: 1,
+  },
+  restpause: {
+    id: 'restpause',
+    label: 'Rest-Pause',
+    shortLabel: 'RP',
+    color: 'text-cyan-400',
+    bgColor: 'bg-cyan-500/20',
+    borderColor: 'border-cyan-500/50',
+    description: 'Rest-pause technique set',
+    isWorkingSet: true,
+    hypertrophyFactor: 0.5,
+  },
+  myoreps: {
+    id: 'myoreps',
+    label: 'Myo Reps',
+    shortLabel: 'M',
+    color: 'text-purple-400',
+    bgColor: 'bg-purple-500/20',
+    borderColor: 'border-purple-500/50',
+    description: 'Myo reps mini-set',
+    isWorkingSet: true,
+    hypertrophyFactor: 0.5,
+  },
+  cluster: {
+    id: 'cluster',
+    label: 'Cluster',
+    shortLabel: 'C',
+    color: 'text-teal-400',
+    bgColor: 'bg-teal-500/20',
+    borderColor: 'border-teal-500/50',
+    description: 'Cluster set with intra-set rest',
+    isWorkingSet: true,
+    hypertrophyFactor: 1,
+  },
+  giantset: {
+    id: 'giantset',
+    label: 'Giant Set',
+    shortLabel: 'G',
+    color: 'text-indigo-400',
+    bgColor: 'bg-indigo-500/20',
+    borderColor: 'border-indigo-500/50',
+    description: 'Part of a giant set circuit',
+    isWorkingSet: true,
+    hypertrophyFactor: 1,
+  },
+  superset: {
+    id: 'superset',
+    label: 'Superset',
+    shortLabel: 'S',
+    color: 'text-fuchsia-400',
+    bgColor: 'bg-fuchsia-500/20',
+    borderColor: 'border-fuchsia-500/50',
+    description: 'Part of a superset pair',
+    isWorkingSet: true,
+    hypertrophyFactor: 1,
   },
   backoff: {
     id: 'backoff',
@@ -168,6 +248,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-lime-500/50',
     description: 'Back-off set with reduced intensity',
     isWorkingSet: true,
+    hypertrophyFactor: 0.5,
   },
   topset: {
     id: 'topset',
@@ -178,6 +259,7 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-yellow-500/50',
     description: 'Top set - heaviest working set',
     isWorkingSet: true,
+    hypertrophyFactor: 1.0,
   },
   feederset: {
     id: 'feederset',
@@ -188,6 +270,18 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-emerald-500/50',
     description: 'Feeder set for blood flow',
     isWorkingSet: true,
+    hypertrophyFactor: 0.0,
+  },
+  negative: {
+    id: 'negative',
+    label: 'Negative Reps',
+    shortLabel: 'N',
+    color: 'text-slate-400',
+    bgColor: 'bg-slate-500/20',
+    borderColor: 'border-slate-500/50',
+    description: 'Eccentric / negative emphasis reps',
+    isWorkingSet: true,
+    hypertrophyFactor: 1,
   },
   partial: {
     id: 'partial',
@@ -198,5 +292,6 @@ export const SET_TYPE_CONFIG: Record<SetTypeId, SetTypeConfig> = {
     borderColor: 'border-pink-500/50',
     description: 'Partial range of motion reps',
     isWorkingSet: true,
+    hypertrophyFactor: 1,
   },
 };

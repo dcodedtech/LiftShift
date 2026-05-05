@@ -138,7 +138,11 @@ export const parseMuscleFields = (
     primaries = [secondaries[0]];
     secondaries = secondaries.slice(1);
   }
-  
+
+  // Remove secondary names that duplicate primary names (case-insensitive)
+  const primaryLower = new Set(primaries.map((m) => m.toLowerCase()));
+  secondaries = secondaries.filter((m) => !primaryLower.has(m.toLowerCase()));
+
   return { primaries, secondaries };
 };
 

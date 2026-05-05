@@ -207,6 +207,9 @@ export const normalizeSetType = (value: unknown): string => {
   // Feeder set
   if (s.includes('feeder') || s === 'f' || s === 'feederset') return 'feederset';
 
+  // Negative / eccentric reps
+  if (s.includes('negative') || s.includes('eccentric') || s === 'n' || s === 'negativereps') return 'negative';
+
   // Partial reps
   if (s.includes('partial') || s === 'p' || s === 'partialreps' || s === 'partialrepsset') return 'partial';
 

@@ -1,11 +1,12 @@
 import type { WorkoutSet } from '../../../types';
 import type { ExerciseAsset } from '../../data/exerciseAssets';
-import { isWarmupSet } from '../../analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../analysis/classification';
 import { createExerciseAssetLookup } from '../../exercise/exerciseAssetLookup';
 import { parseMuscleFields } from '../analytics/muscleContributions';
 import { normalizeMuscleGroup, type NormalizedMuscleGroup } from '../analytics/muscleNormalization';
 import { getSvgIdsForCsvMuscleName } from '../mapping/muscleMapping';
 import { FULL_BODY_TARGET_GROUPS } from '../mapping/muscleMappingConstants';
+import { DETAILED_SVG_ID_TO_MUSCLE_ID } from '../mapping/muscleSvgMappings';
 
 export type WindowedBreakdownGrouping = 'groups' | 'muscles';
 
@@ -102,6 +103,9 @@ export const computeWindowedExerciseBreakdown = (params: {
     if (!d) continue;
     if (d < start || d > end) continue;
 
+    const setFactor = getWeeklyVolumeSetWeight(s);
+    if (setFactor <= 0) continue;
+
     const exerciseName = s.exercise_title || '';
     let asset = assetByName.get(exerciseName);
     if (asset === undefined) {
@@ -125,19 +129,19 @@ export const computeWindowedExerciseBreakdown = (params: {
       if (isFullBody) {
         for (const g of FULL_BODY_TARGET_GROUPS) {
           if (!isSelectedHit(selected, g)) continue;
-          inc += 1;
-          pInc += 1;
+          inc += setFactor;
+          pInc += setFactor;
         }
       } else {
         for (const g of primaryGroups) {
           if (!isSelectedHit(selected, g)) continue;
-          inc += 1;
-          pInc += 1;
+          inc += setFactor;
+          pInc += setFactor;
         }
         for (const g of secondaryGroups) {
           if (!isSelectedHit(selected, g)) continue;
-          inc += secondarySetMultiplier;
-          sInc += secondarySetMultiplier;
+          inc += secondarySetMultiplier * setFactor;
+          sInc += secondarySetMultiplier * setFactor;
         }
       }
 
@@ -157,17 +161,27 @@ export const computeWindowedExerciseBreakdown = (params: {
     let inc = 0;
     let pInc = 0;
     let sInc = 0;
+    const contributedPrimaries = new Set<string>();
+    const contributedSecondaries = new Set<string>();
 
     for (const svgId of primarySvgIds) {
       if (!isSelectedHit(selected, svgId)) continue;
-      inc += 1;
-      pInc += 1;
+      const headlessId = (DETAILED_SVG_ID_TO_MUSCLE_ID as any)[svgId];
+      if (headlessId && !contributedPrimaries.has(headlessId)) {
+        contributedPrimaries.add(headlessId);
+        inc += setFactor;
+        pInc += setFactor;
+      }
     }
 
     for (const svgId of secondarySvgIds) {
       if (!isSelectedHit(selected, svgId)) continue;
-      inc += secondarySetMultiplier;
-      sInc += secondarySetMultiplier;
+      const headlessId = (DETAILED_SVG_ID_TO_MUSCLE_ID as any)[svgId];
+      if (headlessId && !contributedPrimaries.has(headlessId) && !contributedSecondaries.has(headlessId)) {
+        contributedSecondaries.add(headlessId);
+        inc += secondarySetMultiplier * setFactor;
+        sInc += secondarySetMultiplier * setFactor;
+      }
     }
 
     if (inc <= 0) continue;

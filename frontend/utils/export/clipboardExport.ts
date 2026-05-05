@@ -3,7 +3,7 @@ import { subMonths, format, differenceInMonths, min } from 'date-fns';
 import { getDailySummaries, getExerciseStats, getIntensityEvolution, getTopExercisesOverTime, getPrsOverTime, HeatmapEntry } from '../analysis/core';
 import { getEffectiveNowFromWorkoutData, getSessionKey, isPlausibleDate } from '../date/dateUtils';
 import { isWarmupSet } from '../analysis/classification';
-import { isUnilateralSet } from '../analysis/classification/setClassification';
+import { getWeeklyVolumeSetWeight } from '../analysis/classification/setClassification';
 import { getWeightUnit, WeightUnit } from '../storage/localStorage';
 import { convertWeight } from '../format/units';
 import { calculateUnifiedScore, findCurrentCheckpointIndexByScore, CHECKPOINTS } from '../training/trainingTimeline';
@@ -31,7 +31,7 @@ export const calculateTrainingExperience = (sets: WorkoutSet[], now = new Date()
   let totalSets = 0;
   for (const s of sets) {
     if (isWarmupSet(s)) continue;
-    totalSets += isUnilateralSet(s) ? 0.5 : 1;
+    totalSets += getWeeklyVolumeSetWeight(s);
   }
 
   const earliestDate = min(dates);

@@ -1,7 +1,7 @@
 import { startOfDay, format } from 'date-fns';
 import type { WorkoutSet } from '../../../types';
 import type { ExerciseAsset } from '../../data/exerciseAssets';
-import { isWarmupSet } from '../../analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../analysis/classification';
 import { getMuscleContributionsFromAsset } from '../analytics/muscleContributions';
 import { getSvgIdsForCsvMuscleName } from '../mapping/muscleMapping';
 import { normalizeMuscleGroup } from '../analytics/muscleNormalization';
@@ -90,7 +90,10 @@ export function computeDailyMuscleVolumes(
     const contributions = getMuscleContributionsFromAsset(asset, useGroups, { secondarySetMultiplier });
     if (contributions.length === 0) return null;
 
-    return contributions.map((c) => ({ key: c.muscle, sets: c.sets }));
+    const factor = getWeeklyVolumeSetWeight(set);
+    if (factor <= 0) return null;
+
+    return contributions.map((c) => ({ key: c.muscle, sets: c.sets * factor }));
   });
 }
 
@@ -122,6 +125,9 @@ export function computeDailySvgMuscleVolumes(
     const contributions = getMuscleContributionsFromAsset(asset, useGroupsForContributions, { secondarySetMultiplier });
     if (contributions.length === 0) return null;
 
+    const factor = getWeeklyVolumeSetWeight(set);
+    if (factor <= 0) return null;
+
     const out: KeyedContribution[] = [];
     for (const c of contributions) {
       let svgIds = getSvgIdsForCsvMuscleName(c.muscle);
@@ -132,7 +138,7 @@ export function computeDailySvgMuscleVolumes(
       }
       if (svgIds.length === 0) continue;
       for (const svgId of svgIds) {
-        out.push({ key: svgId, sets: c.sets });
+        out.push({ key: svgId, sets: c.sets * factor });
       }
     }
 

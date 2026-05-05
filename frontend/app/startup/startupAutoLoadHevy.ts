@@ -9,7 +9,6 @@ import {
 import { identifyPersonalRecords } from '../../utils/analysis/core';
 import {
   clearHevyAuthToken,
-  clearHevyProApiKey,
   clearHevyRefreshToken,
   getHevyRefreshToken,
   saveHevyAuthToken,
@@ -19,6 +18,7 @@ import {
   saveSetupComplete,
 } from '../../utils/storage/dataSourceStorage';
 import {
+  clearHevyProApiKey,
   getHevyPassword,
   getHevyUsernameOrEmail,
   saveHevyPassword,

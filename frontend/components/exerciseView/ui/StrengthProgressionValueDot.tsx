@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, Award, BarChart3 } from 'lucide-react';
+import { Trophy, Award, BarChart3, Dumbbell } from 'lucide-react';
 import { ExerciseStats, PrType } from '../../../types';
 import { ExerciseSessionEntry } from '../../../utils/analysis/exerciseTrend';
 import { convertWeight } from '../../../utils/format/units';
@@ -169,9 +169,9 @@ export const StrengthProgressionValueDot = (props: any) => {
   const activePrTypes = shouldShowPr ? filteredPrTypes : filteredSilverPrTypes;
   let TrophyIcon = Trophy;
   if (activePrTypes.includes('weight')) {
-    TrophyIcon = Trophy;
+    TrophyIcon = Dumbbell;
   } else if (activePrTypes.includes('oneRm')) {
-    TrophyIcon = Award;
+    TrophyIcon = Trophy;
   } else if (activePrTypes.includes('volume')) {
     TrophyIcon = BarChart3;
   }

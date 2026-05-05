@@ -36,6 +36,7 @@ export interface ExerciseHistoryEntry {
   silverPrTypes?: PrType[];
   /** For unilateral exercises: 'left', 'right', or undefined for bilateral */
   side?: 'left' | 'right';
+  set_type: string;
 }
 
 export interface ExerciseStats {

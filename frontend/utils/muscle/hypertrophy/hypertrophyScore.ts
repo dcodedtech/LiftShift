@@ -14,7 +14,7 @@ import type { WorkoutSet } from '../../../types';
 import type { ExerciseAsset } from '../../data/exerciseAssets';
 import type { ExerciseStats } from '../../../types';
 import { calculateEpley1RM } from '../../analysis/masterAlgorithm/masterAlgorithmMath';
-import { isWarmupSet } from '../../analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../analysis/classification';
 import { getMuscleContributionsFromAsset } from '../analytics/muscleContributions';
 import { getVolumeThresholds, type TrainingLevel } from './muscleParams';
 import { weeklyStimulusFromThresholds } from './hypertrophyCalculations';
@@ -140,26 +140,36 @@ export function calculateVolumeScore(weeklySets: number, trainingLevel: Training
 }
 
 /**
- * Calculate Progressive Overload Score (0-40, matching the 40% weight)
- * 0% trend = 10 (stable baseline), max positive = 40, min negative = 0.
- * Scales proportionally on both sides of 0%.
+ * Calculate Progressive Overload Score (0-40, 40% weight)
+ * - maxTrend (qualified muscles, ≥10% default) → 40 points
+ * - 0% trend → 10 points (stable baseline)
+ * - minTrend (qualified muscles, ≤-5% default) → 0 points
+ * - All values clamped to 0-40, no negative scores possible
  */
 function calculateProgressiveOverloadScore(oneRMTrendPercent: number, maxTrend: number, minTrend: number): number {
-  // No positive trend among any muscle — everything gets baseline 10 if stable
+  // Handle case with no positive trends (all ≤0)
   if (maxTrend <= 0) {
     if (oneRMTrendPercent >= 0) return 10;
-    if (minTrend >= 0) return 10;
-    return Math.round(((oneRMTrendPercent - minTrend) / (0 - minTrend)) * 10);
+    const safeMin = Math.min(minTrend, 0); // minTrend can't be positive
+    const ratio = (oneRMTrendPercent - safeMin) / (0 - safeMin);
+    return Math.max(0, Math.round(ratio * 10));
   }
 
-  if (oneRMTrendPercent <= 0 && minTrend < 0) {
-    return Math.round(((oneRMTrendPercent - minTrend) / (0 - minTrend)) * 10);
-  }
+  // Clamp to max (40) if trend meets/exceeds upper bound
+  if (oneRMTrendPercent >= maxTrend) return 40;
+
+  // Clamp to min (0) if trend meets/exceeds lower bound
+  if (oneRMTrendPercent <= minTrend) return 0;
+
+  // Negative trend: scale 0 (minTrend) → 10 (0% trend)
   if (oneRMTrendPercent <= 0) {
-    return oneRMTrendPercent >= 0 ? 10 : 0;
+    const ratio = (oneRMTrendPercent - minTrend) / (0 - minTrend);
+    return Math.max(0, Math.round(ratio * 10));
   }
 
-  return Math.round(Math.min(40, 10 + (oneRMTrendPercent / maxTrend) * 30));
+  // Positive trend: scale 10 (0% trend) → 40 (maxTrend)
+  const ratio = oneRMTrendPercent / maxTrend;
+  return Math.max(0, Math.round(10 + ratio * 30));
 }
 
 /**
@@ -202,8 +212,8 @@ export function calculateMuscleHypertrophyScore(
   trendWindowDays: number = 28,
   maxTrend?: number
 ): HypertrophyScoreResult {
-  // Filter to working sets only
-  const workingSets = sets.filter(s => !isWarmupSet(s));
+  // Filter to working sets with hypertrophy factor > 0
+  const workingSets = sets.filter(s => !isWarmupSet(s) && getWeeklyVolumeSetWeight(s) > 0);
   
   if (workingSets.length === 0) {
     return {
@@ -242,8 +252,8 @@ export function calculateMuscleHypertrophyScore(
   )).size;
   const daysPerWeek = trainingDays / 4;
   
-  // Weekly sets (extrapolated from 4-week data)
-  const weeklySets = recentSets.length / 4;
+  // Weekly sets (extrapolated from 4-week data, weighted by set type factor)
+  const weeklySets = recentSets.reduce((sum, s) => sum + getWeeklyVolumeSetWeight(s), 0) / 4;
   const volumeScore = weeklyStimulusFromThresholds(weeklySets, getVolumeThresholds(trainingLevel));
 
   // --- Strength Base (removed as factor) ---
@@ -293,8 +303,9 @@ export function calculateMuscleHypertrophyScore(
     if (olderAvg <= 0) continue;
 
     const trend = ((recentAvg - olderAvg) / olderAvg) * 100;
-    totalExerciseSets += exSets.length;
-    weightedTrend += trend * exSets.length;
+    const exSetWeight = exSets.reduce((sum, s) => sum + getWeeklyVolumeSetWeight(s), 0);
+    totalExerciseSets += exSetWeight;
+    weightedTrend += trend * exSetWeight;
   }
 
   const oneRMTrend = totalExerciseSets > 0 ? weightedTrend / totalExerciseSets : 0;
@@ -376,7 +387,7 @@ export function calculateAllMuscleHypertrophyScores(
   if (useHeadlessMuscleIds) {
     // Use the same CSV→SVG→MuscleId chain as the lifetime achievement view
     for (const set of data) {
-      if (isWarmupSet(set)) continue;
+      if (isWarmupSet(set) || getWeeklyVolumeSetWeight(set) <= 0) continue;
       if (!set.parsedDate) continue;
       
       const name = set.exercise_title || '';
@@ -415,7 +426,7 @@ export function calculateAllMuscleHypertrophyScores(
   } else {
     // Original behavior: normalize to major groups (Chest, Back, Arms, etc.)
     for (const set of data) {
-      if (isWarmupSet(set)) continue;
+      if (isWarmupSet(set) || getWeeklyVolumeSetWeight(set) <= 0) continue;
       if (!set.parsedDate) continue;
       
       const name = set.exercise_title || '';
@@ -506,7 +517,7 @@ export function calculateHypertrophyScoresWithExerciseTrends(
   };
 
   for (const set of parsedData) {
-    if (isWarmupSet(set)) continue;
+    if (isWarmupSet(set) || getWeeklyVolumeSetWeight(set) <= 0) continue;
     if (!inWindow(set)) continue;
     const name = (set.exercise_title || '').toLowerCase().trim();
     if (exerciseToMuscles.has(name)) continue;
@@ -525,10 +536,13 @@ export function calculateHypertrophyScoresWithExerciseTrends(
     if (ids.size > 0) exerciseToMuscles.set(name, ids);
   }
 
-  // Frequency: count sets per (muscle, date) — day counts if ≥1 set
+  // Frequency + set counting: count sets per (muscle, date) and per (muscle, exercise)
   const muscleDaySets = new Map<string, Map<string, number>>();
+  const muscleExerciseSets = new Map<string, Map<string, number>>(); // muscleId -> (exerciseName -> setCount)
+  const muscleTotalSets = new Map<string, number>(); // muscleId -> total set count
   for (const set of parsedData) {
-    if (isWarmupSet(set)) continue;
+    const setFactor = getWeeklyVolumeSetWeight(set);
+    if (isWarmupSet(set) || setFactor <= 0) continue;
     if (!inWindow(set)) continue;
     const name = (set.exercise_title || '').toLowerCase().trim();
     const muscleIds = exerciseToMuscles.get(name);
@@ -537,7 +551,13 @@ export function calculateHypertrophyScoresWithExerciseTrends(
     for (const mId of muscleIds) {
       let dayMap = muscleDaySets.get(mId);
       if (!dayMap) { dayMap = new Map(); muscleDaySets.set(mId, dayMap); }
-      dayMap.set(dateStr, (dayMap.get(dateStr) ?? 0) + 1);
+      dayMap.set(dateStr, (dayMap.get(dateStr) ?? 0) + setFactor);
+
+      let exMap = muscleExerciseSets.get(mId);
+      if (!exMap) { exMap = new Map(); muscleExerciseSets.set(mId, exMap); }
+      exMap.set(name, (exMap.get(name) ?? 0) + setFactor);
+
+      muscleTotalSets.set(mId, (muscleTotalSets.get(mId) ?? 0) + setFactor);
     }
   }
 
@@ -547,7 +567,9 @@ export function calculateHypertrophyScoresWithExerciseTrends(
     muscleDays.set(mId, dayMap.size);
   }
 
-  // Progress: weighted average of per-exercise trend percentages
+  // Progress: weighted average of per-exercise trend % by set proportion
+  // Each exercise's trend is multiplied by its share of total sets for that muscle,
+  // giving more weight to exercises that dominate the muscle's training volume.
   const muscleProgressRaw = new Map<string, number>();
   const muscleProgressWeight = new Map<string, number>();
 
@@ -563,18 +585,29 @@ export function calculateHypertrophyScoresWithExerciseTrends(
     if (pct === null || pct === undefined) continue;
 
     for (const muscleId of muscleIds) {
+      const totalSets = muscleTotalSets.get(muscleId) ?? 0;
+      if (totalSets <= 0) continue;
+      const exMap = muscleExerciseSets.get(muscleId);
+      const exerciseSets = exMap?.get(nameLower) ?? 0;
+      const weight = exerciseSets / totalSets;
+
       const prev = muscleProgressRaw.get(muscleId) ?? 0;
-      const prevWeight = muscleProgressWeight.get(muscleId) ?? 0;
-      muscleProgressRaw.set(muscleId, prev + pct);
-      muscleProgressWeight.set(muscleId, prevWeight + 1);
+      muscleProgressRaw.set(muscleId, prev + pct * weight);
+      muscleProgressWeight.set(muscleId, (muscleProgressWeight.get(muscleId) ?? 0) + weight);
     }
   }
 
   // Compute min/max progress from QUALIFIED muscles only (≥4 weekly sets)
   // Low-volume muscles are excluded from scale but still scored against it
   const MIN_WEEKLY_SETS = 4;
-  const DEFAULT_MAX_PROGRESS = 10; // reasonable default: 10% monthly trend is solid
-  const DEFAULT_MIN_PROGRESS = -5; // reasonable floor: -5% is notable regression
+  const PROGRESS_DEFAULTS_BY_LEVEL: Record<TrainingLevel, { max: number; min: number }> = {
+    beginner:     { max: 12, min: -1 },
+    intermediate: { max:  7, min: -3 },
+    advanced:     { max:  5, min: -2 },
+  };
+  const defaults = PROGRESS_DEFAULTS_BY_LEVEL[trainingLevel] ?? PROGRESS_DEFAULTS_BY_LEVEL.intermediate;
+  const DEFAULT_MAX_PROGRESS = defaults.max;
+  const DEFAULT_MIN_PROGRESS = defaults.min;
 
   let maxProgress = DEFAULT_MAX_PROGRESS;
   let minProgress = DEFAULT_MIN_PROGRESS;
@@ -595,7 +628,9 @@ export function calculateHypertrophyScoresWithExerciseTrends(
       }
     }
   }
-  // Clamp: max at least DEFAULT_MAX so scale makes sense, min at most DEFAULT_MIN
+  // Clamp: max at least DEFAULT_MAX, min at most DEFAULT_MIN (prevent extreme outliers)
+  // Upper: if no qualified muscle reaches 10%, use 10% as ceiling
+  // Lower: if no qualified muscle goes below -5%, use -5% as floor
   if (maxProgress < DEFAULT_MAX_PROGRESS) maxProgress = DEFAULT_MAX_PROGRESS;
   if (minProgress > DEFAULT_MIN_PROGRESS) minProgress = DEFAULT_MIN_PROGRESS;
 

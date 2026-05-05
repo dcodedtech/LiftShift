@@ -7,8 +7,9 @@ import {
   getHevyPassword,
   getHevyUsernameOrEmail,
   saveHevyUsernameOrEmail,
+  getHevyProApiKey,
 } from '../../../utils/storage/hevyCredentialsStorage';
-import { getHevyAuthToken, getHevyAuthExpiresAt, getHevyRefreshToken, getHevyProApiKey } from '../../../utils/storage/dataSourceStorage';
+import { getHevyAuthToken, getHevyAuthExpiresAt, getHevyRefreshToken } from '../../../utils/storage/dataSourceStorage';
 import { hevyBackendWarmupSession } from '../../../utils/api/hevyBackend';
 
 type Intent = 'initial' | 'update';

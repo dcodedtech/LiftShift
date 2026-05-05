@@ -10,7 +10,7 @@ import type { WorkoutSet } from '../../../types';
 import type { ExerciseAsset } from '../../data/exerciseAssets';
 import { buildTimeSeries } from '../../analysis/core';
 import { getMuscleContributionsFromAsset } from './muscleContributions';
-import { isWarmupSet } from '../../analysis/classification';
+import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../analysis/classification';
 import {
   getMuscleVolumeTimeSeriesRolling,
   getLatestRollingWeeklyVolume,
@@ -134,9 +134,11 @@ export const getMuscleVolumeTimeSeriesCalendar = (
     if (!asset) return {};
     const contributions = getMuscleContributionsFromAsset(asset, true, { secondarySetMultiplier });
     if (contributions.length === 0) return {};
+    const factor = getWeeklyVolumeSetWeight(set);
+    if (factor <= 0) return {};
     const out: Record<string, number> = {};
     for (const c of contributions) {
-      out[c.muscle] = (out[c.muscle] || 0) + c.sets;
+      out[c.muscle] = (out[c.muscle] || 0) + c.sets * factor;
     }
     return out;
   });
@@ -157,9 +159,11 @@ export const getMuscleVolumeTimeSeriesDetailedCalendar = (
     if (!asset) return {};
     const contributions = getMuscleContributionsFromAsset(asset, false, { secondarySetMultiplier });
     if (contributions.length === 0) return {};
+    const factor = getWeeklyVolumeSetWeight(set);
+    if (factor <= 0) return {};
     const out: Record<string, number> = {};
     for (const c of contributions) {
-      out[c.muscle] = (out[c.muscle] || 0) + c.sets;
+      out[c.muscle] = (out[c.muscle] || 0) + c.sets * factor;
     }
     return out;
   });

@@ -1,6 +1,5 @@
 import { WorkoutSet } from '../../../types';
-import { isWarmupSet } from '../../../utils/analysis/masterAlgorithm';
-import { isUnilateralSet } from '../../../utils/analysis/classification';
+import { getWeeklyVolumeSetWeight } from '../../../utils/analysis/classification';
 import {
   ExerciseMuscleData,
   getExerciseMuscleVolumes,
@@ -54,7 +53,6 @@ export const buildSessionMuscleHeatmap = (
 
   for (const set of sets) {
     if (!set.exercise_title) continue;
-    if (isWarmupSet(set)) continue;
     const ex = lookupExerciseMuscleData(set.exercise_title, exerciseMuscleData);
     if (!ex) continue;
 
@@ -79,17 +77,20 @@ export const buildSessionMuscleHeatmap = (
 
     // Handle Full Body
     if (primaries.some((p) => /^full[\s-]*body$/i.test(p))) {
-      const setIncrement = isUnilateralSet(set) ? 0.5 : 1;
+      const factor = getWeeklyVolumeSetWeight(set);
+      if (factor <= 0) continue;
       for (const groupName of Object.keys(MUSCLE_GROUPS)) {
         const entry = groupVolumes.get(groupName) || { primary: 0, secondary: 0 };
-        entry.primary = round2(entry.primary + setIncrement);
+        entry.primary = round2(entry.primary + factor);
         groupVolumes.set(groupName, entry);
       }
       continue;
     }
 
-    const setIncrement = isUnilateralSet(set) ? 0.5 : 1;
-    const secondaryIncrement = isUnilateralSet(set) ? (secondarySetMultiplier / 2) : secondarySetMultiplier;
+    const factor = getWeeklyVolumeSetWeight(set);
+    if (factor <= 0) continue;
+    const setIncrement = factor;
+    const secondaryIncrement = factor * secondarySetMultiplier;
 
     // Track which groups this set affects (to avoid double-counting within same set)
     const affectedGroupsPrimary = new Set<string>();
@@ -182,8 +183,9 @@ export const buildExerciseMuscleHeatmap = (
   // Count working sets with L/R sets as 0.5 each
   let workingSetCount = 0;
   for (const s of sets) {
-    if (isWarmupSet(s)) continue;
-    workingSetCount += isUnilateralSet(s) ? 0.5 : 1;
+    const factor = getWeeklyVolumeSetWeight(s);
+    if (factor <= 0) continue;
+    workingSetCount += factor;
   }
   
   const base = getExerciseMuscleVolumes(exerciseData, secondarySetMultiplier);

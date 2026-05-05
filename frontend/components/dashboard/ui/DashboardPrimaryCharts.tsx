@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { ChartSkeleton } from '../../ui/ChartSkeleton';
 import { LazyRender } from '../../ui/LazyRender';
 import type { BodyMapGender } from '../../bodyMap/BodyMap';
@@ -59,6 +59,7 @@ interface DashboardPrimaryChartsProps {
   effectiveNow: Date;
   themeMode: string;
   hypertrophyData: any[];
+  hypertrophyData30d?: any[];
   hypertrophyPeriod: '7d' | '30d';
   setHypertrophyPeriod: (v: '7d' | '30d') => void;
 }
@@ -107,10 +108,17 @@ export const DashboardPrimaryCharts: React.FC<DashboardPrimaryChartsProps> = ({
   exerciseStats,
   themeMode,
   hypertrophyData,
+  hypertrophyData30d,
   hypertrophyPeriod,
   setHypertrophyPeriod,
-}) => (
-  <>
+}) => {
+  const scatterHypertrophyData = useMemo(() =>
+    hypertrophyData.filter(m => m.score.raw.weeklySets >= 1.0 && m.score.raw.daysPerWeek >= 1.0),
+    [hypertrophyData]
+  );
+
+  return (
+    <>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-2">
       <Suspense fallback={<ChartSkeleton className="min-h-[400px] sm:min-h-[480px]" />}>
         <PrTrendCard
@@ -145,20 +153,21 @@ export const DashboardPrimaryCharts: React.FC<DashboardPrimaryChartsProps> = ({
 </div>
 
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-2">
-      <LazyRender className="min-w-0 h-[400px] sm:h-[450px] lg:h-auto" placeholder={<ChartSkeleton className="h-[350px] sm:h-[450px]" />}>
+      <LazyRender className="lg:h-auto" placeholder={<ChartSkeleton className="h-[350px] sm:h-[450px]" />}>
         <Suspense fallback={<ChartSkeleton className="h-[350px] sm:h-[450px]" />}>
           <HypertrophyScatterCard
-            hypertrophyData={hypertrophyData}
+            hypertrophyData={scatterHypertrophyData}
             hypertrophyPeriod={hypertrophyPeriod}
             setHypertrophyPeriod={setHypertrophyPeriod}
           />
         </Suspense>
       </LazyRender>
 
-      <LazyRender className="min-w-0 h-[400px] sm:h-[450px] lg:h-auto" placeholder={<ChartSkeleton className="h-[350px] sm:h-[450px]" />}>
+      <LazyRender className=" lg:h-auto" placeholder={<ChartSkeleton className="h-[350px] sm:h-[450px]" />}>
         <Suspense fallback={<ChartSkeleton className="h-[350px] sm:h-[450px]" />}>
           <HypertrophyBarCard
             hypertrophyData={hypertrophyData}
+            hypertrophyData30d={hypertrophyData30d}
             selectedMuscleId={null}
             onMuscleClick={(muscleId) => onMuscleClick?.(muscleId, muscleCompQuick)}
             hypertrophyPeriod={hypertrophyPeriod}
@@ -228,4 +237,5 @@ export const DashboardPrimaryCharts: React.FC<DashboardPrimaryChartsProps> = ({
       </Suspense>
     </LazyRender>
   </>
-);
+  );
+};

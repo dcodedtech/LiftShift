@@ -1,7 +1,7 @@
 import type { ExerciseStats, WorkoutSet } from '../../../types';
 import { getDateKey, type TimePeriod, sortByTimestamp } from '../../date/dateUtils';
 import { roundTo } from '../../format/formatters';
-import { isWarmupSet, isLeftSet, isRightSet, isUnilateralSet } from '../classification/setClassification';
+import { getWeeklyVolumeSetWeight, isWarmupSet, isLeftSet, isRightSet } from '../classification/setClassification';
 
 const calculateOneRepMax = (weight: number, reps: number): number => {
   if (reps <= 0 || weight <= 0) return 0;
@@ -62,9 +62,10 @@ export const getExerciseStats = (data: WorkoutSet[]): ExerciseStats[] => {
       isSilverPr: set.isSilverPr,
       silverPrTypes: set.silverPrTypes,
       side,
+      set_type: set.set_type,
     });
 
-    stats.totalSets += isUnilateralSet(set) ? 0.5 : 1;
+    stats.totalSets += getWeeklyVolumeSetWeight(set);
   }
 
   return Array.from(statsByExercise.values()).sort((a, b) => b.totalSets - a.totalSets);

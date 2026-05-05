@@ -8,14 +8,14 @@ import {
   saveHevyRefreshToken,
   clearHevyRefreshToken,
   clearHevyAuthToken,
-  getHevyProApiKey,
-  saveHevyProApiKey,
-  clearHevyProApiKey,
   saveLastLoginMethod,
   addCombinedDataSource,
   saveSetupComplete,
 } from '../../utils/storage/dataSourceStorage';
 import {
+  getHevyProApiKey,
+  saveHevyProApiKey,
+  clearHevyProApiKey,
   getHevyPassword,
   getHevyUsernameOrEmail,
   saveHevyPassword,

@@ -5,15 +5,17 @@ import {
   getCombinedDataSources,
   getDataSourceChoice,
   getHevyAuthToken,
-  getHevyProApiKey,
   getLastCsvPlatform,
   getLastLoginMethod,
-  getLyfataApiKey,
   getSetupComplete,
   saveSetupComplete,
   type DataSourceChoice,
   type LoginMethod,
 } from '../../utils/storage/dataSourceStorage';
+import {
+  getHevyProApiKey,
+  getLyftaApiKey,
+} from '../../utils/storage/hevyCredentialsStorage';
 import { getHevyUsernameOrEmail, getHevyPassword } from '../../utils/storage/hevyCredentialsStorage';
 
 import { loadCsvAuto } from './startupAutoLoadCsv';
@@ -62,7 +64,7 @@ export const useStartupAutoLoad = (params: StartupAutoLoadParams): void => {
       storedChoice,
       hasHevyToken: Boolean(getHevyAuthToken()),
       hasHevyProApiKey: Boolean(getHevyProApiKey()),
-      hasLyftaApiKey: Boolean(getLyfataApiKey()),
+      hasLyftaApiKey: Boolean(getLyftaApiKey()),
       hasCsvData: Boolean(getCSVData()),
     });
 
@@ -106,7 +108,7 @@ export const useStartupAutoLoad = (params: StartupAutoLoadParams): void => {
 
       // Platform: Lyfta
       if (platform === 'lyfta') {
-        const lyftaApiKey = getLyfataApiKey();
+        const lyftaApiKey = getLyftaApiKey();
 
         // Try API key first (preferred for power users)
         if ((method === 'apiKey' || !method) && lyftaApiKey) {

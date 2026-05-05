@@ -30,6 +30,7 @@ export interface UseMuscleVolumeDataReturn {
   isLoading: boolean;
   assetsMap: Map<string, ExerciseAsset> | null;
   windowStart: Date | null;
+  breakdownStart: Date | null;
   effectiveNow: Date;
   allTimeWindowStart: Date | null;
   /** Lifetime total sets per headless muscle ID (all-time, sum-aggregated) */
@@ -75,6 +76,19 @@ export function useMuscleVolumeData({
           : subDays(effectiveNow, 730); // current year + previous year
 
     // Clamp to the user's first workout date so we don't include pre-history empty time.
+    return allTimeWindowStart > candidate ? allTimeWindowStart : candidate;
+  }, [weeklySetsWindow, effectiveNow, allTimeWindowStart]);
+
+  // Exercise list breakdown uses exact window (not 2x) to match weekly rate.
+  const breakdownStart = useMemo(() => {
+    if (!allTimeWindowStart) return null;
+    if (weeklySetsWindow === 'all') return allTimeWindowStart;
+    const candidate =
+      weeklySetsWindow === '7d'
+        ? subDays(effectiveNow, 7)
+        : weeklySetsWindow === '30d'
+          ? subDays(effectiveNow, 30)
+          : subDays(effectiveNow, 365);
     return allTimeWindowStart > candidate ? allTimeWindowStart : candidate;
   }, [weeklySetsWindow, effectiveNow, allTimeWindowStart]);
 
@@ -131,6 +145,7 @@ export function useMuscleVolumeData({
     isLoading,
     assetsMap,
     windowStart,
+    breakdownStart,
     effectiveNow,
     allTimeWindowStart,
     lifetimeHeadlessVolumes,

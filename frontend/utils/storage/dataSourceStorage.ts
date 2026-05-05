@@ -68,28 +68,6 @@ export const clearHevyAuthToken = (): void => {
   hevyRefreshTokenStorage.clear();
 };
 
-// Hevy Pro API Key
-const hevyProApiKeyStorage = createStorageManager<string | null>({
-  key: 'hevy_pro_api_key',
-  defaultValue: null,
-  validator: (v) => v,
-});
-
-export const saveHevyProApiKey = (apiKey: string): void => hevyProApiKeyStorage.set(apiKey);
-export const getHevyProApiKey = (): string | null => hevyProApiKeyStorage.get();
-export const clearHevyProApiKey = (): void => hevyProApiKeyStorage.clear();
-
-// Lyfta API Key
-const lyftaApiKeyStorage = createStorageManager<string | null>({
-  key: 'lyfta_api_key',
-  defaultValue: null,
-  validator: (v) => v,
-});
-
-export const saveLyfataApiKey = (apiKey: string): void => lyftaApiKeyStorage.set(apiKey);
-export const getLyfataApiKey = (): string | null => lyftaApiKeyStorage.get();
-export const clearLyfataApiKey = (): void => lyftaApiKeyStorage.clear();
-
 // Last CSV Platform
 const lastCsvPlatformStorage = createStorageManager<DataSourceChoice | null>({
   key: 'hevy_analytics_last_csv_platform',

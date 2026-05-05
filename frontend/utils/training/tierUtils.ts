@@ -114,16 +114,16 @@ export const JOURNEY_TIERS: readonly TierDef[] = [
  * Calculate achievement % from lifetime sets using diminishing returns.
  * Formula: (sets / (sets + halfLife)) * 100
  * 
- * At 500 sets: ~9%
- * At 2000 sets: ~29%
- * At 5000 sets: ~50%
- * At 15000 sets: ~75%
- * At 50000 sets: ~91%
+ * At 250 sets: ~9%
+ * At 1000 sets: ~29%
+ * At 2500 sets: ~50%
+ * At 7500 sets: ~75%
+ * At 25000 sets: ~91%
  * 
  * @param lifetimeSets Total lifetime sets for this muscle
- * @param halfLife Sets at which 50% of max achievement is reached (default 5000)
+ * @param halfLife Sets at which 50% of max achievement is reached (default 2500)
  */
-export function calculateAchievement(lifetimeSets: number, halfLife: number = 5000): number {
+export function calculateAchievement(lifetimeSets: number, halfLife: number = 3500): number {
   const achievement = (lifetimeSets / (lifetimeSets + halfLife)) * 100;
   return Math.round(achievement * 10) / 10;
 }
@@ -178,7 +178,7 @@ export function getNextTier(achievementPercent: number): TierDef | null {
 export function estimateWeeksToNextTier(
   achievementPercent: number,
   weeklySets: number,
-  halfLife: number = 5000
+  halfLife: number = 2500
 ): number | null {
   const nextTier = getNextTier(achievementPercent);
   if (!nextTier) return null;

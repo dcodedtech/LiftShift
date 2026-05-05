@@ -11,7 +11,7 @@ import {
 import type { DailySummary, WorkoutSet } from '../../../types';
 import { getDateKey, type TimePeriod, sortByTimestamp, getSessionKey } from '../../date/dateUtils';
 import { roundTo } from '../../format/formatters';
-import { isWarmupSet, isUnilateralSet } from '../classification/setClassification';
+import { getWeeklyVolumeSetWeight, isWarmupSet } from '../classification/setClassification';
 import { parseHevyDateString } from '../../date/parseHevyDateString';
 
 const parseSessionDuration = (startDate: Date | undefined, endTimeStr: string): number => {
@@ -91,7 +91,7 @@ export const getDailySummaries = (data: WorkoutSet[]): DailySummary[] => {
 
     meta.totalVolume += (set.weight_kg || 0) * (set.reps || 0);
     meta.totalReps += set.reps || 0;
-    meta.setCount += isUnilateralSet(set) ? 0.5 : 1;
+    meta.setCount += getWeeklyVolumeSetWeight(set);
   }
 
   const summaries: DailySummary[] = [];
