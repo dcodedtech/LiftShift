@@ -125,9 +125,11 @@ export const computeWeeklySetsDashboardData = (
     }
   }
 
-  const windowDays = window === 'all'
-    ? Math.max(1, differenceInCalendarDays(now, windowStart))
-    : parseInt(window, 10);
+  const clampedSpanDays = Math.max(1, differenceInCalendarDays(now, windowStart));
+  const windowDays =
+    window === 'all' || window === '365d'
+      ? clampedSpanDays
+      : parseInt(window, 10);
   const weeks = Math.max(1, windowDays / 7);
 
   const weeklyRates = new Map<string, number>();

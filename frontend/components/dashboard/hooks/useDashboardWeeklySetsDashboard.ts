@@ -4,6 +4,7 @@ import type { ExerciseAsset } from '../../../utils/data/exerciseAssets';
 import {
   computeWeeklySetsDashboardData,
   type WeeklySetsGrouping,
+  type WeeklySetsDashboardResult,
   type WeeklySetsWindow,
 } from '../../../utils/muscle/analytics';
 import { computationCache } from '../../../utils/storage/computationCache';
@@ -34,25 +35,23 @@ export const useDashboardWeeklySetsDashboard = (args: {
     }
 
     const cacheKey = dashboardCacheKeys.weeklySets(filterCacheKey, muscleCompQuick, compositionGrouping, secondarySetMultiplier);
-    return computationCache.getOrCompute(
+    const computed = computationCache.getOrCompute<WeeklySetsDashboardResult>(
       cacheKey,
       fullData,
-      () => {
-        const computed = computeWeeklySetsDashboardData(
-          fullData,
-          assetsMap,
-          effectiveNow,
-          muscleCompQuick,
-          compositionGrouping,
-          secondarySetMultiplier
-        );
-        return {
-          heatmap: computed.heatmap,
-          windowStart: computed.windowStart,
-        };
-      },
+      () => computeWeeklySetsDashboardData(
+        fullData,
+        assetsMap,
+        effectiveNow,
+        muscleCompQuick,
+        compositionGrouping,
+        secondarySetMultiplier
+      ),
       { ttl: 10 * 60 * 1000 }
     );
+    return {
+      heatmap: computed.heatmap,
+      windowStart: computed.windowStart,
+    };
   }, [assetsMap, fullData, effectiveNow, muscleCompQuick, compositionGrouping, filterCacheKey, secondarySetMultiplier]);
 
   return { weeklySetsDashboard };

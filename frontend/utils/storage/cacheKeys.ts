@@ -28,7 +28,7 @@ export const cacheKeys = {
  */
 export const dashboardCacheKeys = {
   weeklySets: (filterKey: string, window: WeeklySetsWindow, grouping: WeeklySetsGrouping, secondaryMultiplier: number = 0.5) =>
-    `weeklySets:${VERSION}:${filterKey}:${window}:${grouping}:sec:${secondaryMultiplier}`,
+    `weeklySets:${VERSION}:calc2:${filterKey}:${window}:${grouping}:sec:${secondaryMultiplier}`,
   
   muscleSeries: (filterKey: string, mode: 'groups' | 'muscles', secondaryMultiplier: number = 0.5) =>
     `muscleSeries:${VERSION}:${filterKey}:${mode}:sec:${secondaryMultiplier}`,

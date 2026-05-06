@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   getHeadlessIdForDetailedSvgId,
   HEADLESS_MUSCLE_NAMES,
@@ -35,8 +35,25 @@ export const useMuscleAnalysisHandlers = ({
   hypertrophyScoreMap,
 }: UseMuscleAnalysisHandlersParams) => {
   const [hoveredMuscle, setHoveredMuscle] = useState<string | null>(null);
+  const [hoverContext, setHoverContext] = useState<{ muscleId: string; rect: DOMRect } | null>(null);
 
   const volumeThresholds = useMemo(() => getVolumeThresholds(trainingLevel), [trainingLevel]);
+
+  const buildTooltip = useCallback((muscleId: string, rect: DOMRect): TooltipData => {
+    const headlessId = getHeadlessIdForDetailedSvgId(muscleId) ?? muscleId;
+    const rate = headlessRatesMap.get(headlessId) || 0;
+    const zone = getVolumeZone(rate, volumeThresholds);
+    const hScore = hypertrophyScoreMap.get(headlessId);
+    const scoreLine = hScore !== undefined ? `Hypertrophy Score: ${hScore}/100` : `No score yet`;
+    const bodyText = `${rate.toFixed(1)} sets/wk — ${zone.label}\n${scoreLine}\n${zone.explanation}`;
+
+    return {
+      rect,
+      title: (HEADLESS_MUSCLE_NAMES as any)[headlessId] ?? muscleId,
+      body: bodyText,
+      status: rate > 0 ? 'success' : 'default',
+    };
+  }, [headlessRatesMap, hypertrophyScoreMap, volumeThresholds]);
 
   const handleMuscleClick = useCallback((muscleId: string) => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
@@ -64,6 +81,7 @@ export const useMuscleAnalysisHandlers = ({
   const handleMuscleHover = useCallback((muscleId: string | null, e?: MouseEvent) => {
     setHoveredMuscle(muscleId);
     if (!muscleId || !e) {
+      setHoverContext(null);
       setHoverTooltip(null);
       return;
     }
@@ -72,24 +90,19 @@ export const useMuscleAnalysisHandlers = ({
     const groupEl = target?.closest?.('g[id]') as Element | null;
     const rect = groupEl?.getBoundingClientRect?.() as DOMRect | undefined;
     if (!rect) {
+      setHoverContext(null);
       setHoverTooltip(null);
       return;
     }
 
-    const headlessId = getHeadlessIdForDetailedSvgId(muscleId!) ?? muscleId!;
-    const rate = headlessRatesMap.get(headlessId) || 0;
-    const zone = getVolumeZone(rate, volumeThresholds);
-    const hScore = hypertrophyScoreMap.get(muscleId);
-    const scoreLine = hScore !== undefined ? `Hypertrophy Score: ${hScore}/100` : `No score yet`;
-    const bodyText = `${rate.toFixed(1)} sets/wk — ${zone.label}\n${scoreLine}\n${zone.explanation}`;
+    setHoverContext({ muscleId, rect });
+    setHoverTooltip(buildTooltip(muscleId, rect));
+  }, [buildTooltip, setHoverTooltip]);
 
-    setHoverTooltip({
-      rect,
-      title: (HEADLESS_MUSCLE_NAMES as any)[headlessId] ?? muscleId,
-      body: bodyText,
-      status: rate > 0 ? 'success' : 'default',
-    });
-  }, [headlessRatesMap, setHoverTooltip, volumeThresholds]);
+  useEffect(() => {
+    if (!hoverContext) return;
+    setHoverTooltip(buildTooltip(hoverContext.muscleId, hoverContext.rect));
+  }, [hoverContext, buildTooltip, setHoverTooltip]);
 
   const selectedBodyMapIds = useMemo(() => {
     if (!selectedMuscle) return undefined;

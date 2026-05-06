@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import type { WorkoutSet } from '../../../types';
 import { computationCache } from '../../../utils/storage/computationCache';
-import { computeWeeklySetsDashboardData, type WeeklySetsWindow } from '../../../utils/muscle/analytics';
+import {
+  computeWeeklySetsDashboardData,
+  type WeeklySetsDashboardResult,
+  type WeeklySetsWindow,
+} from '../../../utils/muscle/analytics';
 import { toHeadlessVolumeMap } from '../../../utils/muscle/mapping';
 import { MUSCLE_GROUP_ORDER, SVG_TO_MUSCLE_GROUP, getHeadlessRadarSeries } from '../../../utils/muscle/mapping';
 import type { NormalizedMuscleGroup } from '../../../utils/muscle/analytics';
@@ -30,17 +34,41 @@ export const useMuscleHeatmapData = ({
   filterCacheKey,
   secondarySetMultiplier,
 }: UseMuscleHeatmapDataParams) => {
+  const getWeeklySetsDashboard = (
+    cacheKey: string,
+    window: WeeklySetsWindow,
+    grouping: 'muscles' | 'groups'
+  ): WeeklySetsDashboardResult => {
+    const compute = () =>
+      computeWeeklySetsDashboardData(data, assetsMap!, effectiveNow, window, grouping, secondarySetMultiplier);
+
+    const cached = computationCache.getOrCompute<WeeklySetsDashboardResult>(
+      cacheKey,
+      data,
+      compute,
+      { ttl: 10 * 60 * 1000 }
+    );
+
+    // Older dashboard cache entries stored a heatmap-only shape under this key.
+    // If we encounter one, force a recompute so tooltip rates are available.
+    if (!(cached.weeklyRatesBySubject instanceof Map)) {
+      return computationCache.getOrCompute<WeeklySetsDashboardResult>(
+        cacheKey,
+        data,
+        compute,
+        { ttl: 10 * 60 * 1000, forceRecompute: true }
+      );
+    }
+
+    return cached;
+  };
+
   const weeklySetsDashboardMuscles = useMemo(() => {
     if (!assetsMap) return null;
 
     const window: WeeklySetsWindow = weeklySetsWindow === 'all' ? 'all' : weeklySetsWindow;
     const cacheKey = muscleCacheKeys.weeklySets(filterCacheKey, window, 'muscles', secondarySetMultiplier);
-    return computationCache.getOrCompute(
-      cacheKey,
-      data,
-      () => computeWeeklySetsDashboardData(data, assetsMap, effectiveNow, window, 'muscles', secondarySetMultiplier),
-      { ttl: 10 * 60 * 1000 }
-    );
+    return getWeeklySetsDashboard(cacheKey, window, 'muscles');
   }, [assetsMap, data, effectiveNow, weeklySetsWindow, filterCacheKey, secondarySetMultiplier]);
 
   const weeklySetsDashboardGroups = useMemo(() => {
@@ -48,12 +76,7 @@ export const useMuscleHeatmapData = ({
 
     const window: WeeklySetsWindow = weeklySetsWindow === 'all' ? 'all' : weeklySetsWindow;
     const cacheKey = muscleCacheKeys.weeklySets(filterCacheKey, window, 'groups', secondarySetMultiplier);
-    return computationCache.getOrCompute(
-      cacheKey,
-      data,
-      () => computeWeeklySetsDashboardData(data, assetsMap, effectiveNow, window, 'groups', secondarySetMultiplier),
-      { ttl: 10 * 60 * 1000 }
-    );
+    return getWeeklySetsDashboard(cacheKey, window, 'groups');
   }, [assetsMap, data, effectiveNow, weeklySetsWindow, filterCacheKey, secondarySetMultiplier]);
 
   const windowedHeatmapData = useMemo(() => {
