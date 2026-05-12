@@ -16,9 +16,8 @@ import { MuscleAnalysisExerciseListPanel } from './MuscleAnalysisExerciseListPan
 import { LifetimeAchievementCard } from './LifetimeAchievementCard';
 import { TooltipData } from '../../ui/Tooltip';
 import { prefetchHistoryData } from '../../../utils/prefetch/prefetchStrategies';
-import { calculateAllMuscleHypertrophyScores, FACTOR_WEIGHTS } from '../../../utils/muscle/hypertrophy/hypertrophyScore';
-import { weeklyStimulusFromThresholds } from '../../../utils/muscle/hypertrophy/hypertrophyCalculations';
-import { getVolumeThresholds } from '../../../utils/muscle/hypertrophy/muscleParams';
+import { calculateHypertrophyScoresWithExerciseTrends, HypertrophyScoreResult } from '../../../utils/muscle/hypertrophy/hypertrophyScore';
+import type { MuscleVolumeThresholds } from '../../../utils/muscle/hypertrophy/muscleParams';
 
 interface MuscleAnalysisProps {
   data: WorkoutSet[];
@@ -151,46 +150,42 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
     exerciseStats,
   });
 
-  // Compute hypertrophy scores for all muscles (used by card, body map tooltip, graph)
+  // Compute hypertrophy scores (same function as dashboard, computed once and reused)
   const hypertrophyScores = useMemo(() => {
-    if (!lifetimeData || !assetsMap || lifetimeData.length === 0) return [];
-    const windowedData = windowStart
-      ? lifetimeData.filter(s => s.parsedDate && s.parsedDate >= windowStart)
-      : lifetimeData;
-    if (windowedData.length === 0) return [];
+    if (!assetsMap || !headlessRatesMap || headlessRatesMap.size === 0) return [];
+    if (!data || data.length === 0 || !effectiveNow) return [];
 
-    const refNow = effectiveNow ?? new Date();
-    const dataSpanDays = windowStart
-      ? Math.max(1, (refNow.getTime() - windowStart.getTime()) / (24 * 60 * 60 * 1000))
-      : 365;
-    const trendWindowDays = Math.round(Math.max(14, Math.min(730, dataSpanDays * 2)));
+    const period: '7d' | '30d' = weeklySetsWindow === '7d' ? '7d' : '30d';
+    const windowDays = period === '7d' ? 7 : 30;
+    const scoreWindowStart = new Date(effectiveNow.getTime() - windowDays * 86400000);
 
-    const scores = calculateAllMuscleHypertrophyScores(windowedData, assetsMap, trainingLevel, true, effectiveNow, trendWindowDays);
+    return calculateHypertrophyScoresWithExerciseTrends(
+      exerciseStats ?? [],
+      headlessRatesMap,
+      assetsMap,
+      trainingLevel,
+      period,
+      effectiveNow,
+      data,
+      scoreWindowStart,
+    );
+  }, [data, assetsMap, headlessRatesMap, trainingLevel, effectiveNow, weeklySetsWindow, exerciseStats]);
 
-    if (headlessRatesMap && headlessRatesMap.size > 0) {
-      for (const m of scores) {
-        const rate = headlessRatesMap.get(m.muscleId);
-        if (rate !== undefined) {
-          m.score.volumeScore = Math.round(weeklyStimulusFromThresholds(rate, getVolumeThresholds(trainingLevel)));
-          m.score.raw.weeklySets = Math.round(rate * 10) / 10;
-          m.score.totalScore = Math.round(
-            m.score.volumeScore * FACTOR_WEIGHTS.volumeScore +
-            m.score.progressiveOverload * FACTOR_WEIGHTS.progressiveOverload +
-            m.score.frequency * FACTOR_WEIGHTS.frequency
-          );
-        }
-      }
-      scores.sort((a, b) => b.score.totalScore - a.score.totalScore);
-    }
-    return scores;
-  }, [lifetimeData, assetsMap, effectiveNow, windowStart, headlessRatesMap, trainingLevel]);
-
-  // Fast lookup map: muscleId → total hypertrophy score
+  // Fast lookup map: muscleId → full hypertrophy score result
   const hypertrophyScoreMap = useMemo(() => {
-    const m = new Map<string, number>();
-    for (const s of hypertrophyScores) m.set(s.muscleId, s.score.totalScore);
+    const m = new Map<string, HypertrophyScoreResult>();
+    for (const s of hypertrophyScores) m.set(s.muscleId, s.score);
     return m;
   }, [hypertrophyScores]);
+
+  // Body map volumes driven by hypertrophy score (0-100) instead of raw weekly sets
+  const bodyMapVolumeMap = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const [muscleId, result] of hypertrophyScoreMap) {
+      m.set(muscleId, result.totalScore);
+    }
+    return m;
+  }, [hypertrophyScoreMap]);
 
   const {
     handleMuscleClick,
@@ -256,9 +251,9 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
             setWeeklySetsWindow={setWeeklySetsWindow}
             selectedSvgIdForUrlRef={selectedSvgIdForUrlRef}
             updateSelectionUrl={updateSelectionUrl}
-            muscleVolumes={muscleVolumes}
-            maxVolume={maxVolume}
-            volumeThresholds={volumeThresholds}
+            muscleVolumes={bodyMapVolumeMap}
+            maxVolume={100}
+            volumeThresholds={{ mv: 20, mev: 40, mrv: 60, maxv: 100 } as MuscleVolumeThresholds}
             selectedMuscle={selectedMuscle}
             selectedBodyMapIds={selectedBodyMapIds}
             hoveredBodyMapIds={hoveredBodyMapIds}
@@ -282,7 +277,7 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
             legendTrendData={legendTrendData}
             windowedSelectionBreakdown={windowedSelectionBreakdown}
             clearSelection={clearSelection}
-            hypertrophyScore={selectedMuscle ? hypertrophyScoreMap.get(selectedMuscle) : undefined}
+            hypertrophyScore={selectedMuscle ? hypertrophyScoreMap.get(selectedMuscle)?.totalScore : undefined}
           />
         </div>
 

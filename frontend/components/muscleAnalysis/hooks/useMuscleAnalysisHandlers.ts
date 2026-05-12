@@ -7,6 +7,7 @@ import { getVolumeThresholds, getVolumeZone } from '../../../utils/muscle/hypert
 import type { TooltipData } from '../../ui/Tooltip';
 import type { WeeklySetsWindow } from '../../../utils/muscle/analytics';
 import type { TrainingLevel } from '../../../utils/muscle/hypertrophy/muscleParams';
+import { FACTOR_WEIGHTS, HypertrophyScoreResult } from '../../../utils/muscle/hypertrophy/hypertrophyScore';
 
 interface UseMuscleAnalysisHandlersParams {
   selectedMuscle: string | null;
@@ -18,8 +19,8 @@ interface UseMuscleAnalysisHandlersParams {
   headlessRatesMap: Map<string, number>;
   setHoverTooltip: (value: TooltipData | null) => void;
   trainingLevel: TrainingLevel;
-  /** Pre-computed hypertrophy scores per muscle (totalScore) */
-  hypertrophyScoreMap: Map<string, number>;
+  /** Pre-computed hypertrophy score results per muscle */
+  hypertrophyScoreMap: Map<string, HypertrophyScoreResult>;
 }
 
 export const useMuscleAnalysisHandlers = ({
@@ -42,15 +43,36 @@ export const useMuscleAnalysisHandlers = ({
   const buildTooltip = useCallback((muscleId: string, rect: DOMRect): TooltipData => {
     const headlessId = getHeadlessIdForDetailedSvgId(muscleId) ?? muscleId;
     const rate = headlessRatesMap.get(headlessId) || 0;
-    const zone = getVolumeZone(rate, volumeThresholds);
-    const hScore = hypertrophyScoreMap.get(headlessId);
-    const scoreLine = hScore !== undefined ? `Hypertrophy Score: ${hScore}/100` : `No score yet`;
-    const bodyText = `${rate.toFixed(1)} sets/wk — ${zone.label}\n${scoreLine}\n${zone.explanation}`;
+    const hScoreData = hypertrophyScoreMap.get(headlessId);
 
+    if (hScoreData) {
+      const volW = Math.round(hScoreData.volumeScore * FACTOR_WEIGHTS.volumeScore);
+      const progW = Math.round(hScoreData.progressiveOverload);
+      const freqW = Math.round(hScoreData.frequency * FACTOR_WEIGHTS.frequency);
+      const volMax = Math.round(FACTOR_WEIGHTS.volumeScore * 100);
+      const progMax = Math.round(FACTOR_WEIGHTS.progressiveOverload * 100);
+      const freqMax = Math.round(FACTOR_WEIGHTS.frequency * 100);
+      const raw = hScoreData.raw;
+      const trendSign = raw.oneRMTrend > 0 ? '+' : '';
+
+      const displayName = (HEADLESS_MUSCLE_NAMES as any)[headlessId] ?? muscleId;
+      return {
+        rect,
+        title: `${displayName} : ${hScoreData.totalScore}%`,
+        bodySections: [
+          { text: `Volume: ${volW}/${volMax} → ${raw.weeklySets.toFixed(1)} sets/week`, color: volW <= 15 ? '#ef4444' : volW <= 35 ? '#f59e0b' : '#22c55e' },
+          { text: `Progress: ${progW}/${progMax} → ${trendSign}${raw.oneRMTrend.toFixed(1)}% trend`, color: progW <= 11 ? '#ef4444' : progW <= 22 ? '#f59e0b' : '#22c55e' },
+          { text: `Frequency: ${freqW}/${freqMax} → ${raw.daysPerWeek.toFixed(1)} days/week`, color: freqW <= 3 ? '#ef4444' : freqW <= 6 ? '#f59e0b' : '#22c55e' },
+        ],
+        status: hScoreData.totalScore >= 60 ? 'success' : hScoreData.totalScore >= 40 ? 'info' : 'warning',
+      };
+    }
+
+    const zone = getVolumeZone(rate, volumeThresholds);
     return {
       rect,
       title: (HEADLESS_MUSCLE_NAMES as any)[headlessId] ?? muscleId,
-      body: bodyText,
+      body: `${rate.toFixed(1)} sets/wk — ${zone.label}\n${zone.explanation}`,
       status: rate > 0 ? 'success' : 'default',
     };
   }, [headlessRatesMap, hypertrophyScoreMap, volumeThresholds]);
