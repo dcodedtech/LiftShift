@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useCallback, useMemo } from 'react';
-import { getVolumeColor, getExerciseMuscleColor, SVG_MUSCLE_GROUPS, CSV_TO_SVG_MUSCLE_MAP } from '../../utils/muscle/mapping';
+import { getVolumeColor, getExerciseMuscleColor, getHypertrophyColor, SVG_MUSCLE_GROUPS, CSV_TO_SVG_MUSCLE_MAP } from '../../utils/muscle/mapping';
 import { INTERACTIVE_MUSCLE_IDS } from '../../utils/muscle/mapping';
 import { getMuscleWithFallback } from '../../utils/muscle/mapping/bodyMapAvailability';
 import type { MuscleVolumeThresholds } from '../../utils/muscle/hypertrophy/muscleParams';
@@ -28,6 +28,7 @@ interface BodyMapProps {
   maxVolume?: number;
   volumeThresholds?: MuscleVolumeThresholds;
   useExerciseColors?: boolean;
+  useHypertrophyColors?: boolean;
   onPartHover?: (muscleGroup: string | null, e?: MouseEvent) => void;
   compact?: boolean;
   compactFill?: boolean;
@@ -65,6 +66,7 @@ export const BodyMap: React.FC<BodyMapProps> = ({
   maxVolume = 1,
   volumeThresholds,
   useExerciseColors = false,
+  useHypertrophyColors = false,
   onPartHover,
   compact = false,
   compactFill = false,
@@ -92,9 +94,11 @@ export const BodyMap: React.FC<BodyMapProps> = ({
       const isOriginalSelection = muscleId !== targetId;
       elements?.forEach(el => {
         const volume = muscleVolumes.get(muscleId) || 0;
-        const color = useExerciseColors 
+        const color = useExerciseColors
           ? getExerciseMuscleColor(volume)
-          : getVolumeColor(volume, volumeThresholds, maxVolume);
+          : useHypertrophyColors
+            ? getHypertrophyColor(volume)
+            : getVolumeColor(volume, volumeThresholds, maxVolume);
         const isSelected = selectedMuscleIds.includes(muscleId) || (isOriginalSelection && selectedMuscleIds.includes(targetId));
         const isHovered = hoveredMuscleIdsOverride
           ? hoveredMuscleIdsOverride.includes(muscleId)
@@ -124,7 +128,7 @@ export const BodyMap: React.FC<BodyMapProps> = ({
         (el as HTMLElement).style.cursor = compact && !interactive ? 'default' : 'pointer';
       });
     });
-  }, [muscleVolumes, maxVolume, selectedMuscleIds, hoveredMuscleIdsOverride, interactive, useExerciseColors, volumeThresholds]);
+  }, [muscleVolumes, maxVolume, selectedMuscleIds, hoveredMuscleIdsOverride, interactive, useExerciseColors, useHypertrophyColors, volumeThresholds]);
 
   const handleClick = useCallback((e: MouseEvent) => {
     const target = e.target as Element;

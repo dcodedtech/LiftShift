@@ -75,10 +75,10 @@ export function useAppPreferences(): UseAppPreferencesReturn {
     saveSecondarySetMultiplier(secondarySetMultiplier);
   }, [secondarySetMultiplier]);
 
-  // Apply CSS variables - always use multicolor
+  // Apply CSS variables - heatmap hue (warm red for dark themes)
   useLayoutEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty('--heatmap-hue', 'multicolor');
+    root.style.setProperty('--heatmap-hue', '142');
     root.style.setProperty('--bodymap-hover-rgb', '14 90 182');
     root.style.setProperty('--bodymap-selection-rgb', '37 99 235');
   }, []);

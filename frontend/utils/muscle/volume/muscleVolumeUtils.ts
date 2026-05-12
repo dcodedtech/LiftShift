@@ -29,6 +29,20 @@ export const getVolumeColor = (sets: number, thresholds?: MuscleVolumeThresholds
   return getVolumeZoneColor(sets, thresholds, maxVolume);
 };
 
+// Hypertrophy-score-based color for the body-map heatmap.
+// Score is 0–100. Uses a power curve (ratio^1.5) so values in the 70–90 range
+// produce visibly distinct colors — 75 vs 85 differ by ~10 lightness points.
+export const getHypertrophyColor = (score: number): string => {
+  if (score <= 0) return 'hsla(0, 0%, 100%, 1)';
+
+  const ratio = Math.min(score / 100, 1);
+  const adjusted = Math.pow(ratio, 1.5);
+  const lightness = 88 - adjusted * 73;
+  const saturation = 30 + ratio * 50;
+
+  return `hsl(var(--heatmap-hue), ${saturation}%, ${lightness}%)`;
+};
+
 // Color for exercise view: shows primary vs secondary muscle involvement
 // Primary = full involvement (green), Secondary = partial involvement (lighter green/yellow)
 export const getExerciseMuscleColor = (sets: number): string => {

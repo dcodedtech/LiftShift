@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { Tooltip as HoverTooltip, type TooltipData } from '../../ui/Tooltip';
 import { CHART_TOOLTIP_STYLE, RADAR_TICK_FILL } from '../../../utils/ui/uiConstants';
-import { getVolumeZoneColor } from '../../../utils/muscle/hypertrophy/muscleParams';
+
 import type { WeeklySetsWindow } from '../../../utils/muscle/analytics';
 import type { MuscleVolumeThresholds } from '../../../utils/muscle/hypertrophy/muscleParams';
 import { SegmentControl } from '../../ui/SegmentControl';
@@ -162,6 +162,7 @@ export const MuscleAnalysisBodyMapPanel: React.FC<MuscleAnalysisBodyMapPanelProp
                 gender={bodyMapGender}
                 variant="demo"
                 viewMode="headless"
+                useHypertrophyColors
                 stroke={{ width: 2, color: '#484a68', opacity: 0.5 }}
               />
             </div>
