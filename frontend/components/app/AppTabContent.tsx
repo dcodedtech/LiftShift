@@ -155,6 +155,7 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
             stickyHeader={hasActiveCalendarFilter}
             now={now}
             secondarySetMultiplier={secondarySetMultiplier}
+            exerciseStats={exerciseStats}
           />
         )}
         {activeTab === Tab.FLEX && (

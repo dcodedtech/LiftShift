@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { WorkoutSet } from '../../../types';
+import { ExerciseStats, WorkoutSet } from '../../../types';
 import { ViewHeader } from '../../layout/ViewHeader';
 import { Activity, Dumbbell } from 'lucide-react';
 import { BodyMapGender } from '../../bodyMap/BodyMap';
@@ -33,6 +33,7 @@ interface MuscleAnalysisProps {
   bodyMapGender?: BodyMapGender;
   now?: Date;
   secondarySetMultiplier?: number;
+  exerciseStats?: ExerciseStats[];
 }
 
 export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
@@ -48,6 +49,7 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
   bodyMapGender = 'male',
   now,
   secondarySetMultiplier = 0.5,
+  exerciseStats,
 }) => {
   const [weeklySetsChartView, setWeeklySetsChartView] = useState<'heatmap' | 'radar'>('heatmap');
   const [hoverTooltip, setHoverTooltip] = useState<TooltipData | null>(null);
@@ -146,6 +148,7 @@ export const MuscleAnalysis: React.FC<MuscleAnalysisProps> = ({
     muscleVolumes,
     filterCacheKey,
     secondarySetMultiplier,
+    exerciseStats,
   });
 
   // Compute hypertrophy scores for all muscles (used by card, body map tooltip, graph)

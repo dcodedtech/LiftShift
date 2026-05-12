@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 import { differenceInCalendarDays } from 'date-fns';
-import type { WorkoutSet, ExerciseStats, ExerciseHistoryEntry } from '../../../types';
+import type { WorkoutSet, ExerciseStats } from '../../../types';
 import { computeWeeklySetsDelta } from '../utils/weeklySetsMetrics';
 import type { WeeklySetsWindow } from '../../../utils/muscle/analytics';
 import { computeDailySvgMuscleVolumes, computeWindowedExerciseBreakdown } from '../../../utils/muscle/volume';
 import { HEADLESS_ID_TO_DETAILED_SVG_IDS, HEADLESS_MUSCLE_IDS } from '../../../utils/muscle/mapping';
-import { isWarmupSet, getWeeklyVolumeSetWeight } from '../../../utils/analysis/classification';
+import { getWeeklyVolumeSetWeight } from '../../../utils/analysis/classification';
 import type { NormalizedMuscleGroup } from '../../../utils/muscle/analytics';
 import type { ExerciseAsset } from '../../../utils/data/exerciseAssets';
 import { computationCache } from '../../../utils/storage/computationCache';
 import { muscleCacheKeys } from '../../../utils/storage/cacheKeys';
 import { getVolumeThresholds, type TrainingLevel } from '../../../utils/muscle/hypertrophy/muscleParams';
 import { useTrainingLevel } from '../../../hooks/app/useTrainingLevel';
-import { analyzeExerciseTrend } from '../../exerciseView/trend/exerciseTrendUi';
+import { analyzeExerciseTrendCore } from '../../../utils/analysis/exerciseTrend';
 
 interface UseMuscleTrendDataParams {
   data: WorkoutSet[];
@@ -30,6 +30,7 @@ interface UseMuscleTrendDataParams {
   muscleVolumes: Map<string, number>;
   filterCacheKey: string;
   secondarySetMultiplier: number;
+  exerciseStats?: ExerciseStats[];
 }
 
 export const useMuscleTrendData = ({
@@ -41,10 +42,12 @@ export const useMuscleTrendData = ({
   allTimeWindowStart,
   weeklySetsWindow,
   selectedSubjectKeys,
+  groupWeeklyRatesBySubject,
   headlessRatesMap,
   muscleVolumes,
   filterCacheKey,
   secondarySetMultiplier,
+  exerciseStats,
 }: UseMuscleTrendDataParams) => {
   // Use shared hook for training level calculation (matches Dashboard)
   const { trainingLevel } = useTrainingLevel(data, effectiveNow);
@@ -265,63 +268,9 @@ export const useMuscleTrendData = ({
     if (!windowedSelectionBreakdown) return [];
     
     const calculateExerciseStrengthTrend = (exerciseName: string): { diffPct: number | null; label: string | null } | null => {
-      const exerciseSets = data.filter(s => 
-        s.exercise_title === exerciseName && 
-        !isWarmupSet(s) && 
-        s.parsedDate &&
-        s.weight_kg > 0
-      );
-      
-      if (exerciseSets.length < 2) return null;
-      
-      const groupedByDate = new Map<string, ExerciseHistoryEntry>();
-      for (const s of exerciseSets) {
-        const dateKey = s.parsedDate?.toISOString().split('T')[0] ?? '';
-        const existing = groupedByDate.get(dateKey);
-        const est1RM = s.weight_kg * (1 + s.reps / 30);
-        
-        if (!existing) {
-          groupedByDate.set(dateKey, {
-            date: s.parsedDate ?? new Date(),
-            weight: s.weight_kg,
-            reps: s.reps,
-            oneRepMax: est1RM,
-            volume: s.weight_kg * s.reps,
-            isPr: s.isPr ?? false,
-            prTypes: s.prTypes,
-            set_type: s.set_type,
-          });
-        } else {
-          if (est1RM > existing.oneRepMax) {
-            groupedByDate.set(dateKey, {
-              date: s.parsedDate ?? existing.date,
-              weight: s.weight_kg,
-              reps: s.reps,
-              oneRepMax: est1RM,
-              volume: existing.volume + (s.weight_kg * s.reps),
-              isPr: existing.isPr || (s.isPr ?? false),
-              prTypes: [...new Set([...(existing.prTypes ?? []), ...(s.prTypes ?? [])])],
-              set_type: s.set_type,
-            });
-          }
-        }
-      }
-      
-      const history = Array.from(groupedByDate.values())
-        .sort((a, b) => a.date.getTime() - b.date.getTime());
-      
-      if (history.length < 2) return null;
-      
-      const exerciseStats: ExerciseStats = {
-        name: exerciseName,
-        totalSets: exerciseSets.length,
-        totalVolume: exerciseSets.reduce((sum, s) => sum + (s.weight_kg * s.reps), 0),
-        maxWeight: Math.max(...exerciseSets.map(s => s.weight_kg)),
-        prCount: exerciseSets.filter(s => s.isPr).length,
-        history,
-      };
-      
-      const trendResult = analyzeExerciseTrend(exerciseStats, 'kg');
+      const stats = exerciseStats?.find(s => s.name === exerciseName);
+      if (!stats) return null;
+      const trendResult = analyzeExerciseTrendCore(stats, { trendMode: 'reactive' });
       if (trendResult.diffPct === null || trendResult.diffPct === undefined) return { diffPct: null, label: null };
       const prefix = trendResult.diffPct > 0 ? '+' : '';
       return { 
@@ -341,7 +290,7 @@ export const useMuscleTrendData = ({
       });
     });
     return exercises.sort((a, b) => b.sets - a.sets);
-  }, [windowedSelectionBreakdown, data]);
+  }, [windowedSelectionBreakdown, exerciseStats]);
 
   const totalSets = useMemo(() => {
     let sum = 0;
