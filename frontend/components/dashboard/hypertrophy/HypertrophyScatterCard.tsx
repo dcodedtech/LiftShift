@@ -7,6 +7,7 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
   ReferenceLine,
+  ReferenceArea,
   Cell,
 } from 'recharts';
 import { SegmentControl } from '../../ui/SegmentControl';
@@ -57,14 +58,25 @@ function dist(a: ChartPoint, b: ChartPoint): number {
   return Math.sqrt((a.progress - b.progress) ** 2 + (a.volume - b.volume) ** 2);
 }
 
+const QUADRANT_CENTERS = [
+  { progress: PROGRESS_MID / 2, volume: VOLUME_MID / 2 },
+  { progress: PROGRESS_MID / 2, volume: VOLUME_MID + (50 - VOLUME_MID) / 2 },
+  { progress: PROGRESS_MID + (50 - PROGRESS_MID) / 2, volume: VOLUME_MID / 2 },
+  { progress: PROGRESS_MID + (50 - PROGRESS_MID) / 2, volume: VOLUME_MID + (50 - VOLUME_MID) / 2 },
+];
+
 function filterLabelsByCluster(points: ChartPoint[]): string[] {
   if (points.length === 0) return [];
   const sorted = [...points].sort((a, b) => b.total - a.total);
   const ids = new Set<string>();
-  ids.add(sorted[0].muscleId);
-  for (let i = 1; i < sorted.length; i++) {
-    // Check 2D distance to every already-labeled point
+  for (let i = 0; i < sorted.length; i++) {
     let tooClose = false;
+    // Skip points near quadrant centers — they'll get leader-line labels instead
+    for (const qc of QUADRANT_CENTERS) {
+      const d = Math.sqrt((sorted[i].progress - qc.progress) ** 2 + (sorted[i].volume - qc.volume) ** 2);
+      if (d < 8) { tooClose = true; break; }
+    }
+    if (tooClose) continue;
     for (const labeled of sorted) {
       if (!ids.has(labeled.muscleId)) continue;
       const d = dist(sorted[i], labeled);
@@ -99,6 +111,50 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
   );
 
   const labeledIds = useMemo(() => filterLabelsByCluster(chartData), [chartData]);
+
+  const QUADRANT_PUSH = 8;
+
+  const unlabeledDirs = useMemo(() => {
+    const dirs = new Map<string, { dx: number; dy: number }>();
+    const labeledSet = new Set(labeledIds);
+    for (const point of chartData) {
+      if (labeledSet.has(point.muscleId)) continue;
+      let bestDx = 1, bestDy = 0;
+      let nearestDist = Infinity;
+
+      // Check if near a quadrant center — if so, push away from it
+      for (const qc of QUADRANT_CENTERS) {
+        const d = Math.sqrt((point.progress - qc.progress) ** 2 + (point.volume - qc.volume) ** 2);
+        if (d < QUADRANT_PUSH) {
+          const dx = point.volume - qc.volume;
+          const dy = point.progress - qc.progress;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          if (len > 0) { bestDx = dx / len; bestDy = dy / len; }
+          nearestDist = 0;
+          break;
+        }
+      }
+
+      // Fall back to pushing away from nearest labeled point
+      if (nearestDist !== 0) {
+        for (const other of chartData) {
+          if (!labeledSet.has(other.muscleId)) continue;
+          const d = dist(point, other);
+          if (d < nearestDist) {
+            nearestDist = d;
+            const dx = point.volume - other.volume;
+            const dy = point.progress - other.progress;
+            const len = Math.sqrt(dx * dx + dy * dy);
+            if (len > 0) { bestDx = dx / len; bestDy = dy / len; }
+            else { bestDx = 1; bestDy = 0; }
+          }
+        }
+      }
+
+      dirs.set(point.muscleId, { dx: bestDx, dy: bestDy });
+    }
+    return dirs;
+  }, [chartData, labeledIds]);
 
   const CustomScatterTooltip = ({ active, payload }: any) => {
     if (!active || !payload?.length) return null;
@@ -156,13 +212,20 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
               <ReScatterChart margin={{ top: 28, right: 8, bottom: 28, left: 0 }}>
                 <XAxis type="number" dataKey="volume" domain={[0, 50]}
                   tick={{ fill: '#94a3b8', fontSize: 9 }} tickLine={false} axisLine={{ stroke: '#475569' }}
-                  label={{ value: 'Volume', position: 'bottom', offset: 5, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
+                  label={{ value: 'Volume Score (0–50)', position: 'bottom', offset: 5, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
                 <YAxis type="number" dataKey="progress" domain={[0, 50]}
                   tick={{ fill: '#94a3b8', fontSize: 9 }} tickLine={false} axisLine={{ stroke: '#475569' }} width={28}
-                  label={{ value: 'Progress', angle: 0, position: 'insideTop', offset: -18, dx: +12, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
+                  label={{ value: 'Progressive Overload (0–40)', angle: 0, position: 'insideTop', offset: -18, dx: +60, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
 
-                <ReferenceLine x={VOLUME_MID} stroke="#475569" strokeDasharray="4 4" strokeWidth={1} />
-                <ReferenceLine y={PROGRESS_MID} stroke="#475569" strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceArea x1={0} x2={VOLUME_MID} y1={0} y2={PROGRESS_MID} fill="rgba(239,68,68,0.12)"
+                  label={{ value: 'Neglected', position: 'center', fill: '#ef4444', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
+                <ReferenceArea x1={VOLUME_MID} x2={50} y1={0} y2={PROGRESS_MID} fill="rgba(245,158,11,0.12)"
+                  label={{ value: 'Volume Focus', position: 'center', fill: '#f59e0b', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
+                <ReferenceArea x1={0} x2={VOLUME_MID} y1={PROGRESS_MID} y2={50} fill="rgba(59,130,246,0.12)"
+                  label={{ value: 'Efficiency Zone', position: 'center', fill: '#3b82f6', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
+                <ReferenceArea x1={VOLUME_MID} x2={50} y1={PROGRESS_MID} y2={50} fill="rgba(34,197,94,0.12)"
+                  label={{ value: 'Optimal Growth', position: 'center', fill: '#22c55e', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
+
 
                 <RechartsTooltip content={<CustomScatterTooltip />} />
 
@@ -182,12 +245,29 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
                   })}
                 </Scatter>
 
-                <Scatter data={chartData.filter(d => labeledIds.includes(d.muscleId))} shape="circle" isAnimationActive={false} legendType="none"
-                  label={{ dataKey: 'name', position: 'top', fontSize: 10, fill: '#7f7b7b', offset: 2, fontWeight: 600, fontFamily: '"Lora", serif', fontStyle: 'italic' }} >
-                  {chartData.filter(d => labeledIds.includes(d.muscleId)).map((entry) => (
-                    <Cell key={entry.muscleId} fill="transparent" stroke="none" />
-                  ))}
-                </Scatter>
+                <Scatter data={chartData} isAnimationActive={false} legendType="none"
+                  shape={(props: any) => {
+                    const { cx, cy, payload } = props;
+                    if (cx == null || cy == null || !payload) return null;
+                    const isDirect = labeledIds.includes(payload.muscleId);
+                    const name = payload.name;
+                    if (isDirect) {
+                      return (
+                        <text x={cx} y={cy - 8} textAnchor="middle" fontSize={10} fill="#7f7b7b" fontWeight={600} fontFamily={'"Lora", serif'} fontStyle="italic">
+                          {name}
+                        </text>
+                      );
+                    }
+                    const dir = unlabeledDirs.get(payload.muscleId) ?? { dx: 1, dy: 0 };
+                    const OFFSET = 20;
+                    const lx = cx + dir.dx * OFFSET;
+                    const ly = cy - dir.dy * OFFSET;
+                    return (
+                      <text x={lx} y={ly} dy="0.32em" textAnchor="middle" fontSize={10} fill="#7f7b7b" fontWeight={600} fontFamily={'"Lora", serif'} fontStyle="italic">
+                          {name}
+                        </text>
+                    );
+                  }} />
               </ReScatterChart>
             </ResponsiveContainer>
 
