@@ -24,6 +24,8 @@ import { useWeeklyRhythm } from '../hooks/useWeeklyRhythm';
 import { useTrainingLevel } from '../../../hooks/app/useTrainingLevel';
 import { useTrainingTimeline } from '../../../hooks/app/useTrainingTimeline';
 import { calculateHypertrophyScoresWithExerciseTrends } from '../../../utils/muscle/hypertrophy/hypertrophyScore';
+import { analyzeExerciseTrendCore } from '../../../utils/analysis/exerciseTrend';
+import type { ExerciseTrendCoreResult } from '../../../utils/analysis/exerciseTrend/exerciseTrendCore';
 import { toHeadlessVolumeMap } from '../../../utils/muscle/volume/muscleVolumeUtils';
 import { computeWeeklySetsDashboardData } from '../../../utils/muscle/analytics/dashboardWeeklySets';
 
@@ -166,6 +168,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const totalPrs = useMemo(() => exerciseStats.reduce((acc, curr) => acc + curr.prCount, 0), [exerciseStats]);
 
+  const exerciseTrendResults = useMemo(() => {
+    const map = new Map<string, ExerciseTrendCoreResult>();
+    for (const stat of exerciseStats) {
+      map.set(stat.name, analyzeExerciseTrendCore(stat, { trendMode: 'reactive' }));
+    }
+    return map;
+  }, [exerciseStats]);
+
   const totalSets = useMemo(() => {
     let count = 0;
     for (const s of filteredData) {
@@ -289,9 +299,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       hypertrophyPeriod,
       hypertrophyEffectiveNow,
       parsedData,
-      hypertrophyWindowStart
+      hypertrophyWindowStart,
+      exerciseTrendResults
     );
-  }, [parsedData, assetsMap, exerciseStats, hypertrophyEffectiveNow, trainingLevel, hypertrophyPeriod, hypertrophyHeadlessRatesMap, hypertrophyWindowStart]);
+  }, [parsedData, assetsMap, exerciseStats, hypertrophyEffectiveNow, trainingLevel, hypertrophyPeriod, hypertrophyHeadlessRatesMap, hypertrophyWindowStart, exerciseTrendResults]);
 
   const hypertrophyWindowStart30d = useMemo(() =>
     new Date(hypertrophyEffectiveNow.getTime() - 30 * 24 * 60 * 60 * 1000),
@@ -321,9 +332,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       '30d',
       hypertrophyEffectiveNow,
       parsedData,
-      hypertrophyWindowStart30d
+      hypertrophyWindowStart30d,
+      exerciseTrendResults
     );
-  }, [parsedData, assetsMap, exerciseStats, hypertrophyEffectiveNow, trainingLevel, hypertrophyHeadlessRatesMap30d, hypertrophyWindowStart30d]);
+  }, [parsedData, assetsMap, exerciseStats, hypertrophyEffectiveNow, trainingLevel, hypertrophyHeadlessRatesMap30d, hypertrophyWindowStart30d, exerciseTrendResults]);
 
   const dashboardSummary = useMemo(() => buildDashboardSummary({
     dashboardInsights,
@@ -337,6 +349,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     effectiveNow,
     weightUnit,
     filterCacheKey,
+    exerciseTrendResults,
   }), [
     dashboardInsights,
     filteredData,
@@ -349,6 +362,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     effectiveNow,
     weightUnit,
     filterCacheKey,
+    exerciseTrendResults,
   ]);
 
   const TooltipStyle = CHART_TOOLTIP_STYLE;

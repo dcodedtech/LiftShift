@@ -22,7 +22,7 @@ import { lookupAsset, getLowerMap } from '../analytics/muscleAnalyticsHelpers';
 import { CSV_TO_SVG_MUSCLE_MAP_LOWERCASE } from '../mapping/muscleCsvMappings';
 import { DETAILED_SVG_ID_TO_MUSCLE_ID } from '../mapping/muscleSvgMappings';
 import { MUSCLE_NAMES, type MuscleId } from '../mapping/muscleHeadless';
-import { analyzeExerciseTrendCore } from '../../analysis/exerciseTrend/exerciseTrendCore';
+import { analyzeExerciseTrendCore, type ExerciseTrendCoreResult } from '../../analysis/exerciseTrend/exerciseTrendCore';
 
 /**
  * Map a raw muscle name (from exercise assets) to headless MuscleIds.
@@ -499,7 +499,8 @@ export function calculateHypertrophyScoresWithExerciseTrends(
   period: '7d' | '30d',
   effectiveNow: Date,
   parsedData: WorkoutSet[],
-  windowStart: Date
+  windowStart: Date,
+  exerciseTrendResults?: Map<string, ExerciseTrendCoreResult>
 ): MuscleHypertrophyData[] {
   const lowerMap = getLowerMap(assetsMap);
   const windowDays = period === '7d' ? 7 : 30;
@@ -578,7 +579,7 @@ export function calculateHypertrophyScoresWithExerciseTrends(
     const muscleIds = exerciseToMuscles.get(nameLower);
     if (!muscleIds || muscleIds.size === 0) continue;
 
-    const trendResult = analyzeExerciseTrendCore(stat, { trendMode: 'reactive' });
+    const trendResult = exerciseTrendResults?.get(stat.name) ?? analyzeExerciseTrendCore(stat, { trendMode: 'reactive' });
     const pct = period === '7d'
       ? (trendResult.calculation?.recentDeltaPct ?? null)
       : (trendResult.diffPct ?? null);

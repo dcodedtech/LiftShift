@@ -1,6 +1,7 @@
 import type { DailySummary, ExerciseStats, WorkoutSet } from '../../../types';
 import type { WeightUnit } from '../../storage/localStorage';
 import type { DashboardInsights, ExercisePlateauInfo } from '../insights';
+import type { ExerciseTrendCoreResult } from '../exerciseTrend/exerciseTrendCore';
 import { pickDeterministicIndex } from '../common';
 import { analyzeExerciseTrendCore } from '../exerciseTrend';
 import { isWarmupSet } from '../classification';
@@ -23,6 +24,7 @@ export interface DashboardSummaryInput {
   effectiveNow: Date;
   weightUnit: WeightUnit;
   filterCacheKey: string;
+  exerciseTrendResults?: Map<string, ExerciseTrendCoreResult>;
 }
 
 export interface SummarySegment {
@@ -502,7 +504,7 @@ const pushExerciseTrendCandidates = (input: DashboardSummaryInput, candidates: S
 
   const trendCandidates = input.exerciseStats
     .filter((stats) => recentExerciseNames.has(stats.name))
-    .map((stats) => ({ stats, trend: analyzeExerciseTrendCore(stats, { trendMode: 'reactive' }) }))
+    .map((stats) => ({ stats, trend: input.exerciseTrendResults?.get(stats.name) ?? analyzeExerciseTrendCore(stats, { trendMode: 'reactive' }) }))
     .filter(({ trend }) => trend.confidence !== 'low' && typeof trend.diffPct === 'number')
     .sort((a, b) => Math.abs(b.trend.diffPct ?? 0) - Math.abs(a.trend.diffPct ?? 0));
 
