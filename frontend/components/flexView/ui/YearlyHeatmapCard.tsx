@@ -82,11 +82,12 @@ export const YearlyHeatmapCard: React.FC<{
           : monthEnd;
 
       const days = eachDayOfInterval({ start: monthStart, end: visibleEnd });
-      const rowCount = Math.ceil(days.length / 7);
-      const cells: (number | null)[] = new Array(rowCount * 7).fill(null);
+      const dayOfWeekOffset = (getDay(monthStart) + 6) % 7;
+      const totalCells = Math.ceil((dayOfWeekOffset + days.length) / 7) * 7;
+      const cells: (number | null)[] = new Array(totalCells).fill(null);
       for (let i = 0; i < days.length; i++) {
         const key = format(days[i], 'yyyy-MM-dd');
-        cells[i] = daySetCount.get(key) || 0;
+        cells[dayOfWeekOffset + i] = daySetCount.get(key) || 0;
       }
 
       out.push({ monthIndex: m, cells, rowCount });

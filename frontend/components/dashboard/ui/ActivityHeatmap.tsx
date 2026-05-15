@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from 'react';
-import { format, startOfMonth, endOfMonth, addMonths, eachDayOfInterval } from 'date-fns';
+import { format, startOfMonth, endOfMonth, addMonths, eachDayOfInterval, getDay } from 'date-fns';
 import { Target } from 'lucide-react';
 import type { DailySummary } from '../../../types';
 import { computationCache } from '../../../utils/storage/computationCache';
@@ -94,15 +94,16 @@ export const ActivityHeatmap = memo(({
       const visibleEnd = monthEnd.getTime() > rangeEnd.getTime() ? rangeEnd : monthEnd;
 
       const days = eachDayOfInterval({ start: visibleStart, end: visibleEnd });
-      const rowCount = Math.ceil(days.length / 7);
-      const cells: Array<any | null> = new Array(rowCount * 7).fill(null);
+      const dayOfWeekOffset = (getDay(visibleStart) + 6) % 7;
+      const totalCells = Math.ceil((dayOfWeekOffset + days.length) / 7) * 7;
+      const cells: Array<any | null> = new Array(totalCells).fill(null);
 
       for (let i = 0; i < days.length; i++) {
         const day = days[i];
         const existing = byKey.get(format(day, 'yyyy-MM-dd'));
         const isFuture = day.getTime() > today.getTime();
         const isCurrentMonthFuture = isFuture && day.getTime() <= currentMonthEnd.getTime();
-        cells[i] = existing || { date: day, count: 0, title: null, isFuture, isCurrentMonthFuture };
+        cells[dayOfWeekOffset + i] = existing || { date: day, count: 0, title: null, isFuture, isCurrentMonthFuture };
       }
 
       blocks.push({
@@ -235,7 +236,7 @@ export const ActivityHeatmap = memo(({
               const isLatestMonth = monthIdx === monthBlocks.length - 1;
               const cellSizeClass = isLatestMonth ? 'w-[18px] h-[18px]' : 'w-2 h-2';
               const dayGapClass = isLatestMonth ? 'gap-1' : 'gap-[2px]';
-              const dayOfWeekLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+              const dayOfWeekLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
               return (
               <div
                 key={month.key}
