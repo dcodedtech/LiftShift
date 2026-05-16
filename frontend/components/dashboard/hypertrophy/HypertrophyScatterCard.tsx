@@ -53,41 +53,25 @@ function getQuadrant(progress: number, volume: number): string {
   return 'Strength Focus';
 }
 
-/** Euclidean distance in (progress, volume) space — max domain is (50,50) so max dist ~70 */
-function dist(a: ChartPoint, b: ChartPoint): number {
-  return Math.sqrt((a.progress - b.progress) ** 2 + (a.volume - b.volume) ** 2);
-}
+// ── Label placement tunables ──
+const LABEL_OFFSET_DATA = 1.5;          // Data units from dot to label (~= LABEL_OFFSET_PX / 8)
+const LABEL_OFFSET_PX = 12;             // Pixel distance from dot to rendered label
+const MIN_LABEL_DISTANCE = 3;           // Min data units between two labels before repulsion kicks in
+const COLLISION_ITERATIONS = 3;         // How many repulsion iterations between labels
+const TEXT_ANCHOR_THRESHOLD = 0.3;      // |dx| above this switches text anchor to start/end
 
-const QUADRANT_CENTERS = [
-  { progress: PROGRESS_MID / 2, volume: VOLUME_MID / 2 },
-  { progress: PROGRESS_MID / 2, volume: VOLUME_MID + (50 - VOLUME_MID) / 2 },
-  { progress: PROGRESS_MID + (50 - PROGRESS_MID) / 2, volume: VOLUME_MID / 2 },
-  { progress: PROGRESS_MID + (50 - PROGRESS_MID) / 2, volume: VOLUME_MID + (50 - VOLUME_MID) / 2 },
-];
+const RIGHT_EDGE_THRESHOLD = 47;        // Volume above this → label moves left
+const LEFT_EDGE_THRESHOLD = 3;         // Volume below this → label moves right
+const TOP_EDGE_THRESHOLD = 47;          // Progress above this → label moves below
+const BOTTOM_EDGE_THRESHOLD = 3;        // Progress below this → label moves above
+const EDGE_PUSH = 1.5;                  // How strongly edge bias pulls the label
 
-function filterLabelsByCluster(points: ChartPoint[]): string[] {
-  if (points.length === 0) return [];
-  const sorted = [...points].sort((a, b) => b.total - a.total);
-  const ids = new Set<string>();
-  for (let i = 0; i < sorted.length; i++) {
-    let tooClose = false;
-    // Skip points near quadrant centers — they'll get leader-line labels instead
-    for (const qc of QUADRANT_CENTERS) {
-      const d = Math.sqrt((sorted[i].progress - qc.progress) ** 2 + (sorted[i].volume - qc.volume) ** 2);
-      if (d < 8) { tooClose = true; break; }
-    }
-    if (tooClose) continue;
-    for (const labeled of sorted) {
-      if (!ids.has(labeled.muscleId)) continue;
-      const d = dist(sorted[i], labeled);
-      if (d < 3) { tooClose = true; break; }
-    }
-    if (!tooClose) {
-      ids.add(sorted[i].muscleId);
-    }
-  }
-  return Array.from(ids);
-}
+const COLLISION_REPULSION_DAMPING = 1;// Damping factor for label-label repulsion (0-1)
+
+// Zone label positions — labels push away from these rows
+const ZONE_LABEL_Y1 = PROGRESS_MID / 2;                      // 12.5 — bottom row
+const ZONE_LABEL_Y2 = PROGRESS_MID + (50 - PROGRESS_MID) / 2; // 37.5 — top row
+// ─────────────────────────────────
 
 export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
   hypertrophyData,
@@ -110,51 +94,59 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
     [hypertrophyData]
   );
 
-  const labeledIds = useMemo(() => filterLabelsByCluster(chartData), [chartData]);
-
-  const QUADRANT_PUSH = 8;
-
-  const unlabeledDirs = useMemo(() => {
+  const labelDirs = useMemo(() => {
     const dirs = new Map<string, { dx: number; dy: number }>();
-    const labeledSet = new Set(labeledIds);
-    for (const point of chartData) {
-      if (labeledSet.has(point.muscleId)) continue;
-      let bestDx = 1, bestDy = 0;
-      let nearestDist = Infinity;
+    const pts = chartData;
+    if (pts.length === 0) return dirs;
 
-      // Check if near a quadrant center — if so, push away from it
-      for (const qc of QUADRANT_CENTERS) {
-        const d = Math.sqrt((point.progress - qc.progress) ** 2 + (point.volume - qc.volume) ** 2);
-        if (d < QUADRANT_PUSH) {
-          const dx = point.volume - qc.volume;
-          const dy = point.progress - qc.progress;
-          const len = Math.sqrt(dx * dx + dy * dy);
-          if (len > 0) { bestDx = dx / len; bestDy = dy / len; }
-          nearestDist = 0;
-          break;
-        }
-      }
+    for (const p of pts) {
+      let dx = 0, dy = -1;
 
-      // Fall back to pushing away from nearest labeled point
-      if (nearestDist !== 0) {
-        for (const other of chartData) {
-          if (!labeledSet.has(other.muscleId)) continue;
-          const d = dist(point, other);
-          if (d < nearestDist) {
-            nearestDist = d;
-            const dx = point.volume - other.volume;
-            const dy = point.progress - other.progress;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            if (len > 0) { bestDx = dx / len; bestDy = dy / len; }
-            else { bestDx = 1; bestDy = 0; }
+      // Y band: push label away from zone label rows (y=12.5, y=37.5)
+      if (p.progress < ZONE_LABEL_Y1) dy = -EDGE_PUSH;
+      else if (p.progress < PROGRESS_MID) dy = EDGE_PUSH;
+      else if (p.progress < ZONE_LABEL_Y2) dy = -EDGE_PUSH;
+      else dy = EDGE_PUSH;
+
+      // Edge overrides (chart boundary takes priority)
+      if (p.progress > TOP_EDGE_THRESHOLD) dy = -EDGE_PUSH;
+      else if (p.progress < BOTTOM_EDGE_THRESHOLD) dy = EDGE_PUSH;
+      if (p.volume > RIGHT_EDGE_THRESHOLD) dx = -EDGE_PUSH;
+      else if (p.volume < LEFT_EDGE_THRESHOLD) dx = EDGE_PUSH;
+
+      const len = Math.hypot(dx, dy);
+      if (len > 0.01) { dx /= len; dy /= len; }
+      dirs.set(p.muscleId, { dx, dy });
+    }
+
+    for (let iter = 0; iter < COLLISION_ITERATIONS; iter++) {
+      const pushes = new Map<string, { dx: number; dy: number }>();
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const a = pts[i], b = pts[j];
+          const da = dirs.get(a.muscleId)!, db = dirs.get(b.muscleId)!;
+          const ax = a.volume + da.dx * LABEL_OFFSET_DATA, ay = a.progress - da.dy * LABEL_OFFSET_DATA;
+          const bx = b.volume + db.dx * LABEL_OFFSET_DATA, by = b.progress - db.dy * LABEL_OFFSET_DATA;
+          const d = Math.hypot(bx - ax, by - ay);
+          if (d < MIN_LABEL_DISTANCE && d > 0.01) {
+            const f = (MIN_LABEL_DISTANCE - d) / MIN_LABEL_DISTANCE * COLLISION_REPULSION_DAMPING;
+            const nx = (bx - ax) / d, ny = (by - ay) / d;
+            const pa = pushes.get(a.muscleId) ?? { dx: 0, dy: 0 };
+            pa.dx -= nx * f; pa.dy -= ny * f; pushes.set(a.muscleId, pa);
+            const pb = pushes.get(b.muscleId) ?? { dx: 0, dy: 0 };
+            pb.dx += nx * f; pb.dy += ny * f; pushes.set(b.muscleId, pb);
           }
         }
       }
-
-      dirs.set(point.muscleId, { dx: bestDx, dy: bestDy });
+      for (const [id, push] of pushes) {
+        const d = dirs.get(id)!;
+        d.dx += push.dx; d.dy += push.dy;
+        const len = Math.hypot(d.dx, d.dy);
+        if (len > 0.01) { d.dx /= len; d.dy /= len; }
+      }
     }
     return dirs;
-  }, [chartData, labeledIds]);
+  }, [chartData]);
 
   const CustomScatterTooltip = ({ active, payload }: any) => {
     if (!active || !payload?.length) return null;
@@ -246,26 +238,18 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
                 </Scatter>
 
                 <Scatter data={chartData} isAnimationActive={false} legendType="none"
-                  shape={(props: any) => {
-                    const { cx, cy, payload } = props;
+                  shape={({ cx, cy, payload }: any) => {
                     if (cx == null || cy == null || !payload) return null;
-                    const isDirect = labeledIds.includes(payload.muscleId);
-                    const name = payload.name;
-                    if (isDirect) {
-                      return (
-                        <text x={cx} y={cy - 8} textAnchor="middle" fontSize={10} fill="#7f7b7b" fontWeight={600} fontFamily={'"Lora", serif'} fontStyle="italic">
-                          {name}
-                        </text>
-                      );
-                    }
-                    const dir = unlabeledDirs.get(payload.muscleId) ?? { dx: 1, dy: 0 };
-                    const OFFSET = 20;
-                    const lx = cx + dir.dx * OFFSET;
-                    const ly = cy - dir.dy * OFFSET;
+                    const dir = labelDirs.get(payload.muscleId) ?? { dx: 0, dy: -1 };
+                    const lx = cx + dir.dx * LABEL_OFFSET_PX;
+                    const ly = cy - dir.dy * LABEL_OFFSET_PX;
+                    const anchor = dir.dx > TEXT_ANCHOR_THRESHOLD ? 'start' : dir.dx < -TEXT_ANCHOR_THRESHOLD ? 'end' : 'middle';
                     return (
-                      <text x={lx} y={ly} dy="0.32em" textAnchor="middle" fontSize={10} fill="#7f7b7b" fontWeight={600} fontFamily={'"Lora", serif'} fontStyle="italic">
-                          {name}
-                        </text>
+                      <text x={lx} y={ly}
+                        dy="0.32em" textAnchor={anchor} fontSize={10} fill="#7f7b7b"
+                        fontWeight={600} fontFamily={'"Lora", serif'} fontStyle="italic">
+                        {payload.name}
+                      </text>
                     );
                   }} />
               </ReScatterChart>
