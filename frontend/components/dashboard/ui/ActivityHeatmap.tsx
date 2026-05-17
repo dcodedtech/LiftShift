@@ -177,6 +177,8 @@ export const ActivityHeatmap = memo(({
   };
 
 
+  const isPeakDay = (volume: number) => volume > 0 && volume === maxVolume;
+
   const handleMouseEnter = (e: React.MouseEvent, day: any) => {
     if (!day || day.count === 0) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -184,7 +186,7 @@ export const ActivityHeatmap = memo(({
       rect,
       title: formatHumanReadableDate(day.date, { now }),
       body: `${day.totalVolume.toLocaleString()} kg${day.title ? `\n${day.title}` : ''}`,
-      footer: 'Click to view details',
+      footer: isPeakDay(day.totalVolume) ? 'Best volume session — Click to view details' : 'Click to view details',
       status: (day.totalVolume > 3000 ? 'success' : 'info') as TooltipData['status'],
     });
   };
@@ -277,7 +279,7 @@ export const ActivityHeatmap = memo(({
                       return (
                         <div
                           key={day.date.toISOString()}
-                          className={`${cellSizeClass} rounded-full flex items-center justify-center text-[8px] font-medium ${bgClass} ${textColor} transition-all duration-300 ${day.totalVolume > 0 && !isFuture ? 'cursor-pointer hover:ring-2 hover:ring-white/30' : 'cursor-default'} ${isToday ? 'ring-2 ring-blue-400/70' : ''}`}
+                          className={`${cellSizeClass} rounded-full flex items-center justify-center text-[8px] font-medium ${bgClass} ${textColor} transition-all duration-300 ${day.totalVolume > 0 && !isFuture ? 'cursor-pointer hover:ring-2 hover:ring-white/30' : 'cursor-default'} ${isPeakDay(day.totalVolume) ? 'ring-2 ring-amber-400' : isToday ? 'ring-2 ring-blue-400/70' : ''}`}
                           style={style}
                           onClick={() => day.count > 0 && !isFuture && onDayClick?.(day.date)}
                           onMouseEnter={(e) => !isFuture && handleMouseEnter(e, day)}
