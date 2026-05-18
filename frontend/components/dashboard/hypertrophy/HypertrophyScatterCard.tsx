@@ -51,8 +51,8 @@ interface HypertrophyScatterCardProps {
 function getQuadrant(progress: number, volume: number): string {
   if (volume >= VOLUME_MID && progress < PROGRESS_MID) return 'Volume Focus';
   if (volume >= VOLUME_MID && progress >= PROGRESS_MID) return 'Optimal Growth';
-  if (volume < VOLUME_MID && progress < PROGRESS_MID) return 'Undertrained';
-  return 'Strength Focus';
+  if (volume < VOLUME_MID && progress < PROGRESS_MID) return 'Neglected';
+  return 'Efficiency Zone';
 }
 
 // ── Label placement tunables ──
@@ -190,11 +190,11 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
         desc: <>High volume (<span style={{color:vc}}>{sets} sets/wk</span>) + strong progress (<span style={{color:pc}}>{trend}</span>)</>,
         advice: 'Keep it up! this balance is ideal for hypertrophy',
       },
-      'Undertrained': {
+      'Neglected': {
         desc: <>Low volume (<span style={{color:vc}}>{sets} sets/wk</span>) + low progress (<span style={{color:pc}}>{trend}</span>)</>,
         advice: 'If prioritizing this muscle, add sets and train 2-3x/week',
       },
-      'Strength Focus': {
+      'Efficiency Zone': {
         desc: <>Strong progress (<span style={{color:pc}}>{trend}</span>) despite low volume (<span style={{color:vc}}>{sets} sets/wk</span>)</>,
         advice: 'Consider increasing volume for more size gains',
       },

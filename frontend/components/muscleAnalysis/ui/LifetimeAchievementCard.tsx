@@ -393,7 +393,7 @@ export const LifetimeAchievementCard: React.FC<LifetimeAchievementCardProps> = (
           m.score.raw.weeklySets = Math.round(rate * 10) / 10;
           m.score.totalScore = Math.round(
             m.score.volumeScore * FACTOR_WEIGHTS.volumeScore +
-            m.score.progressiveOverload * FACTOR_WEIGHTS.progressiveOverload +
+            m.score.progressiveOverload +
             m.score.frequency * FACTOR_WEIGHTS.frequency
           );
         }

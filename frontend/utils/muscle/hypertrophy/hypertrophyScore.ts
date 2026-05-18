@@ -105,9 +105,16 @@ const OPTIMAL_FREQUENCY = 2.5;
 /**
  * Baseline score for progressive overload when trend is 0% (no change).
  * Represents the score for maintaining strength without regression.
- * Range: 0-40 (40% weight factor). Lower = stricter scoring.
+ * Higher for advanced lifters — maintenance is a real achievement.
+ * Lower for beginners — they should be progressing, not stalling.
  */
-const PROGRESS_BASELINE_SCORE = 5;
+function getProgressBaselineScore(trainingLevel: TrainingLevel = 'intermediate'): number {
+  switch (trainingLevel) {
+    case 'beginner':     return 8;
+    case 'intermediate': return 12;
+    case 'advanced':     return 18;
+  }
+}
 
 // ============================================================================
 // Calculation Functions
@@ -153,13 +160,20 @@ export function calculateVolumeScore(weeklySets: number, trainingLevel: Training
  * - minTrend (qualified muscles, ≤-5% default) → 0 points
  * - All values clamped to 0-40, no negative scores possible
  */
-function calculateProgressiveOverloadScore(oneRMTrendPercent: number, maxTrend: number, minTrend: number): number {
+function calculateProgressiveOverloadScore(
+  oneRMTrendPercent: number,
+  maxTrend: number,
+  minTrend: number,
+  trainingLevel: TrainingLevel = 'intermediate'
+): number {
+  const baseline = getProgressBaselineScore(trainingLevel);
+
   // Handle case with no positive trends (all ≤0)
   if (maxTrend <= 0) {
-    if (oneRMTrendPercent >= 0) return PROGRESS_BASELINE_SCORE;
-    const safeMin = Math.min(minTrend, 0); // minTrend can't be positive
+    if (oneRMTrendPercent >= 0) return baseline;
+    const safeMin = Math.min(minTrend, 0);
     const ratio = (oneRMTrendPercent - safeMin) / (0 - safeMin);
-    return Math.max(0, Math.round(ratio * PROGRESS_BASELINE_SCORE));
+    return Math.max(0, Math.round(ratio * baseline));
   }
 
   // Clamp to max (40) if trend meets/exceeds upper bound
@@ -168,22 +182,22 @@ function calculateProgressiveOverloadScore(oneRMTrendPercent: number, maxTrend: 
   // Clamp to min (0) if trend meets/exceeds lower bound
   if (oneRMTrendPercent <= minTrend) return 0;
 
-  // Negative trend: scale 0 (minTrend) → PROGRESS_BASELINE_SCORE (0% trend)
+  // Negative trend: scale 0 (minTrend) → baseline (0% trend)
   if (oneRMTrendPercent <= 0) {
     const ratio = (oneRMTrendPercent - minTrend) / (0 - minTrend);
-    return Math.max(0, Math.round(ratio * PROGRESS_BASELINE_SCORE));
+    return Math.max(0, Math.round(ratio * baseline));
   }
 
-  // Positive trend: scale PROGRESS_BASELINE_SCORE (0% trend) → 40 (maxTrend)
+  // Positive trend: scale baseline (0% trend) → 40 (maxTrend)
   const ratio = oneRMTrendPercent / maxTrend;
-  const range = 40 - PROGRESS_BASELINE_SCORE;
-  return Math.max(0, Math.round(PROGRESS_BASELINE_SCORE + ratio * range));
+  const range = 40 - baseline;
+  return Math.max(0, Math.round(baseline + ratio * range));
 }
 
 /**
  * Calculate Frequency Score (0-100)
  * 3 days/week = 100 (optimal), above 3 penalizes (recovery concern).
- * Day counts only if muscle got ≥2 sets that day.
+ * Day counts if muscle got ≥1 working set that day.
  */
 export function calculateFrequencyScore(daysPerWeek: number): number {
   if (daysPerWeek <= 0) return 0;
@@ -317,7 +331,7 @@ export function calculateMuscleHypertrophyScore(
   }
 
   const oneRMTrend = totalExerciseSets > 0 ? weightedTrend / totalExerciseSets : 0;
-  const progressiveOverload = calculateProgressiveOverloadScore(oneRMTrend, maxTrend ?? 0, 0);
+  const progressiveOverload = calculateProgressiveOverloadScore(oneRMTrend, maxTrend ?? 0, 0, trainingLevel);
 
   // --- Frequency ---
   const frequency = calculateFrequencyScore(daysPerWeek);
@@ -475,11 +489,11 @@ export function calculateAllMuscleHypertrophyScores(
 
   for (const r of results) {
     const trend = r.score.raw.oneRMTrend;
-    r.score.progressiveOverload = calculateProgressiveOverloadScore(trend, maxTrend, minTrend);
+    r.score.progressiveOverload = calculateProgressiveOverloadScore(trend, maxTrend, minTrend, trainingLevel);
     if (r.score.volumeScore > 0 || r.score.frequency > 0) {
         r.score.totalScore = Math.round(
           r.score.volumeScore * FACTOR_WEIGHTS.volumeScore +
-          r.score.progressiveOverload * FACTOR_WEIGHTS.progressiveOverload +
+          r.score.progressiveOverload +
           r.score.frequency * FACTOR_WEIGHTS.frequency
         );
       }
@@ -660,7 +674,7 @@ export function calculateHypertrophyScoresWithExerciseTrends(
     const rawProgress = muscleProgressRaw.get(muscleId) ?? 0;
     const progressWeight = muscleProgressWeight.get(muscleId) ?? 0;
     const oneRMTrend = progressWeight > 0 ? rawProgress / progressWeight : 0;
-    const progressiveOverload = calculateProgressiveOverloadScore(oneRMTrend, maxProgress, minProgress);
+    const progressiveOverload = calculateProgressiveOverloadScore(oneRMTrend, maxProgress, minProgress, trainingLevel);
 
     const totalScore = Math.round(
       volumeScore * FACTOR_WEIGHTS.volumeScore +
