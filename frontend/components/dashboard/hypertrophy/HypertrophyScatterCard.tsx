@@ -6,7 +6,6 @@ import {
   YAxis,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  ReferenceLine,
   ReferenceArea,
   Cell,
 } from 'recharts';
@@ -17,7 +16,7 @@ import {
   type MuscleHypertrophyData,
 } from '../../../utils/muscle/hypertrophy/hypertrophyScore';
 
-const PROGRESS_MID = 25;
+const PROGRESS_MID = 20;
 const VOLUME_MID = 25;
 
 const SCORE_COLORS = ['#ef4444', '#f59e0b', '#22c55e'] as const;
@@ -38,6 +37,9 @@ interface ChartPoint {
   volume: number;
   total: number;
   quadrant: string;
+  weeklySets: number;
+  oneRMTrend: number;
+  daysPerWeek: number;
 }
 
 interface HypertrophyScatterCardProps {
@@ -62,7 +64,7 @@ const TEXT_ANCHOR_THRESHOLD = 0.3;      // |dx| above this switches text anchor 
 
 const RIGHT_EDGE_THRESHOLD = 47;        // Volume above this → label moves left
 const LEFT_EDGE_THRESHOLD = 3;         // Volume below this → label moves right
-const TOP_EDGE_THRESHOLD = 47;          // Progress above this → label moves below
+const TOP_EDGE_THRESHOLD = 37;          // Progress above this → label moves below
 const BOTTOM_EDGE_THRESHOLD = 3;        // Progress below this → label moves above
 const EDGE_PUSH = 1.5;                  // How strongly edge bias pulls the label
 
@@ -70,7 +72,7 @@ const COLLISION_REPULSION_DAMPING = 1;// Damping factor for label-label repulsio
 
 // Zone label positions — labels push away from these rows
 const ZONE_LABEL_Y1 = PROGRESS_MID / 2;                      // 12.5 — bottom row
-const ZONE_LABEL_Y2 = PROGRESS_MID + (50 - PROGRESS_MID) / 2; // 37.5 — top row
+const ZONE_LABEL_Y2 = PROGRESS_MID + (40 - PROGRESS_MID) / 2; // 30 — top row
 // ─────────────────────────────────
 
 export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
@@ -89,6 +91,9 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
         volume,
         total: m.score.totalScore,
         quadrant: getQuadrant(progress, volume),
+        weeklySets: m.score.raw.weeklySets,
+        oneRMTrend: m.score.raw.oneRMTrend,
+        daysPerWeek: m.score.raw.daysPerWeek,
       };
     }),
     [hypertrophyData]
@@ -153,14 +158,31 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
     const d: ChartPoint | undefined = payload[0]?.payload;
     if (!d) return null;
 
-    const quadrantDesc: Record<string, { desc: string; advice: string }> = {
-      'Volume Focus': { desc: 'High volume but lagging strength progress', advice: 'Focus on progressive overload, add weight or reps slowly' },
-      'Optimal Growth': { desc: 'High volume + strong progress, ideal for hypertrophy', advice: 'Keep it up! Maintain this balance for gains' },
-      'Undertrained': { desc: 'Low volume + low progress', advice: 'If prioritizing this muscle, add sets and train 2-3x/week' },
-      'Strength Focus': { desc: 'Strong progress despite low volume', advice: 'Consider increasing volume for more size gains' },
+    const sets = d.weeklySets.toFixed(1);
+    const trend = `${d.oneRMTrend > 0 ? '+' : ''}${d.oneRMTrend.toFixed(1)}%`;
+    const vc = volColor(d.volume);
+    const pc = progColor(d.progress);
+
+    const quadrantAdvice: Record<string, { desc: React.ReactNode; advice: string }> = {
+      'Volume Focus': {
+        desc: <>High volume (<span style={{color:vc}}>{sets} sets/wk</span>) but lagging strength progress (<span style={{color:pc}}>{trend}</span>)</>,
+        advice: 'Focus on progressive overload — add weight or reps slowly',
+      },
+      'Optimal Growth': {
+        desc: <>High volume (<span style={{color:vc}}>{sets} sets/wk</span>) + strong progress (<span style={{color:pc}}>{trend}</span>)</>,
+        advice: 'Keep it up! this balance is ideal for hypertrophy',
+      },
+      'Undertrained': {
+        desc: <>Low volume (<span style={{color:vc}}>{sets} sets/wk</span>) + low progress (<span style={{color:pc}}>{trend}</span>)</>,
+        advice: 'If prioritizing this muscle, add sets and train 2-3x/week',
+      },
+      'Strength Focus': {
+        desc: <>Strong progress (<span style={{color:pc}}>{trend}</span>) despite low volume (<span style={{color:vc}}>{sets} sets/wk</span>)</>,
+        advice: 'Consider increasing volume for more size gains',
+      },
     };
 
-    const q = quadrantDesc[d.quadrant];
+    const q = quadrantAdvice[d.quadrant];
     return (
       <div className="rounded-lg px-3 py-2 shadow-2xl border text-xs"
         style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.95)', borderColor: 'rgb(var(--border-rgb) / 0.5)', color: 'var(--text-primary)' }}>
@@ -205,7 +227,7 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
                 <XAxis type="number" dataKey="volume" domain={[0, 50]}
                   tick={{ fill: '#94a3b8', fontSize: 9 }} tickLine={false} axisLine={{ stroke: '#475569' }}
                   label={{ value: 'Volume Score (0–50)', position: 'bottom', offset: 5, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
-                <YAxis type="number" dataKey="progress" domain={[0, 50]}
+                <YAxis type="number" dataKey="progress" domain={[0, 40]}
                   tick={{ fill: '#94a3b8', fontSize: 9 }} tickLine={false} axisLine={{ stroke: '#475569' }} width={28}
                   label={{ value: 'Progressive Overload (0–40)', angle: 0, position: 'insideTop', offset: -18, dx: +60, fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} />
 
@@ -213,13 +235,13 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
                   label={{ value: 'Neglected', position: 'center', fill: '#ef4444', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
                 <ReferenceArea x1={VOLUME_MID} x2={50} y1={0} y2={PROGRESS_MID} fill="rgba(245,158,11,0.12)"
                   label={{ value: 'Volume Focus', position: 'center', fill: '#f59e0b', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
-                <ReferenceArea x1={0} x2={VOLUME_MID} y1={PROGRESS_MID} y2={50} fill="rgba(59,130,246,0.12)"
+                <ReferenceArea x1={0} x2={VOLUME_MID} y1={PROGRESS_MID} y2={40} fill="rgba(59,130,246,0.12)"
                   label={{ value: 'Efficiency Zone', position: 'center', fill: '#3b82f6', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
-                <ReferenceArea x1={VOLUME_MID} x2={50} y1={PROGRESS_MID} y2={50} fill="rgba(34,197,94,0.12)"
+                <ReferenceArea x1={VOLUME_MID} x2={50} y1={PROGRESS_MID} y2={40} fill="rgba(34,197,94,0.12)"
                   label={{ value: 'Optimal Growth', position: 'center', fill: '#22c55e', fontSize: 11, fontWeight: 600, opacity: 0.5 }} />
 
 
-                <RechartsTooltip content={<CustomScatterTooltip />} />
+                <RechartsTooltip cursor={false} content={<CustomScatterTooltip />} />
 
                 <Scatter data={chartData} shape="circle" isAnimationActive={false}>
                   {chartData.map((entry) => {
