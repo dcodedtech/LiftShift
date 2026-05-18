@@ -219,7 +219,7 @@ export const HypertrophyScatterCard: React.FC<HypertrophyScatterCardProps> = ({
   };
 
   return (
-    <div className="bg-black/70 rounded-xl border border-slate-700/50 overflow-hidden h-[400px] sm:h-[450px] lg:h-full flex flex-col">
+    <div className="bg-black/70 rounded-xl border border-slate-700/50 overflow-hidden h-[400px] sm:h-[450px] lg:h-[550px] flex flex-col">
       <div className="p-3 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>

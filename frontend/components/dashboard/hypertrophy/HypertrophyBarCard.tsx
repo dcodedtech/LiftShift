@@ -104,11 +104,16 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
 }) => {
   const { tooltip, showTooltip, hideTooltip } = useTooltip();
 
+  const sortedData = useMemo(() =>
+    [...hypertrophyData].sort((a, b) => b.score.totalScore - a.score.totalScore),
+    [hypertrophyData]
+  );
+
   const stats = useMemo(() => {
-    if (hypertrophyData.length === 0) return null;
-    const avgScore = hypertrophyData.reduce((sum, m) => sum + m.score.totalScore, 0) / hypertrophyData.length;
-    return { avgScore, bestMuscle: hypertrophyData[0], count: hypertrophyData.length };
-  }, [hypertrophyData]);
+    if (sortedData.length === 0) return null;
+    const avgScore = sortedData.reduce((sum, m) => sum + m.score.totalScore, 0) / sortedData.length;
+    return { avgScore, bestMuscle: sortedData[0], count: sortedData.length };
+  }, [sortedData]);
 
   const prevPositionMap = useMemo(() => {
     if (!hypertrophyData30d || hypertrophyPeriod !== '7d') return null;
@@ -191,7 +196,7 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
                   );
                 })()}
               </div>
-              <p className="text-[10px] text-slate-500 mt-1 leading-tight">{stats.count} muscles tracked</p>
+              <p className="text-[10px] text-slate-500 mt-1 leading-tight">{stats.count} muscles actively trained</p>
               <p className="text-[10px] text-slate-500 mt-0.5">
                 {Math.round(stats.avgScore)}% average · Best: {stats.bestMuscle?.muscleName} ({stats.bestMuscle?.score.totalScore}%)
               </p>
@@ -205,7 +210,7 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pb-3">
-        {hypertrophyData.length > 0 ? (
+        {sortedData.length > 0 ? (
           <div className="space-y-2 pr-3">
             <div className="flex items-center gap-3 px-1">
               {([
@@ -219,7 +224,7 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
                 </div>
               ))}
             </div>
-            {hypertrophyData.map((m, idx) => {
+            {sortedData.map((m, idx) => {
               const isSelected = m.muscleId === selectedMuscleId;
               const rating = getScoreRating(m.score.totalScore);
               const currentPos = idx + 1;
@@ -229,7 +234,7 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
               const isNew = prevPos === undefined;
               return (
                 <div key={m.muscleId}
-                  className="flex items-center gap-2 rounded px-1 py-0.5 -mx-1 group relative cursor-pointer"
+                  className="flex items-center gap-2 rounded py-0.5 group relative cursor-pointer"
                   onClick={() => { if (window.innerWidth >= 1024) onMuscleClick?.(m.muscleId); }}
                   onMouseEnter={(e) => handleMouseEnter(e, m)}
                   onMouseLeave={hideTooltip}>
