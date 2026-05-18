@@ -78,7 +78,7 @@ export const useMuscleAnalysisHandlers = ({
   }, [headlessRatesMap, hypertrophyScoreMap, volumeThresholds]);
 
   const handleMuscleClick = useCallback((muscleId: string) => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
     setSelectedMuscle((prev) => {
       const next = prev === muscleId ? null : muscleId;

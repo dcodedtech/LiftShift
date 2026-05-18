@@ -50,7 +50,7 @@ export const ExerciseListPanel: React.FC<ExerciseListPanelProps> = ({
     }
     
     // Auto-scroll on mobile to show the exercise details below
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
       // Small delay to let React render and blur take effect
       requestAnimationFrame(() => {
         setTimeout(() => {

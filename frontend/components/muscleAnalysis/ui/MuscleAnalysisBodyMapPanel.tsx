@@ -58,8 +58,8 @@ export const MuscleAnalysisBodyMapPanel: React.FC<MuscleAnalysisBodyMapPanelProp
 }) => {
   const handleClick = (muscleId: string) => {
     handleMuscleClick(muscleId);
-    // Scroll to graph on mobile/tablet (< 1024px)
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    // Scroll to graph on mobile/tablet (< 768px)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
       setTimeout(() => {
         const target = document.getElementById('all-muscles-graph');
         if (target) {

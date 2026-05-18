@@ -235,7 +235,7 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
               return (
                 <div key={m.muscleId}
                   className="flex items-center gap-1 rounded py-0.5 group relative cursor-pointer"
-                  onClick={() => { if (window.innerWidth >= 1024) onMuscleClick?.(m.muscleId); }}
+                  onClick={() => { if (window.innerWidth >= 768) onMuscleClick?.(m.muscleId); }}
                   onMouseEnter={(e) => handleMouseEnter(e, m)}
                   onMouseLeave={hideTooltip}>
               <span className={`text-[10px] w-[15%] lg:w-[13%] truncate flex-shrink-0 ${isSelected ? 'font-semibold text-white' : 'text-slate-500'}`} style={SEMI_FANCY_FONT}>
