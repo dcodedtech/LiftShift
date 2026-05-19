@@ -101,7 +101,7 @@ export const mapLyfataWorkoutsToWorkoutSets = (
       setsForExercise.forEach((s, setIdx) => {
         let weight = toNumber(s.weight, 0);
 
-        if (weight > 0 && exerciseWeightUnit === 'lb') {
+        if (weight > 0 && (exerciseWeightUnit === 'lb' || exerciseWeightUnit === 'lbs')) {
           weight = weight * LBS_TO_KG;
         }
 
