@@ -194,19 +194,6 @@ export const SecondarySetMultiplierSection: React.FC<SecondarySetMultiplierSecti
       <span className="text-xs font-medium">Secondary Set Value</span>
     </div>
     <div className="rounded-lg border border-slate-700/50 bg-slate-900/20 p-3 space-y-2">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-[11px] text-slate-400">Secondary muscles per set</span>
-        <button
-          type="button"
-          onClick={() => {
-            onSecondarySetMultiplierChange(0.5);
-            setDraft('0.5');
-          }}
-          className="rounded-md border border-slate-600 bg-slate-900 px-2 py-1 text-[10px] font-medium text-slate-200 hover:border-slate-500 hover:bg-slate-800 transition-colors"
-        >
-          Default 0.5
-        </button>
-      </div>
       <input
         type="text"
         inputMode="decimal"
@@ -227,11 +214,11 @@ export const SecondarySetMultiplierSection: React.FC<SecondarySetMultiplierSecti
             commitDraft();
           }
         }}
-        className="w-full rounded-md border border-slate-600 bg-slate-950 px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        className="w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
         placeholder="0.00 to 1.00"
         aria-label="Secondary set multiplier"
       />
-      <p className="text-[10px] text-slate-500">Primary stays 1.0. Default secondary is 0.5.</p>
+      <p className="text-[10px] text-slate-500">For accurate tracking, set to: Beginner 0.4, Intermediate 0.3, Advanced 0.2</p>
     </div>
     </div>
   );
