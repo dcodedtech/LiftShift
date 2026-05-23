@@ -93,7 +93,7 @@ export const WeeklyRhythmCard = ({
                 strokeWidth={3}
                 fill="#ec4899"
                 fillOpacity={0.4}
-                animationDuration={1500}
+                animationDuration={500}
               />
               <Tooltip contentStyle={tooltipStyle as any} />
             </RadarChart>
@@ -103,7 +103,7 @@ export const WeeklyRhythmCard = ({
               <XAxis dataKey="subject" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} padding={RECHARTS_XAXIS_PADDING as any} />
               <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(val) => formatAxisNumber(Number(val))} />
               <Tooltip contentStyle={tooltipStyle as any} cursor={{ fill: 'rgb(var(--overlay-rgb) / 0.12)' }} />
-              <Bar dataKey="A" name="Workouts" fill="#ec4899" radius={[8, 8, 0, 0]} animationDuration={1500} />
+              <Bar dataKey="A" name="Workouts" fill="#ec4899" radius={[8, 8, 0, 0]} animationDuration={500} />
             </BarChart>
           )}
         </ResponsiveContainer>
