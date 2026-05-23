@@ -338,7 +338,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                       dot={false}
                       activeDot={false}
                       isAnimationActive={true}
-                      animationDuration={1000}
+                      animationDuration={500}
                     />
                     <Line
                       type="monotone"
@@ -362,7 +362,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                       />}
                       activeDot={{ r: 5, strokeWidth: 0 }}
                       isAnimationActive={true}
-                      animationDuration={1000}
+                      animationDuration={500}
                     />
                     <Line
                       type="monotone"
@@ -385,7 +385,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                       />}
                       activeDot={{ r: 5, strokeWidth: 0 }}
                       isAnimationActive={true}
-                      animationDuration={1000}
+                      animationDuration={500}
                     />
                   </>
                 ) : (
@@ -400,7 +400,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                       dot={false}
                       activeDot={{ r: 5, strokeWidth: 0, fill: '#06b6d4' }}
                       isAnimationActive={true}
-                      animationDuration={1000}
+                      animationDuration={500}
                       name="Left"
                       connectNulls
                     />
@@ -414,7 +414,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                       dot={false}
                       activeDot={{ r: 5, strokeWidth: 0, fill: '#8b5cf6' }}
                       isAnimationActive={true}
-                      animationDuration={1000}
+                      animationDuration={500}
                       name="Right"
                       connectNulls
                     />
@@ -431,7 +431,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                   dot={false}
                   activeDot={false}
                   isAnimationActive={true}
-                  animationDuration={1000}
+                  animationDuration={500}
                 />
               </AreaChart>
             </ResponsiveContainer>
