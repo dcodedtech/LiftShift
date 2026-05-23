@@ -93,7 +93,7 @@ export const MuscleTrendChart: React.FC<MuscleTrendChartProps> = ({
                   stroke={color}
                   fill={color}
                   fillOpacity={0.25}
-                  animationDuration={1200}
+                  animationDuration={500}
                 />
               );
             })}
@@ -124,7 +124,7 @@ export const MuscleTrendChart: React.FC<MuscleTrendChartProps> = ({
                   stackId="1"
                   fill={color}
                   radius={idx === trendKeys.length - 1 ? [6, 6, 0, 0] : [0, 0, 0, 0]}
-                  animationDuration={1200}
+                  animationDuration={500}
                 />
               );
             })}
