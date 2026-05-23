@@ -2,7 +2,6 @@ import { WorkoutSet } from '../../types';
 import { lyfatBackendGetSets } from '../../utils/api/lyfataBackend';
 import { identifyPersonalRecords } from '../../utils/analysis/core';
 import { saveSetupComplete } from '../../utils/storage/dataSourceStorage';
-import { clearLyftaApiKey } from '../../utils/storage/hevyCredentialsStorage';
 import { hydrateBackendWorkoutSetsWithSource } from '../auth/hydrateBackendWorkoutSets';
 import { getLyfatErrorMessage } from '../ui/appErrorMessages';
 import type { StartupAutoLoadParams } from './startupAutoLoadTypes';
@@ -43,7 +42,6 @@ export const loadLyftaFromApiKey = (
       deps.setCsvImportError(null);
     })
     .catch((err) => {
-      clearLyftaApiKey();
       if (shouldResetOnError) {
         saveSetupComplete(false);
         deps.setLyfatLoginError(getLyfatErrorMessage(err));

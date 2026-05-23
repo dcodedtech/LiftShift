@@ -15,7 +15,6 @@ import {
 import {
   getHevyProApiKey,
   saveHevyProApiKey,
-  clearHevyProApiKey,
   getHevyPassword,
   getHevyUsernameOrEmail,
   saveHevyPassword,
@@ -61,7 +60,6 @@ export const runHevySyncSaved = (deps: AppAuthHandlersDeps): void => {
         }
       })
       .catch((err) => {
-        clearHevyProApiKey();
         deps.setHevyLoginError(getHevyErrorMessage(err));
       })
       .finally(() => {
@@ -218,7 +216,6 @@ export const runHevyApiKeyLogin = (deps: AppAuthHandlersDeps, apiKey: string): v
     })
     .catch((err) => {
       trackEvent('hevy_sync_error', { method: 'pro_api_key' });
-      clearHevyProApiKey();
       deps.setHevyLoginError(getHevyErrorMessage(err));
     })
     .finally(() => {

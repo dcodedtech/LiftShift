@@ -8,7 +8,6 @@ import {
 } from '../../utils/api/hevyBackend';
 import { identifyPersonalRecords } from '../../utils/analysis/core';
 import {
-  clearHevyAuthToken,
   clearHevyRefreshToken,
   getHevyRefreshToken,
   saveHevyAuthToken,
@@ -18,7 +17,6 @@ import {
   saveSetupComplete,
 } from '../../utils/storage/dataSourceStorage';
 import {
-  clearHevyProApiKey,
   getHevyPassword,
   getHevyUsernameOrEmail,
   saveHevyPassword,
@@ -56,7 +54,6 @@ export const loadHevyFromProKey = (
       // Instant processing
       const hydrated = hydrateBackendWorkoutSetsWithSource(sets, 'hevy');
       if (hydrated.length === 0 || hydrated.every((s) => !s.parsedDate)) {
-        clearHevyProApiKey();
         if (shouldResetOnError) {
           saveSetupComplete(false);
           deps.setHevyLoginError('Hevy data could not be parsed. Please try syncing again.');
@@ -71,7 +68,6 @@ export const loadHevyFromProKey = (
       deps.setCsvImportError(null);
     })
     .catch((err) => {
-      clearHevyProApiKey();
       if (shouldResetOnError) {
         saveSetupComplete(false);
         deps.setHevyLoginError(getHevyErrorMessage(err));
@@ -107,7 +103,6 @@ export const loadHevyFromToken = (
 
     const hydrated = hydrateBackendWorkoutSetsWithSource(sets, 'hevy');
     if (hydrated.length === 0 || hydrated.every((s) => !s.parsedDate)) {
-      clearHevyAuthToken();
       if (shouldResetOnError) {
         saveSetupComplete(false);
         deps.setHevyLoginError('Hevy data could not be parsed. Please try syncing again.');
@@ -156,7 +151,6 @@ export const loadHevyFromToken = (
       }
       const status = (err as any)?.statusCode;
       if (status && status !== 401) {
-        clearHevyAuthToken();
         if (shouldResetOnError) {
           saveSetupComplete(false);
           deps.setHevyLoginError(getHevyErrorMessage(err));
@@ -167,7 +161,6 @@ export const loadHevyFromToken = (
       return attemptRefreshFallback()
         .catch(() => attemptCredentialFallback())
         .catch(() => {
-          clearHevyAuthToken();
           if (shouldResetOnError) {
             saveSetupComplete(false);
             deps.setHevyLoginError(getHevyErrorMessage(err));
@@ -225,7 +218,6 @@ export const loadHevyFromCredentials = async (
     const hydrated = hydrateBackendWorkoutSetsWithSource(sets, 'hevy');
 
     if (hydrated.length === 0 || hydrated.every((s) => !s.parsedDate)) {
-      clearHevyAuthToken();
       if (shouldResetOnError) {
         saveSetupComplete(false);
         deps.setHevyLoginError('Hevy data could not be parsed. Please try syncing again.');
@@ -243,7 +235,6 @@ export const loadHevyFromCredentials = async (
     return true;
   } catch (err) {
     trackEvent('hevy_sync_error', { method: 'auto_credentials_reload' });
-    clearHevyAuthToken();
     if (shouldResetOnError) {
       saveSetupComplete(false);
       deps.setHevyLoginError(getHevyErrorMessage(err));

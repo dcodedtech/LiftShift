@@ -7,7 +7,6 @@ import {
 import {
   getLyftaApiKey,
   saveLyftaApiKey,
-  clearLyftaApiKey,
 } from '../../utils/storage/hevyCredentialsStorage';
 import { lyfatBackendGetSets } from '../../utils/api/lyfataBackend';
 import { identifyPersonalRecords } from '../../utils/analysis/core';
@@ -46,7 +45,6 @@ export const runLyfatSyncSaved = (deps: AppAuthHandlersDeps): void => {
     })
     .catch((err) => {
       trackEvent('lyfta_sync_error', { method: 'saved_api_key' });
-      clearLyftaApiKey();
       deps.setLyfatLoginError(getLyfatErrorMessage(err));
     })
     .finally(() => {

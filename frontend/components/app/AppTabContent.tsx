@@ -178,11 +178,11 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
         )}
       </Suspense>
 
-      <div className="hidden sm:block mt-8">
+      <div className="hidden sm:block mt-5">
         <SupportLinks variant="secondary" layout="footer" />
       </div>
 
-      <div className="sm:hidden pb-[calc(env(safe-area-inset-bottom)+1.5rem)] mt-8">
+      <div className="sm:hidden pb-[calc(env(safe-area-inset-bottom))] mt-5">
         <SupportLinks variant="all" layout="footer" />
       </div>
     </main>

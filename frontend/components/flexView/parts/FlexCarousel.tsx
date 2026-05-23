@@ -23,7 +23,7 @@ const FlexCarouselPlaceholder = () => (
 export const FlexCarousel: React.FC<FlexCarouselProps> = ({ cards, onSelectCard, renderCard }) => (
   <div className="relative w-full overflow-hidden mt-10">
     <div
-      className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-3 pb-2 px-3"
+      className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-3 pb-20 px-3"
       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
     >
       {cards.map((card) => (

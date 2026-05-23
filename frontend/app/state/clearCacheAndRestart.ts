@@ -10,10 +10,6 @@ import {
   clearCombinedDataSources,
   clearSetupComplete,
 } from '../../utils/storage/dataSourceStorage';
-import {
-  clearHevyProApiKey,
-  clearLyftaApiKey,
-} from '../../utils/storage/hevyCredentialsStorage';
 
 export const clearCacheAndRestart = (): void => {
   trackEvent('unload_data', {});
@@ -35,8 +31,6 @@ export const forceRefreshAndRelogin = (): void => {
   resetUser();
   clearCSVData();
   clearHevyAuthToken();
-  clearHevyProApiKey();
-  clearLyftaApiKey();
   clearDataSourceChoice();
   clearLastCsvPlatform();
   clearLastLoginMethod();

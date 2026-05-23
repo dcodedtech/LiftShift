@@ -23,7 +23,7 @@ export const FlexCard: React.FC<FlexCardProps> = ({ children, theme, className =
   return (
     <div className={`relative isolate overflow-hidden rounded-3xl ${cardShadow} transition-all duration-500`}>
       <div className={`absolute inset-0 ${cardGradient}`} />
-      <div className={`absolute inset-0 backdrop-blur-[24px] ${glassSurface}`} />
+      <div className={`absolute inset-0  ${glassSurface}`} />
       <div className={`pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full blur-3xl ${glowClass}`} />
       <div className={`relative z-10 h-full ${className}`}>
         {children}
