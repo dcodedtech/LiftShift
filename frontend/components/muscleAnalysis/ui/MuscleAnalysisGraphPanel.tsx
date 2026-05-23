@@ -608,7 +608,7 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
                       stroke="none"
                       fill="url(#zoneGradient)"
                       mask="url(#zoneAreaTopFadeMaskDef)"
-                      isAnimationActive={false}
+                      animationDuration={500}
                     />
                     <Area
                       type="monotone"
@@ -616,7 +616,7 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
                       stroke="#175c0f"
                       strokeWidth={0.5}
                       fill="none"
-                      isAnimationActive={false}
+                      animationDuration={500}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
