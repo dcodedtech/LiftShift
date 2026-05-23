@@ -322,15 +322,15 @@ const HypertrophyScatterChart: React.FC<{ data: MuscleHypertrophyData[] }> = ({ 
         />
         <RechartsTooltip content={<CustomScatterTooltip />} />
         {/* Diagonal reference line across full Cartesian grid */}
-        <Scatter data={diagonalData} line={{ stroke: '#94a3b8', strokeDasharray: '4 4', strokeWidth: 1 }} lineType="joint" shape={() => <></>} isAnimationActive={false} legendType="none" />
+        <Scatter data={diagonalData} line={{ stroke: '#94a3b8', strokeDasharray: '4 4', strokeWidth: 1 }} lineType="joint" shape={() => <></>} animationDuration={500} legendType="none" />
         {/* Main data dots */}
-        <Scatter data={chartData} shape="circle" isAnimationActive={false}>
+        <Scatter data={chartData} shape="circle" animationDuration={500}>
           {chartData.map((entry) => (
             <Cell key={entry.muscleId} fill={getColor(entry.total)} fillOpacity={0.85} stroke={getColor(entry.total)} strokeWidth={0.5} />
           ))}
         </Scatter>
         {/* Extreme point labels only */}
-        <Scatter data={extremes} shape="circle" isAnimationActive={false} legendType="none"
+        <Scatter data={extremes} shape="circle" animationDuration={500} legendType="none"
           label={{ dataKey: 'name', position: 'top', fontSize: 9, fill: '#94a3b8', offset: 6 }}
         >
           {extremes.map((entry) => (
