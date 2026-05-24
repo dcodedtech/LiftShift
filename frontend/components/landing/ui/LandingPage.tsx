@@ -298,6 +298,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       {/* ========== PLATFORM DOCK ========== */}
       <PlatformDock items={platformDockItems} />
 
+      {/* ========== FOOTER ========== */}
+      <footer className="relative z-10 border-t border-white/10 mt-16 px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-sm">
+          <div>
+            <h3 className="text-white font-semibold mb-3">Product</h3>
+            <ul className="space-y-2">
+              <li><a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 transition-colors">About</a></li>
+              <li><a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a></li>
+              <li><a href={assetPath('features/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Features</a></li>
+              <li><a href={assetPath('faq/')} className="text-slate-400 hover:text-emerald-300 transition-colors">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold mb-3">Resources</h3>
+            <ul className="space-y-2">
+              <li><a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Supported apps</a></li>
+              <li><a href={assetPath('metrics/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Metrics glossary</a></li>
+              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Hevy vs Lyfta</a></li>
+              <li><a href={assetPath('ai/')} className="text-slate-400 hover:text-emerald-300 transition-colors">AI reference</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold mb-3">Company</h3>
+            <ul className="space-y-2">
+              <li><a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Privacy</a></li>
+              <li><a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-emerald-300 transition-colors">GitHub</a></li>
+              <li><a href="https://github.com/aree6/LiftShift/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-emerald-300 transition-colors">License (AGPL-3.0)</a></li>
+            </ul>
+          </div>
+          <div className="col-span-2 sm:col-span-1">
+            <h3 className="text-white font-semibold mb-3">LiftShift</h3>
+            <p className="text-slate-500 leading-relaxed text-xs">
+              Free and open source workout analytics. No account needed. Runs locally in your browser.
+            </p>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-white/5 text-center text-xs text-slate-600">
+          &copy; {new Date().getFullYear()} LiftShift. Open source under AGPL-3.0.
+        </div>
+      </footer>
+
       {/* Back to Top Button */}
       <AnimatePresence>
         {showScrollTop && (
