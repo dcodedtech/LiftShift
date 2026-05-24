@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useMemo, useState } from 'react';
 import { format, startOfMonth, endOfMonth, addMonths, eachDayOfInterval, getDay } from 'date-fns';
-import { Target } from 'lucide-react';
+import { Dumbbell, Target } from 'lucide-react';
 import type { DailySummary } from '../../../types';
 import { computationCache } from '../../../utils/storage/computationCache';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -202,7 +202,7 @@ export const ActivityHeatmap = memo(({
   };
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 p-4 sm:p-5 rounded-xl flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-hidden">
+    <div className="bg-black/70 border border-slate-700/50 p-2 sm:p-3 rounded-xl flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-hidden">
       <div className="flex-shrink-0 min-w-[160px] sm:min-w-[200px] lg:min-w-[240px] border-b lg:border-b-0 lg:border-r border-slate-700/50 pb-4 lg:pb-0 lg:pr-6 lg:flex lg:flex-col">
         <div className="flex flex-col gap-3 lg:flex-1">
           <div className="flex items-center justify-between">
@@ -253,19 +253,21 @@ export const ActivityHeatmap = memo(({
 
       <div className="flex-1 w-full overflow-x-auto pb-2 custom-scrollbar" ref={scrollContainerRef}>
         <div className="w-max">
-          <div className="grid grid-flow-col grid-rows-[auto_auto] auto-cols-max items-start gap-x-3 gap-y-2">
+          <div className="grid grid-flow-col grid-rows-[auto_auto] auto-cols-max items-start gap-x-3 gap-y-1">
             {monthBlocks.map((month, monthIdx) => {
-              const isLatestMonth = monthIdx === monthBlocks.length - 1;
-              const cellSizeClass = isLatestMonth ? 'w-[18px] h-[18px]' : 'w-2 h-2';
-              const dayGapClass = isLatestMonth ? 'gap-1' : 'gap-[2px]';
+              const isLatestMonth = monthIdx === monthBlocks.length - 1 || monthIdx === monthBlocks.length - 2;
+              const isLast = monthIdx === monthBlocks.length - 1;
+              const isSecondToLast = monthIdx === monthBlocks.length - 2;
+              const cellSizeClass = isLatestMonth ? 'w-[18px] h-[18px]' : 'w-2.5 h-2.5';
+              const dayGapClass = isLatestMonth ? 'gap-1' : 'gap-[3px]';
               const dayOfWeekLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
               return (
               <div
                 key={month.key}
-                className={`flex flex-col items-center ${isLatestMonth ? 'row-span-2' : ''}`}
+                className={`flex flex-col items-center ${isSecondToLast ? 'mx-6 ' : ''}${isLast ? 'mr-2 ' : ''}${isLatestMonth ? 'row-span-2 self-center' : ''}`}
                 style={isLatestMonth ? { gridRow: '1 / span 2' } : undefined}
               >
-                <div className="h-5 mb-1 flex items-center justify-center text-[10px] text-slate-500 font-medium whitespace-nowrap">
+                <div className="h-4 mb-0.5 flex items-center justify-center text-[10px] text-slate-500 font-medium whitespace-nowrap">
                   {month.label}
                 </div>
                 {isLatestMonth && (
@@ -295,7 +297,7 @@ export const ActivityHeatmap = memo(({
                           onMouseEnter={(e) => !isFuture && handleMouseEnter(e, day)}
                           onMouseLeave={() => !isFuture && setTooltip(null)}
                         >
-                          {isLatestMonth && dayNum <= 31 && dayNum}
+                          {isLatestMonth && dayNum <= 31 && (day.count > 0 && !isFuture ? <Dumbbell className={`w-3 h-3 ${isLight ? '!text-white' : '!text-black'}`} /> : dayNum)}
                         </div>
                       );
                     })}
