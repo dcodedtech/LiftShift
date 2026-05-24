@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Strong Import | LiftShift</title>
-    <meta name="description" content="How to use LiftShift with Strong: import CSV exports and visualize training volume, PRs, and exercise history." />
+    <title>Strong Workout Analytics — CSV Import Guide | LiftShift</title>
+    <meta name="description" content="Import your Strong workout CSV into LiftShift and get muscle heatmaps, plateau detection, PR tracking, and set-by-set feedback. Step-by-step guide with troubleshooting." />
     <link rel="canonical" href="https://liftshift.app/supported-apps/strong/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="LiftShift" />
-    <meta property="og:title" content="Strong Import" />
+    <meta property="og:title" content="Strong Workout Analytics — CSV Import Guide" />
     <meta property="og:description" content="How to use LiftShift with Strong: import CSV exports and visualize training volume, PRs, and exercise history." />
     <meta property="og:url" content="https://liftshift.app/supported-apps/strong/" />
     <meta property="og:image" content="https://liftshift.app/UI/logo.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Strong Import" />
+    <meta name="twitter:title" content="Strong Workout Analytics — Import Guide" />
     <meta name="twitter:description" content="How to use LiftShift with Strong: import CSV exports and visualize training volume, PRs, and exercise history." />
     <meta name="twitter:image" content="https://liftshift.app/UI/logo.png" />
 
@@ -30,30 +30,84 @@
         </a>
         <nav class="nav" aria-label="Primary">
           <a href="../../">Open App</a>
-          <a href="../">Supported apps</a>
+          <a href="../../about/">About</a>
           <a href="../../how-it-works/">How it works</a>
+          <a href="../">Supported apps</a>
           <a href="../../privacy/">Privacy</a>
         </nav>
       </header>
 
       <main class="card">
         <h1>Strong</h1>
-        <p class="muted">LiftShift supports Strong via CSV import.</p>
+        <p class="muted">
+          Strong is a great workout logger, but its built-in charts leave you guessing. LiftShift turns your Strong CSV export into detailed analytics — muscle heatmaps, plateau detection, PR tracking, and set-by-set feedback.
+        </p>
 
         <h2>Import options</h2>
         <ul>
-          <li><strong>CSV import</strong>: export from Strong and upload to LiftShift.</li>
+          <li><strong>CSV import</strong> — Export your workout history from Strong and upload the file to LiftShift. All analysis runs locally in your browser.</li>
+        </ul>
+
+        <h2>How to export your Strong data</h2>
+        <ol>
+          <li>Open the Strong app on your phone.</li>
+          <li>Go to <strong>Profile</strong> → <strong>Export Data</strong>.</li>
+          <li>Choose <strong>CSV</strong> as the export format.</li>
+          <li>Save or share the file to your computer.</li>
+          <li>Open LiftShift, click the import button, and select the CSV file.</li>
+        </ol>
+        <p>
+          Strong CSV exports can vary in format. LiftShift handles the most common variants automatically, including semicolon-delimited files and unit-suffixed headers.
+        </p>
+
+        <h2>What LiftShift reads from your Strong export</h2>
+        <ul>
+          <li><strong>Exercise names</strong> — Normalised so variations like &ldquo;Bench Press&rdquo; and &ldquo;Barbell Bench&rdquo; are recognised as the same movement.</li>
+          <li><strong>Set reps and weight</strong> — Used for training volume, 1RM estimates, and PR detection.</li>
+          <li><strong>Dates</strong> — Used for trend charts, consistency heatmaps, and rolling window comparisons.</li>
         </ul>
 
         <h2>Common Strong export variants</h2>
+        <p>Strong exports can differ depending on your app version and device. LiftShift handles these automatically:</p>
         <ul>
-          <li>Semicolon-delimited files</li>
-          <li>Unit-suffixed headers (e.g., “Weight (kg)”)</li>
+          <li><strong>Semicolon-delimited files</strong> — Some versions of Strong use semicolons instead of commas as delimiters. LiftShift detects and parses both.</li>
+          <li><strong>Unit-suffixed headers</strong> — Headers like &ldquo;Weight (kg)&rdquo; or &ldquo;Weight (lb)&rdquo; are recognised and stripped automatically.</li>
+          <li><strong>Routine names as workout identifiers</strong> — If your Strong export includes routine names, LiftShift displays them in your workout history.</li>
+        </ul>
+
+        <h2>Troubleshooting</h2>
+        <h3>LiftShift shows an error on import</h3>
+        <p>
+          Make sure you exported as <strong>CSV</strong>, not another format. If the file has a <code>.txt</code> or <code>.json</code> extension, re-export and choose CSV.
+        </p>
+
+        <h3>Exercise names are split across multiple entries</h3>
+        <p>
+          Strong sometimes exports slight variations of the same exercise name (e.g., &ldquo;Bench Press&rdquo; vs &ldquo;Bench Press (Barbell)&rdquo;). LiftShift normalises many common variations automatically. If you find a case that isn&rsquo;t handled, try renaming exercises consistently in Strong before exporting.
+        </p>
+
+        <h3>Switched from Strong to Hevy?</h3>
+        <p>
+          You can import data from both apps into LiftShift. The dashboard merges everything into one unified view.
+          Exercise names are normalised across apps so your history stays clean. See the <a href="../">Supported apps</a> page for other import guides.
+        </p>
+
+        <h2>What analytics you get with Strong data</h2>
+        <ul>
+          <li><a href="../../metrics/muscle-heatmap/">Muscle heatmaps</a> — See which muscles get the most (and least) weekly volume.</li>
+          <li><a href="../../metrics/personal-records/">Smart PR tracking</a> — All-time bests, 2-month bests, and premature PR flags.</li>
+          <li><a href="../../metrics/training-volume/">Training volume</a> — Graph your volume over weeks, months, or custom date ranges.</li>
+          <li>Exercise status labels (Getting stronger / Plateauing / Taking a dip) with confidence levels.</li>
+          <li>Set-by-set feedback analysing every set in any past workout.</li>
         </ul>
       </main>
 
       <footer class="footer">
-        <div>Next: <a href="../../metrics/training-volume/">Training volume definition</a></div>
+        <div>
+          <a href="../">Supported apps</a> &middot;
+          <a href="../../metrics/training-volume/">Training volume definition</a> &middot;
+          <a href="../../how-it-works/">How it works</a>
+        </div>
       </footer>
     </div>
   </body>
