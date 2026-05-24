@@ -111,7 +111,6 @@ const SectionView: React.FC<{ section: HowItWorksSection; level: number; linkTar
 export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = true, linkTarget = '_self' }) => {
   const navItems = useMemo(() => flattenSections(HOW_IT_WORKS_SECTIONS, 0), []);
   const [activeId, setActiveId] = useState<string>(HOW_IT_WORKS_SECTIONS[0]?.id ?? '');
-  const observerRef = useRef<IntersectionObserver | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToIdInPane = (id: string) => {
@@ -126,42 +125,10 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    // Prevent native hash navigation (which scrolls the outer page)
     e.preventDefault();
+    setActiveId(id);
     scrollToIdInPane(id);
   };
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const nodes = navItems
-      .map((i) => document.getElementById(i.id))
-      .filter(Boolean) as HTMLElement[];
-
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0));
-        const first = visible[0]?.target as HTMLElement | undefined;
-        if (first?.id) setActiveId(first.id);
-      },
-      {
-        root: contentRef.current,
-        rootMargin: '-20% 0px -70% 0px',
-        threshold: [0, 1],
-      }
-    );
-
-    for (const el of nodes) observerRef.current.observe(el);
-
-    return () => {
-      observerRef.current?.disconnect();
-      observerRef.current = null;
-    };
-  }, [navItems]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -170,7 +137,31 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
     if (!id) return;
 
     scrollToIdInPane(id);
+    setActiveId(id);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const nodes = navItems
+      .map((i) => document.getElementById(i.id))
+      .filter(Boolean) as HTMLElement[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0));
+        const first = visible[0]?.target as HTMLElement | undefined;
+        if (first?.id) setActiveId(first.id);
+      },
+      { root: contentRef.current, rootMargin: '-20% 0px -70% 0px', threshold: [0, 1] }
+    );
+
+    for (const el of nodes) observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [navItems]);
 
   return (
     <div className={`space-y-8 ${className}`}>
@@ -204,36 +195,48 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
         </div>
       </details>
 
-      <div className="grid gap-6 lg:grid-cols-[280px,minmax(0,1fr)] px-5 sm:px-6 h-[70vh] min-h-0">
-        <aside className="hidden lg:block pr-2 h-full min-h-0">
-          <div className="h-full min-h-0 overflow-y-auto pr-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400">On this page</div>
-            <nav className="mt-3 space-y-1 pb-6">
-              {navItems.map((i) => {
-                const isActive = i.id === activeId;
-                const pad = i.depth === 0 ? 'pl-0' : i.depth === 1 ? 'pl-3' : 'pl-6';
-                return (
-                  <a
-                    key={i.id}
-                    href={`#${i.id}`}
-                    onClick={(e) => handleNavClick(e, i.id)}
-                    className={`block rounded-lg px-2 py-1.5 text-sm ${pad} transition-colors border border-transparent ${isActive
-                      ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/20'
-                      : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                      }`}
-                  >
-                    {i.title}
-                  </a>
-                );
-              })}
-            </nav>
+      {/* Docs layout: sidebar (left) + content (right) */}
+      <div className="flex h-[calc(100vh-11rem)] min-h-0 rounded-2xl overflow-hidden border border-slate-800/30 bg-black/20">
+        {/* Sidebar */}
+        <aside className="hidden lg:flex lg:flex-col w-[280px] shrink-0 border-r border-slate-800/40 bg-black/25">
+          <div className="shrink-0 px-5 py-3.5 border-b border-slate-800/30">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Contents</span>
           </div>
+          <nav className="flex-1 overflow-y-auto py-3 space-y-0">
+            {navItems.map((i) => {
+              const isActive = i.id === activeId;
+              const isParent = i.depth === 0;
+              return (
+                <a
+                  key={i.id}
+                  href={`#${i.id}`}
+                  onClick={(e) => handleNavClick(e, i.id)}
+                  className={[
+                    'block border-l-2 transition-colors',
+                    isParent ? 'mt-2 first:mt-0' : '',
+                    i.depth === 0 ? 'pl-5' : i.depth === 1 ? 'pl-8' : 'pl-12',
+                    'pr-4 py-1.5 text-sm leading-snug',
+                    isParent ? 'text-[13px] font-semibold tracking-wide text-slate-200' : 'text-[13px] text-slate-400',
+                    isActive
+                      ? 'border-emerald-400 text-emerald-200 bg-emerald-500/8'
+                      : 'border-transparent hover:border-slate-700 hover:text-slate-200 hover:bg-white/[0.03]',
+                  ].join(' ')}
+                >
+                  {i.title}
+                </a>
+              );
+            })}
+          </nav>
         </aside>
 
-        <div ref={contentRef} className="space-y-10 overflow-y-auto pr-2 h-full min-h-0 scroll-pt-16 pb-32">
-          {HOW_IT_WORKS_SECTIONS.map((s) => (
-            <SectionView key={s.id} section={s} level={2} linkTarget={linkTarget} />
-          ))}
+        {/* Content */}
+        <div ref={contentRef} className="flex-1 overflow-y-auto min-w-0 scroll-pt-8">
+          <div className="max-w-3xl mx-auto px-8 py-10 space-y-14">
+            {HOW_IT_WORKS_SECTIONS.map((s) => (
+              <SectionView key={s.id} section={s} level={2} linkTarget={linkTarget} />
+            ))}
+            <div className="pb-16" />
+          </div>
         </div>
       </div>
     </div>

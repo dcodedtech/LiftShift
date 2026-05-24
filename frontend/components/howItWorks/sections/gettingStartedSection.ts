@@ -1,0 +1,28 @@
+import type { HowItWorksSection } from '../utils/howItWorksTypes';
+
+export const GETTING_STARTED_SECTION: HowItWorksSection = {
+  id: 'getting-started',
+  title: 'Getting started',
+  nodes: [
+    {
+      type: 'p',
+      text:
+        'LiftShift turns your workout log into clear, useful answers: which muscles are growing, what\'s stuck, what\'s improving, and what to do next. Connect Hevy, Strong, or Lyfta in seconds. No account needed. Everything runs in your browser.',
+    },
+    {
+      type: 'ul',
+      items: [
+        'Import from Hevy (login), Hevy Pro (API key), Lyfta (API key), or CSV (Strong / Lyfta / other apps).',
+        'Choose your body map gender and weight unit (kg / lbs) so charts and muscle visuals match you.',
+        'Explore your dashboard: weekly volume, personal records, exercise progress, muscle heatmaps, activity calendar, and set-by-set feedback.',
+      ],
+    },
+    {
+      type: 'callout',
+      tone: 'note',
+      title: 'No account, no upload',
+      text:
+        'All analytics run locally in your browser. When you use login or API-key syncing, LiftShift uses your credentials only to retrieve workout data — analysis is still done on your device.',
+    },
+  ],
+};
