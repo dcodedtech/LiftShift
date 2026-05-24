@@ -35,7 +35,7 @@ export const ExerciseStatusCard: React.FC<ExerciseStatusCardProps> = ({
           <p className="text-slate-300 text-xs sm:text-sm leading-tight">
             {inactiveReason?.parts?.length
               ? inactiveReason.parts.join(' · ')
-              : 'This exercise is inactive because it has not been trained recently or there is not enough data to generate meaningful insights.'}
+              : 'This exercise has not been trained recently.'}
           </p>
         </div>
         <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-slate-600" />

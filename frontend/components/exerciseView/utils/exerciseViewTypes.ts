@@ -11,5 +11,4 @@ export interface ExerciseMuscleTargets {
 export interface InactiveReason {
   parts: string[];
   tooOld: boolean;
-  notEnoughData: boolean;
 }

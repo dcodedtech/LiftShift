@@ -1,7 +1,7 @@
 import { subDays } from 'date-fns';
 import { ExerciseStats } from '../../../types';
 import { ExerciseMuscleData, getExerciseMuscleVolumes, lookupExerciseMuscleData, SVG_MUSCLE_NAMES } from '../../../utils/muscle/mapping';
-import { summarizeExerciseHistory, MIN_SESSIONS_FOR_TREND } from '../../../utils/analysis/exerciseTrend';
+import { summarizeExerciseHistory } from '../../../utils/analysis/exerciseTrend';
 import { HEADLESS_MUSCLE_NAMES } from '../../../utils/muscle/mapping';
 import { getVolumeZone, getVolumeThresholds } from '../../../utils/muscle/hypertrophy/muscleParams';
 import type { ExerciseMuscleTargets, InactiveReason } from './exerciseViewTypes';
@@ -17,18 +17,15 @@ export const getInactiveReason = (
   const sessions = summarizedHistoryByName.get(selectedStats.name) ?? summarizeExerciseHistory(selectedStats.history, { exerciseName: selectedStats.name });
   const lastDate = sessions[0]?.date ?? null;
   const tooOld = !lastDate || lastDate < activeSince;
-  const notEnoughData = sessions.length < MIN_SESSIONS_FOR_TREND;
 
-  if (!tooOld && !notEnoughData) return null;
+  if (!tooOld) return null;
 
   const parts: string[] = [];
   if (tooOld) parts.push('You haven\'t trained this exercise recently');
-  if (notEnoughData) parts.push('New exercise: keep logging sessions to build your history (check back soon for trends)');
 
   return {
     parts,
     tooOld,
-    notEnoughData,
   };
 };
 

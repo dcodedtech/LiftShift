@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ExerciseStats } from '../../../types';
-import { analyzeExerciseTrendCore, ExerciseTrendStatus, MIN_SESSIONS_FOR_TREND, summarizeExerciseHistory } from '../../../utils/analysis/exerciseTrend';
+import { analyzeExerciseTrendCore, ExerciseTrendStatus, summarizeExerciseHistory } from '../../../utils/analysis/exerciseTrend';
 import type { ExerciseTrendMode } from '../../../utils/storage/localStorage';
 import { analyzeExerciseTrend, type StatusResult } from '../trend/exerciseTrendUi';
 
@@ -115,11 +115,10 @@ export function useExerciseFilters({
       const sessions = summarizedHistoryByName.get(stat.name) ?? [];
       const lastDate = sessions[0]?.date ?? null;
       const tooOld = !lastDate || lastDate < activeSince;
-      const notEnoughData = sessions.length < MIN_SESSIONS_FOR_TREND;
-      const isEligible = !tooOld && !notEnoughData;
+      const isEligible = !tooOld;
       eligibilityByName.set(stat.name, {
         isEligible,
-        inactiveLabel: notEnoughData ? 'new exercise' : 'inactive',
+        inactiveLabel: 'inactive',
       });
 
       if (!isEligible) continue;
