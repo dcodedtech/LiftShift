@@ -84,6 +84,10 @@ export const LyftaLoginModal: React.FC<LyftaLoginModalProps> = ({
         className="pt-6 space-y-3"
         onSubmit={(e) => {
           e.preventDefault();
+          if (!apiKey.trim()) {
+            setTouched(true);
+            return;
+          }
           const trimmedKey = apiKey.trim();
           onLogin(trimmedKey);
         }}

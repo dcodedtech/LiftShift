@@ -219,7 +219,16 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
         onSubmit={(e) => {
           e.preventDefault();
           if (loginMode === 'apiKey') {
+            if (!apiKey.trim()) {
+              setTouchedApiKey(true);
+              return;
+            }
             onLoginWithApiKey(apiKey.trim());
+            return;
+          }
+          if (!emailOrUsername.trim() || !password) {
+            setTouchedUser(true);
+            setTouchedPass(true);
             return;
           }
           const trimmed = emailOrUsername.trim();

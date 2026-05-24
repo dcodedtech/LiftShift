@@ -524,11 +524,10 @@ const App: React.FC = () => {
               <strong>{relativeTime}</strong>
             </span>
           );
-        }
-        dataAgeShownRef.current = true;
-        return () => clearTimeout(timer);
-      }, 800);
-      dataAgeShownRef.current = true;
+         }
+       }, 800);
+       dataAgeShownRef.current = true;
+       return () => clearTimeout(timer);
     }
   }, [parsedData, showColdStartOverlay, onboarding?.intent]);
 
