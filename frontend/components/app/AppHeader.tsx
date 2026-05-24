@@ -53,9 +53,6 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 style={{ color: 'var(--app-fg)' }}
               >
                 <span style={SEMI_FANCY_FONT}>LiftShift</span>
-                <sup className="ml-1 inline-block rounded-full border border-amber-500/30 bg-amber-500/15 px-1 py-0.5 text-[7px] sm:text-[9px] font-semibold leading-none tracking-wide text-amber-400 align-super -translate-y-0.5 -translate-x-2">
-                  BETA
-                </sup>
               </span>
             </div>
           </div>
