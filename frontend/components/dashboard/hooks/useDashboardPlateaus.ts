@@ -41,7 +41,7 @@ export const useDashboardPlateaus = (args: {
   }, [exerciseStats]);
 
   const activePlateauExercises = useMemo(() => {
-    const activeSince = subDays(effectiveNow, 60);
+    const activeSince = subDays(effectiveNow, 45);
     return plateauAnalysis.plateauedExercises.filter((p) => {
       const stat = exerciseStatsMap.get(p.exerciseName);
       if (!stat) return false;

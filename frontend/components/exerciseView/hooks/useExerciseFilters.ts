@@ -99,7 +99,7 @@ export function useExerciseFilters({
 
   // Calculate training structure
   const trainingStructure = useMemo(() => {
-    const activeSince = new Date(effectiveNow.getTime() - 60 * 24 * 60 * 60 * 1000);
+    const activeSince = new Date(effectiveNow.getTime() - 45 * 24 * 60 * 60 * 1000);
 
     let activeCount = 0;
     let overloadCount = 0;

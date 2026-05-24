@@ -28,7 +28,7 @@ export const FAKE_PR_POST_PR_DROP_THRESHOLD = -2.5; // Reduced from 4% to 2.5% -
 // - Losing: < -3%
 export const GAINING_PCT_THRESHOLD = 2.0;
 export const LOSING_PCT_THRESHOLD = -3.0;
-export const MIN_SESSIONS_FOR_TREND = 4;
+export const MIN_SESSIONS_FOR_TREND = 2;
 
 // ============================================================================
 // Types (merged from exerciseTrendTypes.ts)

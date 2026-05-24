@@ -13,7 +13,7 @@ export const getInactiveReason = (
 ): InactiveReason | null => {
   if (!selectedStats) return null;
 
-  const activeSince = subDays(effectiveNow, 60);
+  const activeSince = subDays(effectiveNow, 45);
   const sessions = summarizedHistoryByName.get(selectedStats.name) ?? summarizeExerciseHistory(selectedStats.history, { exerciseName: selectedStats.name });
   const lastDate = sessions[0]?.date ?? null;
   const tooOld = !lastDate || lastDate < activeSince;
