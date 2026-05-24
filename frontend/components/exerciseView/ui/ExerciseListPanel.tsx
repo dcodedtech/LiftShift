@@ -93,7 +93,7 @@ export const ExerciseListPanel: React.FC<ExerciseListPanelProps> = ({
   };
 
   return (
-    <div className="lg:col-span-1 flex flex-col gap-1 h-[25vh] lg:h-0 lg:min-h-full">
+    <div className="lg:col-span-1 flex flex-col gap-1 h-[34vh] lg:h-0 lg:min-h-full">
       <div className="relative shrink-0">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
         <input
