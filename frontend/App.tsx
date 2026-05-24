@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import { Trophy } from 'lucide-react';
 import { WorkoutSet } from './types';
 import { Tab } from './app/navigation';
 import { AppOnboardingLayer } from './components/app/AppOnboardingLayer';
 import { AppLoadingOverlay } from './components/app/AppLoadingOverlay';
 import { UserPreferencesModal } from './components/modals/userPreferences/UserPreferencesModal';
+import { ToastProvider, useToast } from './components/ui/ToastProvider';
 import type { OnboardingFlow } from './app/onboarding/types';
 import { getEffectiveNowFromWorkoutData } from './utils/date/dateUtils';
 import { getDataSourceChoice, getSetupComplete } from './utils/storage/dataSourceStorage';
@@ -22,6 +24,7 @@ import { useAppSideEffects } from './app/state';
 import { useAppDerivedData } from './app/state';
 import { useCalendarSelectionHandlers } from './app/state';
 import { useUpdateFlowHandler } from './app/auth';
+import { calculatePRInsights } from './utils/analysis/insights';
 import { createFingerprintMatcher } from './utils/exercise/exerciseFingerprint';
 
 const CHUNK_RELOAD_KEY = 'liftshift_chunk_reload_once';
@@ -449,12 +452,114 @@ const App: React.FC = () => {
 
   const showColdStartOverlay = onboarding?.intent !== 'initial' && parsedData.length === 0 && !hasHydratedData;
 
+  const formatRelativeTime = (ms: number): string => {
+    const minutes = Math.floor(ms / (1000 * 60));
+    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+    if (minutes < 1) return 'just now';
+    if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    if (hours < 24) {
+      const remMins = minutes % 60;
+      if (remMins === 0) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+      return `${hours}h ${remMins}m ago`;
+    }
+    const remHours = hours % 24;
+    if (days === 1) {
+      if (remHours === 0) return '1 day ago';
+      return `1 day, ${remHours}h ago`;
+    }
+    if (remHours === 0) return `${days} days ago`;
+    return `${days} days, ${remHours}h ago`;
+  };
+
+  const dataAgeShownRef = useRef(false);
+  const prevHasFilterRef = useRef(false);
+
+  useEffect(() => {
+    if (showColdStartOverlay || parsedData.length === 0 || onboarding?.intent === 'initial') {
+      dataAgeShownRef.current = false;
+      return;
+    }
+
+    if (dataAgeShownRef.current) return;
+
+    let latestMs = 0;
+    for (const s of parsedData) {
+      if (s.parsedDate) {
+        const ts = s.parsedDate.getTime();
+        if (ts > latestMs) latestMs = ts;
+      }
+    }
+
+    if (latestMs > 0) {
+      const msAgo = Date.now() - latestMs;
+      const relativeTime = formatRelativeTime(msAgo);
+      const prInsights = calculatePRInsights(parsedData, new Date());
+      const prsToday = prInsights.recentPRs.filter((pr) => {
+        const prDate = pr.date;
+        if (!prDate) return false;
+        const latestDate = new Date(latestMs);
+        return prDate.toDateString() === latestDate.toDateString();
+      });
+      const prCount = prsToday.length;
+
+      const timer = setTimeout(() => {
+        if (prCount > 0) {
+          addToastRef.current?.(
+            <div className="flex flex-col gap-1">
+              <span>
+                <span style={{ color: 'var(--text-secondary)' }}>Last workout was </span>
+                <strong>{relativeTime}</strong>
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-yellow-400 font-semibold">
+                <Trophy className="w-4 h-4" />
+                with {prCount} new PR{prCount === 1 ? '' : 's'}
+              </span>
+            </div>
+          );
+        } else {
+          addToastRef.current?.(
+            <span>
+              <span style={{ color: 'var(--text-secondary)' }}>Last session was </span>
+              <strong>{relativeTime}</strong>
+            </span>
+          );
+        }
+        dataAgeShownRef.current = true;
+        return () => clearTimeout(timer);
+      }, 800);
+      dataAgeShownRef.current = true;
+    }
+  }, [parsedData, showColdStartOverlay, onboarding?.intent]);
+
+  useEffect(() => {
+    if (onboarding?.intent === 'initial') return;
+    if (!prevHasFilterRef.current && hasActiveCalendarFilter) {
+      addToastRef.current?.('Calendar filter applied', 1500);
+    } else if (prevHasFilterRef.current && !hasActiveCalendarFilter) {
+      addToastRef.current?.('Calendar filter removed', 1500);
+    }
+    prevHasFilterRef.current = hasActiveCalendarFilter;
+  }, [hasActiveCalendarFilter, onboarding?.intent]);
+
+  const addToastRef = useRef<((content: React.ReactNode, duration?: number) => string) | null>(null);
+
+  const ToastNotifier: React.FC = () => {
+    const { addToast } = useToast();
+    useEffect(() => {
+      addToastRef.current = addToast;
+    }, [addToast]);
+    return null;
+  };
+
   return (
-    <div
-      className="flex flex-col min-h-[100svh] h-[100dvh] overscroll-none bg-transparent text-[color:var(--app-fg)] font-sans"
-      style={{ background: 'var(--app-bg)' }}
-    >
-      <AppShell
+    <ToastProvider>
+      <ToastNotifier />
+      <div
+        className="flex flex-col min-h-[100svh] h-[100dvh] overscroll-none bg-transparent text-[color:var(--app-fg)] font-sans"
+        style={{ background: 'var(--app-bg)' }}
+      >
+        <AppShell
         onboardingIntent={onboarding?.intent ?? null}
         onSetOnboarding={setOnboarding}
         activeTab={activeTab}
@@ -550,6 +655,7 @@ const App: React.FC = () => {
 
       <AppLoadingOverlay open={isAnalyzing || showColdStartOverlay} isCompleting={isCompleting} />
     </div>
+    </ToastProvider>
   );
 };
 
