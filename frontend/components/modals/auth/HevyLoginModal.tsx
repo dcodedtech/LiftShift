@@ -62,6 +62,9 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
   const passwordTouchedRef = useRef(false);
   const warmupTriggeredRef = useRef(false);
   const passwordHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [touchedUser, setTouchedUser] = useState(false);
+  const [touchedPass, setTouchedPass] = useState(false);
+  const [touchedApiKey, setTouchedApiKey] = useState(false);
 
   // Cooldown timer effect
   useEffect(() => {
@@ -241,13 +244,19 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                   <label className="block text-xs font-semibold text-slate-200">Hevy Pro API key</label>
                   <input
                     value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
+                    onChange={(e) => {
+                      setApiKey(e.target.value);
+                      if (touchedApiKey && e.target.value.trim()) setTouchedApiKey(false);
+                    }}
+                    onBlur={() => setTouchedApiKey(true)}
                     disabled={isLoading}
-                    className="mt-1 w-full h-10 rounded-md bg-slate-900/20 border border-slate-700/60 px-3 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-emerald-500/60"
+                    className={`mt-1 w-full h-10 rounded-md bg-slate-900/20 border px-3 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-emerald-500/60 ${touchedApiKey && !apiKey.trim() ? 'border-rose-500/60' : 'border-slate-700/60'}`}
                     placeholder="Enter your Hevy API key"
                     autoComplete="off"
-                    required
                   />
+                  {touchedApiKey && !apiKey.trim() && (
+                    <p className="mt-1 text-xs text-rose-400">Enter your Hevy API key to continue.</p>
+                  )}
                 </div>
               ) : (
                 <>
@@ -257,13 +266,19 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                       name="username"
                       value={emailOrUsername}
                       onFocus={() => maybeWarmup()}
-                      onChange={(e) => handleUsernameChange(e.target.value)}
+                      onChange={(e) => {
+                        handleUsernameChange(e.target.value);
+                        if (touchedUser && e.target.value.trim()) setTouchedUser(false);
+                      }}
+                      onBlur={() => setTouchedUser(true)}
                       disabled={isLoading}
-                      className="mt-1 w-full h-10 rounded-md bg-slate-900/20 border border-slate-700/60 px-3 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-emerald-500/60"
+                      className={`mt-1 w-full h-10 rounded-md bg-slate-900/20 border px-3 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-emerald-500/60 ${touchedUser && !emailOrUsername.trim() ? 'border-rose-500/60' : 'border-slate-700/60'}`}
                       placeholder="Use your Hevy username or email"
                       autoComplete="username"
-                      required
                     />
+                    {touchedUser && !emailOrUsername.trim() && (
+                      <p className="mt-1 text-xs text-rose-400">Enter your Hevy username or email.</p>
+                    )}
                   </div>
 
                   <div>
@@ -277,12 +292,13 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                         onChange={(e) => {
                           passwordTouchedRef.current = true;
                           setPassword(e.target.value);
+                          if (touchedPass && e.target.value) setTouchedPass(false);
                         }}
+                        onBlur={() => setTouchedPass(true)}
                         disabled={isLoading}
-                        className="mt-1 w-full h-10 rounded-md bg-slate-900/20 border border-slate-700/60 px-3 pr-10 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-emerald-500/60"
+                        className={`mt-1 w-full h-10 rounded-md bg-slate-900/20 border px-3 pr-10 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-emerald-500/60 ${touchedPass && !password ? 'border-rose-500/60' : 'border-slate-700/60'}`}
                         placeholder="Password"
                         autoComplete="current-password"
-                        required
                       />
                       <button
                         type="button"
@@ -292,6 +308,9 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
+                    {touchedPass && !password && (
+                      <p className="mt-1 text-xs text-rose-400">Enter your Hevy password.</p>
+                    )}
                   </div>
                 </>
               )}

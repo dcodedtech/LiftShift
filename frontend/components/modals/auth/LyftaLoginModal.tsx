@@ -40,6 +40,7 @@ export const LyftaLoginModal: React.FC<LyftaLoginModalProps> = ({
 }) => {
   const [apiKey, setApiKey] = useState(() => getLyftaApiKey() || '');
   const [showLoginHelp, setShowLoginHelp] = useState(false);
+  const [touched, setTouched] = useState(false);
 
   return (
     <OnboardingModalShell
@@ -103,13 +104,19 @@ export const LyftaLoginModal: React.FC<LyftaLoginModalProps> = ({
           <label className="block text-xs font-semibold text-slate-200">Lyfta API Key</label>
           <input
             value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
+            onChange={(e) => {
+              setApiKey(e.target.value);
+              if (touched && e.target.value.trim()) setTouched(false);
+            }}
+            onBlur={() => setTouched(true)}
             disabled={isLoading}
-            className="mt-1 w-full h-10 rounded-md bg-slate-900/20 border border-slate-700/60 px-3 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-purple-500/60"
+            className={`mt-1 w-full h-10 rounded-md bg-slate-900/20 border px-3 text-sm text-slate-200 placeholder:text-slate-500 outline-none focus:border-purple-500/60 ${touched && !apiKey.trim() ? 'border-rose-500/60' : 'border-slate-700/60'}`}
             placeholder="Enter your Lyfta API key"
             autoComplete="off"
-            required
           />
+          {touched && !apiKey.trim() && (
+            <p className="mt-1 text-xs text-rose-400">Enter your Lyfta API key to continue.</p>
+          )}
         </div>
 
         {errorMessage ? (
@@ -193,8 +200,28 @@ export const LyftaLoginModal: React.FC<LyftaLoginModalProps> = ({
                 lyfta.app
               </a>
             </li>
-            <li>Sign in to your Lyfta account</li>
-            <li>Community → API access → Generate API Key</li>
+            <li>
+              {'Sign in to your '}
+              <a
+                href="https://lyfta.app/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-purple-300 hover:text-purple-200 underline"
+              >
+                Lyfta account
+              </a>
+            </li>
+            <li>
+              {'Community → API access → '}
+              <a
+                href="https://lyfta.app/settings"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-purple-300 hover:text-purple-200 underline"
+              >
+                Generate API Key
+              </a>
+            </li>
             <li>Copy your API key and paste it above</li>
           </ol>
         </motion.div>
