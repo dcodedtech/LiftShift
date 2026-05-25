@@ -1,5 +1,6 @@
 import React from 'react';
 import { Info, Sparkles, Menu } from 'lucide-react';
+import { useTheme } from '../theme/ThemeProvider';
 import { assetPath } from '../../constants';
 import { SEMI_FANCY_FONT } from '../../utils/ui/uiConstants';
 
@@ -20,43 +21,45 @@ export const Navigation: React.FC<NavigationProps> = ({
   variant = 'landing',
   className = ''
 }) => {
+  const { mode } = useTheme();
+  const isLight = mode === 'light';
   return (
     <header className={`h-20 sm:h-24 flex items-center justify-between ${className}`}>
       {/* Logo on the left */}
-      <a href={assetPath('/')} className="flex items-center gap-2 sm:gap-3 rounded-xl px-1.5 sm:px-2 py-1 hover:bg-white/5 transition-colors">
+      <a href={assetPath('/')} className={`flex items-center gap-2 sm:gap-3 rounded-xl px-1.5 sm:px-2 py-1 transition-colors ${isLight ? 'hover:bg-black/5' : 'hover:bg-white/5'}`}>
         <img src={assetPath('/UI/logo.png')} alt="LiftShift Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
-        <span className="text-white font-semibold text-sm sm:text-xl" style={SEMI_FANCY_FONT}>LiftShift</span>
+        <span className={`font-semibold text-sm sm:text-xl ${isLight ? 'text-slate-900' : 'text-white'}`} style={SEMI_FANCY_FONT}>LiftShift</span>
       </a>
 
-      {/* Navigation buttons grouped on the right - Desktop */}
-      <div className="hidden sm:flex items-center gap-4">
+      {/* Navigation links on the right - Desktop */}
+      <div className="hidden sm:flex items-center gap-5">
         <a
           href={assetPath('how-it-works/')}
-          className={`group inline-flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-xs font-medium bg-slate-950/50 border shadow-lg ${variant === 'info' && activeNav === 'how-it-works'
-              ? 'border-emerald-400 text-emerald-300 shadow-emerald-500/40'
-              : 'border-emerald-500/30 text-slate-300 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300 hover:shadow-emerald-500/30'
+          className={`inline-flex items-center gap-1.5 transition-colors duration-200 text-sm font-medium ${variant === 'info' && activeNav === 'how-it-works'
+              ? 'text-emerald-300'
+              : `${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-300 hover:text-emerald-300'}`
             }`}
         >
-          <Info className="w-3.5 h-3.5 group-hover:text-emerald-300 transition-colors" />
+          <Info className="w-3.5 h-3.5" />
           <span>How it works</span>
         </a>
         <a
           href={assetPath('features/')}
-          className={`group inline-flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-xs font-medium bg-slate-950/50 border shadow-lg ${variant === 'info' && activeNav === 'features'
-              ? 'border-emerald-400 text-emerald-300 shadow-emerald-500/40'
-              : 'border-emerald-500/30 text-slate-300 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300 hover:shadow-emerald-500/30'
+          className={`inline-flex items-center gap-1.5 transition-colors duration-200 text-sm font-medium ${variant === 'info' && activeNav === 'features'
+              ? 'text-emerald-300'
+              : `${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-300 hover:text-emerald-300'}`
             }`}
         >
-          <Sparkles className="w-3.5 h-3.5 group-hover:text-emerald-300 transition-colors" />
+          <Sparkles className="w-3.5 h-3.5" />
           <span>Features</span>
         </a>
         <a
           href="https://github.com/aree6/LiftShift"
           target="_blank"
           rel="noopener noreferrer"
-          className={`group inline-flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-xs font-medium bg-slate-950/50 border shadow-lg border-emerald-500/30 text-slate-300 shadow-emerald-500/10 hover:border-emerald-400 hover:text-emerald-300 hover:shadow-emerald-500/30`}
+          className={`inline-flex items-center gap-1.5 transition-colors duration-200 text-sm font-medium ${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-300 hover:text-emerald-300'}`}
         >
-          <GithubIcon className="w-3.5 h-3.5 group-hover:text-emerald-300 transition-colors" />
+          <GithubIcon className="w-3.5 h-3.5" />
           <span>GitHub</span>
         </a>
       </div>
@@ -67,7 +70,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           href={assetPath('how-it-works/')}
           className={`inline-flex items-center gap-1 text-xs px-1.5 py-1 transition-colors ${variant === 'info' && activeNav === 'how-it-works'
             ? 'text-emerald-200'
-            : 'text-slate-300 hover:text-emerald-200'
+            : `${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-300 hover:text-emerald-200'}`
             }`}
         >
           <Info className="w-2.5 h-2.5" />
@@ -77,13 +80,13 @@ export const Navigation: React.FC<NavigationProps> = ({
           href={assetPath('features/')}
           className={`inline-flex items-center gap-1 text-xs px-1.5 py-1 transition-colors ${variant === 'info' && activeNav === 'features'
             ? 'text-emerald-200'
-            : 'text-slate-300 hover:text-emerald-200'
+            : `${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-300 hover:text-emerald-200'}`
             }`}
         >
           <Sparkles className="w-2.5 h-2.5" />
           <span>Features</span>
         </a>
-        <a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-emerald-200 px-1.5 py-1">
+        <a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 text-xs px-1.5 py-1 transition-colors ${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-300 hover:text-emerald-200'}`}>
           <GithubIcon className="w-2.5 h-2.5" />
           <span>GitHub</span>
         </a>
