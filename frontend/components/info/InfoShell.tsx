@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigation } from '../layout/Navigation';
+import { useTheme } from '../theme/ThemeProvider';
 import { assetPath } from '../../constants';
 import { clientOnly } from 'vike-react/clientOnly';
 
@@ -14,6 +15,8 @@ type InfoShellProps = {
 };
 
 export const InfoShell: React.FC<InfoShellProps> = ({ activeNav = null, title, subtitle, children }) => {
+  const { mode } = useTheme();
+  const isLight = mode === 'light';
   const platformDockItems = [
     {
       name: 'Hevy',
@@ -51,7 +54,7 @@ export const InfoShell: React.FC<InfoShellProps> = ({ activeNav = null, title, s
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans">
+    <div className={`min-h-screen font-sans ${isLight ? 'bg-white text-slate-900' : 'bg-black text-white'}`}>
       <div className="fixed inset-0 z-[1] pointer-events-none">
         <LightRays
           fallback={null}
@@ -70,56 +73,54 @@ export const InfoShell: React.FC<InfoShellProps> = ({ activeNav = null, title, s
       </div>
 
       {/* Navigation */}
-      <Navigation variant="info" activeNav={activeNav} className="px-4 sm:px-6 lg:px-8" />
+      <div className="mx-auto max-w-6xl w-full pt-2">
+        <Navigation variant="info" activeNav={activeNav} className="px-4 sm:px-6 lg:px-8" />
+      </div>
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-44">
-        <div className="rounded-3xl border border-white/10 bg-black/25 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.45)] overflow-hidden">
-          <div className="p-6 sm:p-8">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>
-            {subtitle ? <p className="mt-3 text-slate-300">{subtitle}</p> : null}
-            <div className="mt-8 space-y-7">{children}</div>
-          </div>
-        </div>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>
+        {subtitle ? <p className={`mt-3 ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>{subtitle}</p> : null}
+        <div className="mt-8 space-y-7">{children}</div>
       </main>
 
       <PlatformDock fallback={null} items={platformDockItems} />
 
-      <footer className="relative z-10 border-t border-white/10 mt-16 px-4 sm:px-6 lg:px-8 py-10">
+      <footer className={`relative z-10 border-t mt-16 px-4 sm:px-6 lg:px-8 py-10 ${isLight ? 'border-black/10' : 'border-white/10'}`}>
         <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-sm">
           <div>
-            <h3 className="text-white font-semibold mb-3">Product</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Product</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('about/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">About</a></li>
-              <li><a href={assetPath('how-it-works/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">How it works</a></li>
-              <li><a href={assetPath('features/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Features</a></li>
-              <li><a href={assetPath('faq/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">FAQ</a></li>
+              <li><a href={assetPath('about/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>About</a></li>
+              <li><a href={assetPath('how-it-works/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>How it works</a></li>
+              <li><a href={assetPath('features/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Features</a></li>
+              <li><a href={assetPath('faq/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>FAQ</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-3">Resources</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Resources</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('supported-apps/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Supported apps</a></li>
-              <li><a href={assetPath('metrics/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Metrics glossary</a></li>
-              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">App comparison</a></li>
-              <li><a href={assetPath('ai/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">AI reference</a></li>
+              <li><a href={assetPath('supported-apps/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Supported apps</a></li>
+              <li><a href={assetPath('metrics/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Metrics glossary</a></li>
+              <li><a href={assetPath('hevy-vs-lyfta/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>App comparison</a></li>
+              <li><a href={assetPath('ai/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>AI reference</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-3">Company</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Company</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('privacy/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Privacy</a></li>
-              <li><a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">GitHub</a></li>
-              <li><a href="https://github.com/aree6/LiftShift/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">License (AGPL-3.0)</a></li>
+              <li><a href={assetPath('privacy/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Privacy</a></li>
+              <li><a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>GitHub</a></li>
+              <li><a href="https://github.com/aree6/LiftShift/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>License (AGPL-3.0)</a></li>
             </ul>
           </div>
           <div className="col-span-2 sm:col-span-1">
-            <h3 className="text-white font-semibold mb-3">LiftShift</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>LiftShift</h3>
             <p className="text-slate-500 leading-relaxed text-xs">
               Free and open source workout analytics. No account needed. Runs locally in your browser.
             </p>
           </div>
         </div>
-        <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-white/5 text-center text-xs text-slate-600">
+        <div className={`max-w-6xl mx-auto mt-8 pt-6 border-t text-center text-xs ${isLight ? 'border-black/5 text-slate-500' : 'border-white/5 text-slate-600'}`}>
           &copy; {new Date().getFullYear()} LiftShift. Open source under AGPL-3.0.
         </div>
       </footer>
