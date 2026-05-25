@@ -219,7 +219,7 @@ const App: React.FC = () => {
   );
 
   const mergeIntoCombinedData = useCallback(
-    (source: 'hevy' | 'lyfta' | 'strong' | 'other', incoming: WorkoutSet[]) => {
+    (source: 'hevy' | 'lyfta' | 'strong' | 'other', incoming: WorkoutSet[], replaceMode = true) => {
       const DEMO_MODE_KEY = 'hevy_analytics_demo_mode';
       const isDemoMode = localStorage.getItem(DEMO_MODE_KEY) === '1';
       if (isDemoMode && source !== 'other') {
@@ -227,7 +227,7 @@ const App: React.FC = () => {
       }
 
       setDataBySource((prev) => {
-        const existing = prev[source] ?? [];
+        const existing = replaceMode ? [] : (prev[source] ?? []);
         const nextSourceData = [...existing, ...incoming];
 
         const byKey = new Map<string, WorkoutSet>();
@@ -245,7 +245,9 @@ const App: React.FC = () => {
         }
 
         const deduped = Array.from(byKey.values());
-        let next = { ...prev, [source]: deduped };
+        let next = replaceMode
+          ? { [source]: deduped }
+          : { ...prev, [source]: deduped };
         if (isDemoMode && source !== 'other') {
           delete (next as any).other;
         }
@@ -328,7 +330,11 @@ const App: React.FC = () => {
     setParsedData: (data) => {
       const inferredSource = data[0]?.source;
       if (inferredSource === 'hevy' || inferredSource === 'lyfta' || inferredSource === 'strong' || inferredSource === 'other') {
-        mergeIntoCombinedData(inferredSource, data);
+        const shouldMerge = isCombiningRef.current;
+        isCombiningRef.current = false;
+        clearAllFilters();
+        lastAutoFilteredMaxTs.current = 0;
+        mergeIntoCombinedData(inferredSource, data, !shouldMerge);
         return;
       }
       setParsedData(data);
@@ -352,7 +358,7 @@ const App: React.FC = () => {
     setParsedData: (data) => {
       const inferredSource = data[0]?.source;
       if (inferredSource === 'hevy' || inferredSource === 'lyfta' || inferredSource === 'strong' || inferredSource === 'other') {
-        mergeIntoCombinedData(inferredSource, data);
+        mergeIntoCombinedData(inferredSource, data, false);
         return;
       }
       setParsedData(data);
@@ -376,6 +382,16 @@ const App: React.FC = () => {
 
   // Track last auto-filtered max timestamp to prevent re-triggering
   const lastAutoFilteredMaxTs = useRef<number>(0);
+
+  const isCombiningRef = useRef(false);
+
+  useEffect(() => {
+    if (onboarding?.step === 'add_source_platform' || onboarding?.backStep === 'add_source_platform') {
+      isCombiningRef.current = true;
+    } else {
+      isCombiningRef.current = false;
+    }
+  }, [onboarding]);
   
   // Auto-apply filter once per unique data load when stale
   useEffect(() => {

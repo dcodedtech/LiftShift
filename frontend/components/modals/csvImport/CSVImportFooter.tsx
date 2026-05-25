@@ -56,7 +56,7 @@ export const CSVImportFooter: React.FC<CSVImportFooterProps> = ({
             disabled={isLoading}
             className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 text-sm font-semibold disabled:opacity-60`}
           >
-            <span>Combine data</span>
+            <span>Combine sources</span>
           </button>
         ) : null}
       </div>
@@ -83,7 +83,7 @@ export const CSVImportFooter: React.FC<CSVImportFooterProps> = ({
           disabled={isLoading}
           className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 text-sm font-semibold disabled:opacity-60`}
         >
-          <span>Combine data</span>
+          <span>Combine sources</span>
         </button>
       ) : null}
     </div>

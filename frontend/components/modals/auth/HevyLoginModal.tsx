@@ -364,9 +364,9 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                       onClick={onAddDataSource}
                       disabled={isLoading}
                       className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 px-2.5 w-full text-[12px] font-semibold disabled:opacity-60 gap-2 justify-center`}
-                      title="Combine data"
+                      title="Combine sources"
                     >
-                      <span>Combine data</span>
+                      <span>Combine sources</span>
                     </button>
                   ) : (
                     <div />
