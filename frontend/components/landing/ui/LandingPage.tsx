@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Info, ArrowUp } from 'lucide-react';
 import type { DataSourceChoice } from '../../../utils/storage/dataSourceStorage';
+import { useTheme } from '../../theme/ThemeProvider';
 import { Navigation } from '../../layout/Navigation';
 import PlatformDock from './PlatformDock';
 import { ReviewsCarousel } from './ReviewsCarousel';
@@ -16,6 +17,8 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTryDemo }) => {
+  const { mode } = useTheme();
+  const isLight = mode === 'light';
   const [showScrollTop, setShowScrollTop] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -72,10 +75,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-200 font-sans"
+      className={`fixed inset-0 z-50 overflow-y-auto overflow-x-hidden font-sans ${isLight ? 'bg-white text-slate-900' : 'bg-slate-950 text-slate-200'}`}
     >
       {/* Light Rays Effect */}
-      <div className="absolute inset-0 z-[1] pointer-events-none">
+      <div className="fixed inset-0 z-[1] pointer-events-none">
         <LightRays
           raysOrigin="top-center"
           raysColor="#10b981"
@@ -100,19 +103,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-8 mt-10 mr-1 ml-1 leading-[1.15]">
-              <span className="block text-slate-400 text-2xl sm:text-2xl lg:text-3xl xl:text-4xl mb-4" style={FANCY_FONT}>
+              <span className={`block ${isLight ? 'text-slate-600' : 'text-slate-400'} text-2xl sm:text-2xl lg:text-3xl xl:text-4xl mb-4`} style={FANCY_FONT}>
                 Your workout app logs,
               </span>
               <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-green-400 bg-clip-text text-transparent pb-2" style={FANCY_FONT}>
                 LiftShift answers.
               </span>
-              <span className="block text-slate-400 text-2xl sm:text-2xl lg:text-3xl xl:text-4xl mt-2" style={FANCY_FONT}>
+              <span className={`block ${isLight ? 'text-slate-600' : 'text-slate-400'} text-2xl sm:text-2xl lg:text-3xl xl:text-4xl mt-2`} style={FANCY_FONT}>
                 Free & open-source.
               </span>
             </h1>
 
             {/* Subheadline */}
-            <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed`}>
               Connect Hevy, Strong, or Lyfta in seconds. Track training volume, personal records, and exercise progress with interactive muscle heatmaps. Get plateau detection, set-by-set feedback, and AI-ready analysis. All processed on your device, nothing stored on our servers.
             </p>
 
@@ -132,7 +135,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="mb-8">
                 <button
                   onClick={onTryDemo}
-                  className="group cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold h-11 px-8 bg-slate-950/75 text-emerald-300 border border-emerald-500/40 hover:border-emerald-400 hover:text-emerald-200 transition-all duration-200"
+                  className={`group cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold h-11 px-8 border transition-all duration-200 ${isLight ? 'border-slate-400/40 text-slate-600 hover:border-emerald-600 hover:text-emerald-600' : 'border-slate-600/40 text-slate-400 hover:border-emerald-400 hover:text-emerald-300'}`}
                 >
                   <span>Try it with sample data</span>
                 </button>
@@ -147,10 +150,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       <section id="why-liftshift" className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-200 mb-4" style={FANCY_FONT}>
+            <h2 className={`text-3xl sm:text-4xl font-bold tracking-tight mb-4 ${isLight ? 'text-slate-900' : 'text-slate-200'}`} style={FANCY_FONT}>
               What your workout app doesn&apos;t tell you
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+            <p className={`max-w-2xl mx-auto text-lg ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
               Hevy, Strong, and Lyfta are great at logging. But their built-in charts leave you guessing. LiftShift gives you the answers you actually want.
             </p>
           </div>
@@ -164,8 +167,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
                 <Flame className="w-5 h-5 text-orange-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-200 mb-3">Interactive muscle heatmaps</h3>
-              <p className="text-slate-400 leading-relaxed mb-3">
+              <h3 className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-slate-200'} mb-3`}>Interactive muscle heatmaps</h3>
+              <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} leading-relaxed mb-3`}>
                 Click any muscle to see exactly which exercises built it, with primary and secondary sets weighted separately. Rolling 7-day windows match your body&apos;s real recovery patterns.
               </p>
               <p className="text-slate-500 text-sm">
@@ -183,8 +186,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
                 <Trophy className="w-5 h-5 text-yellow-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-200 mb-3">Plateau detection that actually helps</h3>
-              <p className="text-slate-400 leading-relaxed mb-3">
+              <h3 className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-slate-200'} mb-3`}>Plateau detection that actually helps</h3>
+              <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} leading-relaxed mb-3`}>
                 Every exercise gets a clear status, Getting stronger, Plateauing, or Taking a dip, with confidence levels. When you&apos;re stuck, LiftShift suggests exactly what to change: add 1 rep, bump 2.5 kg, or deload.
               </p>
               <p className="text-slate-500 text-sm">
@@ -202,8 +205,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
                 <BarChart3 className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-200 mb-3">Set-by-set coaching feedback</h3>
-              <p className="text-slate-400 leading-relaxed mb-3">
+              <h3 className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-slate-200'} mb-3`}>Set-by-set coaching feedback</h3>
+              <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} leading-relaxed mb-3`}>
                 Open any past workout. LiftShift analyzes every set across 19 scenarios, normal fatigue, premature weight jumps, effective back-off sets, with plain-English badges and improvement suggestions.
               </p>
               <p className="text-slate-500 text-sm">
@@ -221,8 +224,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
                 <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a4 4 0 0 0-4 4v1H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3V6a4 4 0 0 0-4-4z"/><path d="M12 11v4"/><path d="M8 11v4"/><path d="M16 11v4"/></svg>
               </div>
-              <h3 className="text-2xl font-bold text-slate-200 mb-3">AI-ready analysis export</h3>
-              <p className="text-slate-400 leading-relaxed mb-3">
+              <h3 className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-slate-200'} mb-3`}>AI-ready analysis export</h3>
+              <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} leading-relaxed mb-3`}>
                 Export your structured training data in one click. Choose from 8 built-in analysis modules, junk volume audit, structural balance, joint health, or write your own prompt. Paste into any AI.
               </p>
               <p className="text-slate-500 text-sm">
@@ -240,8 +243,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
                 <Activity className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-200 mb-3">Volume vs progressive overload</h3>
-              <p className="text-slate-400 leading-relaxed mb-3">
+              <h3 className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-slate-200'} mb-3`}>Volume vs progressive overload</h3>
+              <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} leading-relaxed mb-3`}>
                 Are you doing enough volume, or just going through the motions? The hypertrophy scatter plot maps every muscle across four quadrants, efficiency zone, optimal growth, neglected, and volume focus, so you see exactly which muscles need more stimulus and which need progressive overload.
               </p>
               <p className="text-slate-500 text-sm">
@@ -259,8 +262,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
                 <CalendarDays className="w-5 h-5 text-blue-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-200 mb-3">Calendar filtering that rebuilds everything</h3>
-              <p className="text-slate-400 leading-relaxed mb-3">
+              <h3 className={`text-2xl font-bold ${isLight ? 'text-slate-900' : 'text-slate-200'} mb-3`}>Calendar filtering that rebuilds everything</h3>
+              <p className={`${isLight ? 'text-slate-600' : 'text-slate-400'} leading-relaxed mb-3`}>
                 Pick any date range, last month, all of 2025, a single week. Every chart, metric, and insight recalculates for just that window. Compare training blocks in seconds.
               </p>
               <p className="text-slate-500 text-sm">
@@ -282,52 +285,52 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       <PlatformDock items={platformDockItems} />
 
       {/* ========== FOOTER ========== */}
-      <footer className="relative z-10 border-t border-white/10 mt-16 px-4 sm:px-6 lg:px-8 py-10">
+      <footer className={`relative z-10 border-t mt-16 px-4 sm:px-6 lg:px-8 py-10 ${isLight ? 'border-black/10' : 'border-white/10'}`}>
         <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-sm">
           <div>
-            <h3 className="text-white font-semibold mb-3">Product</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Product</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('about/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">About</a></li>
-              <li><a href={assetPath('how-it-works/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">How it works</a></li>
-              <li><a href={assetPath('features/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Features</a></li>
-              <li><a href={assetPath('faq/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">FAQ</a></li>
+              <li><a href={assetPath('about/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>About</a></li>
+              <li><a href={assetPath('how-it-works/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>How it works</a></li>
+              <li><a href={assetPath('features/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Features</a></li>
+              <li><a href={assetPath('faq/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>FAQ</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-3">Resources</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Resources</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('supported-apps/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Supported apps</a></li>
-              <li><a href={assetPath('metrics/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Metrics glossary</a></li>
-              <li><a href={assetPath('ai/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">AI reference</a></li>
+              <li><a href={assetPath('supported-apps/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Supported apps</a></li>
+              <li><a href={assetPath('metrics/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Metrics glossary</a></li>
+              <li><a href={assetPath('ai/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>AI reference</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-3">Compare</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Compare</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs Lyfta vs Strong</a></li>
-              <li><a href={assetPath('hevy-vs-strong/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs Strong</a></li>
-              <li><a href={assetPath('lyfta-vs-strong/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Lyfta vs Strong</a></li>
-              <li><a href={assetPath('hevy-vs-liftshift/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs LiftShift</a></li>
-              <li><a href={assetPath('lyfta-vs-liftshift/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Lyfta vs LiftShift</a></li>
-              <li><a href={assetPath('strong-vs-liftshift/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Strong vs LiftShift</a></li>
+              <li><a href={assetPath('hevy-vs-lyfta/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Hevy vs Lyfta vs Strong</a></li>
+              <li><a href={assetPath('hevy-vs-strong/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Hevy vs Strong</a></li>
+              <li><a href={assetPath('lyfta-vs-strong/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Lyfta vs Strong</a></li>
+              <li><a href={assetPath('hevy-vs-liftshift/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Hevy vs LiftShift</a></li>
+              <li><a href={assetPath('lyfta-vs-liftshift/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Lyfta vs LiftShift</a></li>
+              <li><a href={assetPath('strong-vs-liftshift/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Strong vs LiftShift</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-semibold mb-3">Company</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Company</h3>
             <ul className="space-y-2">
-              <li><a href={assetPath('privacy/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Privacy</a></li>
-              <li><a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">GitHub</a></li>
-              <li><a href="https://github.com/aree6/LiftShift/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">License (AGPL-3.0)</a></li>
+              <li><a href={assetPath('privacy/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Privacy</a></li>
+              <li><a href="https://github.com/aree6/LiftShift" target="_blank" rel="noopener noreferrer" className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>GitHub</a></li>
+              <li><a href="https://github.com/aree6/LiftShift/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>License (AGPL-3.0)</a></li>
             </ul>
           </div>
           <div className="col-span-2 sm:col-span-1">
-            <h3 className="text-white font-semibold mb-3">LiftShift</h3>
+            <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>LiftShift</h3>
             <p className="text-slate-500 leading-relaxed text-xs">
               Free and open source workout analytics. No account needed. Runs locally in your browser.
             </p>
           </div>
         </div>
-        <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-white/5 text-center text-xs text-slate-600">
+        <div className={`max-w-6xl mx-auto mt-8 pt-6 border-t text-center text-xs ${isLight ? 'border-black/5 text-slate-500' : 'border-white/5 text-slate-600'}`}>
           &copy; {new Date().getFullYear()} LiftShift. Open source under AGPL-3.0.
         </div>
       </footer>
@@ -340,7 +343,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-[101] p-3 rounded-full bg-slate-900/80 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-colors shadow-lg backdrop-blur-sm"
+            className={`fixed bottom-6 right-6 z-[101] p-3 rounded-full border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-colors shadow-lg backdrop-blur-sm ${isLight ? 'bg-white/80' : 'bg-slate-900/80'}`}
             aria-label="Scroll to top"
           >
             <ArrowUp className="w-5 h-5" />
