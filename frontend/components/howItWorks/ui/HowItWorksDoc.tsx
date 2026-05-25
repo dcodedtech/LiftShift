@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { assetPath } from '../../../constants';
 import type { HowItWorksSection, HowItWorksNode } from '../utils/howItWorksDocContent';
@@ -84,23 +84,33 @@ const NodeView: React.FC<{ node: HowItWorksNode; linkTarget: '_self' | '_blank' 
   );
 };
 
-const SectionView: React.FC<{ section: HowItWorksSection; level: number; linkTarget: '_self' | '_blank' }> = ({ section, level, linkTarget }) => {
+const SectionView: React.FC<{ section: HowItWorksSection; level: number; linkTarget: '_self' | '_blank'; flashingId: string | null }> = ({ section, level, linkTarget, flashingId }) => {
   const HeadingTag = level === 2 ? 'h2' : 'h3';
+  const isFlashing = flashingId === section.id;
+  const isDimmed = flashingId !== null && !isFlashing;
   return (
     <section id={section.id} className="space-y-4 scroll-mt-16">
-      <HeadingTag className={level === 2 ? 'text-xl font-bold text-white' : 'text-lg font-semibold text-white'}>
-        {section.title}
-      </HeadingTag>
-      <div className="mt-3 space-y-3">
-        {section.nodes.map((n, idx) => (
-          <NodeView key={idx} node={n} linkTarget={linkTarget} />
-        ))}
+      <div className={'transition-opacity duration-400' + (isDimmed ? ' opacity-50' : '')}>
+        <HeadingTag
+          className={[
+            'transition-all duration-700',
+            level === 2 ? 'text-xl font-bold' : 'text-lg font-semibold',
+            isFlashing ? 'text-emerald-300 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]' : 'text-white',
+          ].join(' ')}
+        >
+          {section.title}
+        </HeadingTag>
+        <div className="mt-3 space-y-3">
+          {section.nodes.map((n, idx) => (
+            <NodeView key={idx} node={n} linkTarget={linkTarget} />
+          ))}
+        </div>
       </div>
 
       {section.children && section.children.length > 0 ? (
         <div className="mt-6 space-y-6">
           {section.children.map((c) => (
-            <SectionView key={c.id} section={c} level={3} linkTarget={linkTarget} />
+            <SectionView key={c.id} section={c} level={3} linkTarget={linkTarget} flashingId={flashingId} />
           ))}
         </div>
       ) : null}
@@ -112,22 +122,50 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
   const navItems = useMemo(() => flattenSections(HOW_IT_WORKS_SECTIONS, 0), []);
   const [activeId, setActiveId] = useState<string>(HOW_IT_WORKS_SECTIONS[0]?.id ?? '');
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const [sidebarHeight, setSidebarHeight] = useState<number>(0);
+  const [flashingId, setFlashingId] = useState<string | null>(null);
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const scrollToIdInPane = (id: string) => {
+  useLayoutEffect(() => {
+    if (!sidebarRef.current) return;
+    setSidebarHeight(sidebarRef.current.offsetHeight);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    };
+  }, []);
+
+  const scrollToIdInPane = (id: string, relativePos: number = 0) => {
     const el = document.getElementById(id);
     const container = contentRef.current;
     if (!el || !container) return;
 
     const containerRect = container.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
-    const offset = elRect.top - containerRect.top + container.scrollTop;
-    container.scrollTo({ top: offset, behavior: 'smooth' });
+    const targetScroll = container.scrollTop + (elRect.top - containerRect.top) - containerRect.height * relativePos;
+    container.scrollTo({ top: targetScroll, behavior: 'smooth' });
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     setActiveId(id);
-    scrollToIdInPane(id);
+
+    const navRect = e.currentTarget.getBoundingClientRect();
+    const sidebar = sidebarRef.current;
+    if (sidebar) {
+      const sidebarRect = sidebar.getBoundingClientRect();
+      const relativePos = (navRect.top + navRect.height / 2 - sidebarRect.top) / sidebarRect.height;
+      scrollToIdInPane(id, Math.max(0, Math.min(1, relativePos)));
+    } else {
+      scrollToIdInPane(id);
+    }
+
+    setFlashingId(id);
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = setTimeout(() => setFlashingId(null), 2000);
   };
 
   useEffect(() => {
@@ -196,13 +234,13 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
       </details>
 
       {/* Docs layout: sidebar (left) + content (right) */}
-      <div className="flex h-[calc(100vh-11rem)] min-h-0 rounded-2xl overflow-hidden border border-slate-800/30 bg-black/20">
+      <div className="flex items-start rounded-2xl overflow-hidden border border-slate-800/30 bg-black/20">
         {/* Sidebar */}
-        <aside className="hidden lg:flex lg:flex-col w-[280px] shrink-0 border-r border-slate-800/40 bg-black/25">
+        <aside ref={sidebarRef} className="hidden lg:flex lg:flex-col w-[280px] shrink-0 border-r border-slate-800/40 bg-black/25">
           <div className="shrink-0 px-5 py-3.5 border-b border-slate-800/30">
             <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Contents</span>
           </div>
-          <nav className="flex-1 overflow-y-auto py-3 space-y-0">
+          <nav className="py-3 space-y-0">
             {navItems.map((i) => {
               const isActive = i.id === activeId;
               const isParent = i.depth === 0;
@@ -212,14 +250,14 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
                   href={`#${i.id}`}
                   onClick={(e) => handleNavClick(e, i.id)}
                   className={[
-                    'block border-l-2 transition-colors',
+                    'block transition-colors rounded-r-lg',
                     isParent ? 'mt-2 first:mt-0' : '',
                     i.depth === 0 ? 'pl-5' : i.depth === 1 ? 'pl-8' : 'pl-12',
                     'pr-4 py-1.5 text-sm leading-snug',
-                    isParent ? 'text-[13px] font-semibold tracking-wide text-slate-200' : 'text-[13px] text-slate-400',
+                    isParent ? 'text-[13px] font-semibold tracking-wide text-emerald-400' : 'text-[13px] text-slate-400',
                     isActive
-                      ? 'border-emerald-400 text-emerald-200 bg-emerald-500/8'
-                      : 'border-transparent hover:border-slate-700 hover:text-slate-200 hover:bg-white/[0.03]',
+                      ? 'text-emerald-200 bg-emerald-500/8'
+                      : 'hover:text-emerald-300 hover:bg-white/[0.03]',
                   ].join(' ')}
                 >
                   {i.title}
@@ -230,10 +268,10 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
         </aside>
 
         {/* Content */}
-        <div ref={contentRef} className="flex-1 overflow-y-auto min-w-0 scroll-pt-8">
+        <div ref={contentRef} className="flex-1 overflow-y-auto min-w-0 scroll-pt-8" style={{ maxHeight: sidebarHeight }}>
           <div className="max-w-3xl mx-auto px-8 py-10 space-y-14">
             {HOW_IT_WORKS_SECTIONS.map((s) => (
-              <SectionView key={s.id} section={s} level={2} linkTarget={linkTarget} />
+              <SectionView key={s.id} section={s} level={2} linkTarget={linkTarget} flashingId={flashingId} />
             ))}
             <div className="pb-16" />
           </div>
