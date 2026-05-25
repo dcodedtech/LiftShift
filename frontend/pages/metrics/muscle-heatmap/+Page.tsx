@@ -15,7 +15,7 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">What it means</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            LiftShift\u2019s muscle heatmap shows a colour-coded map of your body, where each muscle\u2019s colour intensity reflects how much <a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 transition-colors">training volume</a> that muscle has received recently. Darker or more intense colours indicate higher volume; lighter or cooler colours indicate less or no volume.
+            LiftShift\u2019s muscle heatmap shows a colour-coded map of your body, where each muscle\u2019s colour intensity reflects how much <a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">training volume</a> that muscle has received recently. Darker or more intense colours indicate higher volume; lighter or cooler colours indicate less or no volume.
           </p>
           <p className="text-slate-300 leading-relaxed mb-4">
             The heatmap is built by mapping each exercise you log to the primary and secondary muscles it targets, then distributing the exercise\u2019s volume across those muscles. For example, a bench press primarily maps to the chest and secondarily to the front deltoids and triceps. The volume from that set is allocated proportionally across all three muscle groups.

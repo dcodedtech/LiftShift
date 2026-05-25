@@ -74,17 +74,17 @@ function Page() {
 
           <h3 className="text-base font-semibold text-white mb-2">Switched from Strong to Hevy</h3>
           <p className="text-slate-300 leading-relaxed mb-4">
-            If you\u2019ve moved from Strong to Hevy, you can import both exports into LiftShift. The dashboard merges your history and deduplicates overlapping dates so you get a single, continuous timeline. See the <a href={assetPath('supported-apps/hevy/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Hevy page</a> for import instructions.
+            If you\u2019ve moved from Strong to Hevy, you can import both exports into LiftShift. The dashboard merges your history and deduplicates overlapping dates so you get a single, continuous timeline. See the <a href={assetPath('supported-apps/hevy/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Hevy page</a> for import instructions.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">What analytics you get</h2>
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
-            <li><a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Training volume</a> \u2014 Weekly and per-muscle volume trends with rolling comparisons.</li>
-            <li><a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Personal records (PRs)</a> \u2014 Track your strongest lifts with tiered PR detection.</li>
-            <li><a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 transition-colors">1RM estimates</a> \u2014 Strength trend tracking without max testing.</li>
-            <li><a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Muscle heatmaps</a> \u2014 See exactly which muscles are getting attention and which are being neglected.</li>
+            <li><a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Training volume</a> \u2014 Weekly and per-muscle volume trends with rolling comparisons.</li>
+            <li><a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Personal records (PRs)</a> \u2014 Track your strongest lifts with tiered PR detection.</li>
+            <li><a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">1RM estimates</a> \u2014 Strength trend tracking without max testing.</li>
+            <li><a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Muscle heatmaps</a> \u2014 See exactly which muscles are getting attention and which are being neglected.</li>
             <li>Set-by-set coaching feedback and plateau detection with actionable suggestions.</li>
           </ul>
         </section>

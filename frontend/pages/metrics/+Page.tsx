@@ -15,10 +15,10 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Metrics</h2>
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
-            <li><a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Training volume</a> \u2014 The total weight you move in a session, week, or muscle group. Defined as sets \u00d7 reps \u00d7 weight, with rolling window comparisons and zone scoring.</li>
-            <li><a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Personal records (PRs)</a> \u2014 Data-derived bests, not performance promises. Covers the three PR tiers, how PRs are calculated, and what they don\u2019t mean.</li>
-            <li><a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 transition-colors">1RM (one-rep max)</a> \u2014 Estimated one-rep max values derived from your logged sets using standard formulas. Tracks strength trends without testing maxes.</li>
-            <li><a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Muscle heatmaps</a> \u2014 Visual estimates of which muscles your training emphasises, based on exercise-to-muscle mapping and volume allocation.</li>
+            <li><a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Training volume</a> \u2014 The total weight you move in a session, week, or muscle group. Defined as sets \u00d7 reps \u00d7 weight, with rolling window comparisons and zone scoring.</li>
+            <li><a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Personal records (PRs)</a> \u2014 Data-derived bests, not performance promises. Covers the three PR tiers, how PRs are calculated, and what they don\u2019t mean.</li>
+            <li><a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">1RM (one-rep max)</a> \u2014 Estimated one-rep max values derived from your logged sets using standard formulas. Tracks strength trends without testing maxes.</li>
+            <li><a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Muscle heatmaps</a> \u2014 Visual estimates of which muscles your training emphasises, based on exercise-to-muscle mapping and volume allocation.</li>
           </ul>
         </section>
 

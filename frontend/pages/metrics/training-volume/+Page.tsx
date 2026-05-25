@@ -56,11 +56,11 @@ function Page() {
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
             <li><strong className="text-white">Session volume</strong> \u2014 How much work you did in a single workout.</li>
             <li><strong className="text-white">Weekly volume</strong> \u2014 Total work across all sessions in a rolling 7-day window.</li>
-            <li><strong className="text-white">Per-muscle volume</strong> \u2014 How volume is distributed across muscle groups (visible on the <a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 transition-colors">muscle heatmap</a>).</li>
+            <li><strong className="text-white">Per-muscle volume</strong> \u2014 How volume is distributed across muscle groups (visible on the <a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">muscle heatmap</a>).</li>
             <li><strong className="text-white">Rolling comparisons</strong> \u2014 This week vs. last week, this month vs. last month, so you can spot trends at a glance.</li>
           </ul>
           <p className="text-slate-300 leading-relaxed mb-4">
-            A steadily rising weekly volume often indicates progressive overload (you\u2019re doing more work over time). A sharp drop may be intentional (a deload week) or a sign of inconsistency. Look at volume alongside other metrics like <a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 transition-colors">PRs</a> and <a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 transition-colors">1RM estimates</a> for a complete picture.
+            A steadily rising weekly volume often indicates progressive overload (you\u2019re doing more work over time). A sharp drop may be intentional (a deload week) or a sign of inconsistency. Look at volume alongside other metrics like <a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">PRs</a> and <a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">1RM estimates</a> for a complete picture.
           </p>
         </section>
 

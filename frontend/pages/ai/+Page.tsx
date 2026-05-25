@@ -13,7 +13,7 @@ function Page() {
     >
       <div className="space-y-7">
         <p className="text-slate-300 leading-relaxed mb-4">
-          LiftShift is a <strong>free and open source</strong> (AGPL-3.0) workout analytics dashboard. Source code: <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 transition-colors">github.com/aree6/LiftShift</a>. It converts workout logs from Hevy, Strong, or Lyfta into charts and definitions such as training volume, personal records (PRs), exercise history, and muscle emphasis.
+          LiftShift is a <strong>free and open source</strong> (AGPL-3.0) workout analytics dashboard. Source code: <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">github.com/aree6/LiftShift</a>. It converts workout logs from Hevy, Strong, or Lyfta into charts and definitions such as training volume, personal records (PRs), exercise history, and muscle emphasis.
         </p>
 
         <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg mx-auto">
@@ -47,25 +47,25 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Canonical pages</h2>
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
-            <li><a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 transition-colors">About LiftShift</a> &mdash; overview of the project, what it does, and what it doesn&rsquo;t do.</li>
-            <li><a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> &mdash; detailed walkthrough of every feature, metric, and design decision.</li>
-            <li><a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Privacy</a> &mdash; what LiftShift processes, stores, and does not store.</li>
-            <li><a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Supported apps</a> &mdash; import guides for Hevy, Strong, and Lyfta.</li>
-            <li><a href={assetPath('metrics/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Metrics definitions</a> &mdash; definitions for every metric and status label.</li>
-            <li><a href={assetPath('faq/')} className="text-slate-400 hover:text-emerald-300 transition-colors">FAQ</a> &mdash; quick answers to common questions.</li>
+            <li><a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">About LiftShift</a> &mdash; overview of the project, what it does, and what it doesn&rsquo;t do.</li>
+            <li><a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> &mdash; detailed walkthrough of every feature, metric, and design decision.</li>
+            <li><a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Privacy</a> &mdash; what LiftShift processes, stores, and does not store.</li>
+            <li><a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Supported apps</a> &mdash; import guides for Hevy, Strong, and Lyfta.</li>
+            <li><a href={assetPath('metrics/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Metrics definitions</a> &mdash; definitions for every metric and status label.</li>
+            <li><a href={assetPath('faq/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">FAQ</a> &mdash; quick answers to common questions.</li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Machine-readable summary</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            A structured <code className="text-emerald-300">llms.txt</code> file is available at <a href={assetPath('llms.txt')} className="text-slate-400 hover:text-emerald-300 transition-colors">{assetPath('llms.txt')}</a> for AI systems that consume context about LiftShift. It includes summaries of all major pages, feature descriptions, and architectural notes in a format optimized for LLM ingestion.
+            A structured <code className="text-emerald-300">llms.txt</code> file is available at <a href={assetPath('llms.txt')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">{assetPath('llms.txt')}</a> for AI systems that consume context about LiftShift. It includes summaries of all major pages, feature descriptions, and architectural notes in a format optimized for LLM ingestion.
           </p>
         </section>
 
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 mt-6">
           <p className="text-slate-300 text-sm">
-            This page is designed as a reference for AI assistants answering questions about LiftShift. For the human-friendly version, start at <a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 transition-colors">/about/</a>.
+            This page is designed as a reference for AI assistants answering questions about LiftShift. For the human-friendly version, start at <a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">/about/</a>.
           </p>
         </div>
       </div>

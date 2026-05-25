@@ -71,17 +71,17 @@ function Page() {
 
           <h3 className="text-base font-semibold text-white mb-2">Using alongside other apps</h3>
           <p className="text-slate-300 leading-relaxed mb-4">
-            If you use Lyfta alongside Hevy or Strong, import both exports into LiftShift. The dashboard merges your history and deduplicates overlapping sessions so you get a single timeline. See <a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Supported apps</a> for import guides for other platforms.
+            If you use Lyfta alongside Hevy or Strong, import both exports into LiftShift. The dashboard merges your history and deduplicates overlapping sessions so you get a single timeline. See <a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Supported apps</a> for import guides for other platforms.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">What analytics you get</h2>
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
-            <li><a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Training volume</a> \u2014 Track volume trends across workouts, weeks, and muscle groups.</li>
-            <li><a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Personal records (PRs)</a> \u2014 Tiered PR tracking with gold, silver, and premature detection.</li>
-            <li><a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 transition-colors">1RM estimates</a> \u2014 Progressive strength estimates without maxing out.</li>
-            <li><a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Muscle heatmaps</a> \u2014 Visual per-muscle training emphasis with rolling 7-day windows.</li>
+            <li><a href={assetPath('metrics/training-volume/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Training volume</a> \u2014 Track volume trends across workouts, weeks, and muscle groups.</li>
+            <li><a href={assetPath('metrics/personal-records/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Personal records (PRs)</a> \u2014 Tiered PR tracking with gold, silver, and premature detection.</li>
+            <li><a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">1RM estimates</a> \u2014 Progressive strength estimates without maxing out.</li>
+            <li><a href={assetPath('metrics/muscle-heatmap/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Muscle heatmaps</a> \u2014 Visual per-muscle training emphasis with rolling 7-day windows.</li>
             <li>Set-by-set coaching feedback, plateau detection, and AI-ready structured data exports.</li>
           </ul>
         </section>

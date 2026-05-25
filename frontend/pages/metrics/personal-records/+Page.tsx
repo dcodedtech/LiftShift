@@ -55,7 +55,7 @@ function Page() {
           </p>
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
             <li><strong className="text-white">Weight</strong> \u2014 The heaviest load lifted for a given rep count. This is the classic definition of a PR.</li>
-            <li><strong className="text-white">1RM estimate</strong> \u2014 The highest estimated one-rep max for the exercise, derived from any set using the Epley formula. Even if the weight itself isn\u2019t your heaviest, a set with more reps at a slightly lower weight may produce a higher estimated 1RM. See the <a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 transition-colors">1RM page</a> for the formula.</li>
+            <li><strong className="text-white">1RM estimate</strong> \u2014 The highest estimated one-rep max for the exercise, derived from any set using the Epley formula. Even if the weight itself isn\u2019t your heaviest, a set with more reps at a slightly lower weight may produce a higher estimated 1RM. See the <a href={assetPath('metrics/one-rep-max/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">1RM page</a> for the formula.</li>
             <li><strong className="text-white">Volume</strong> \u2014 The highest single-set volume (weight \u00d7 reps) for the exercise. This captures endurance-oriented PRs that raw weight alone would miss.</li>
           </ul>
           <p className="text-slate-300 leading-relaxed mb-4">

@@ -54,7 +54,7 @@ function Page() {
 
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 mt-6">
           <p className="text-slate-300 text-sm">
-            For more background on the design choices behind LiftShift&rsquo;s architecture, see the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> guide. The full source code is available on <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 transition-colors">GitHub</a> under AGPL-3.0.
+            For more background on the design choices behind LiftShift&rsquo;s architecture, see the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> guide. The full source code is available on <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">GitHub</a> under AGPL-3.0.
           </p>
         </div>
       </div>

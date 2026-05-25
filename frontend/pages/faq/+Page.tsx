@@ -15,35 +15,35 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">What is LiftShift?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            LiftShift is a free and open source workout analytics tool that connects to Hevy, Strong, or Lyfta and provides insights your logging app doesn&rsquo;t offer &mdash; muscle heatmaps, plateau detection, set-by-set feedback, PR tracking, and AI-ready exports. Everything runs locally in your browser. See the <a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 transition-colors">About</a> page for more.
+            LiftShift is a free and open source workout analytics tool that connects to Hevy, Strong, or Lyfta and provides insights your logging app doesn&rsquo;t offer &mdash; muscle heatmaps, plateau detection, set-by-set feedback, PR tracking, and AI-ready exports. Everything runs locally in your browser. See the <a href={assetPath('about/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">About</a> page for more.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Does LiftShift store my workout data?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            No. LiftShift does not store your full training history on any LiftShift-owned server. All computation happens locally in your browser using IndexedDB. We never see your sets, reps, or exercise history. For full details, read the <a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Privacy</a> page.
+            No. LiftShift does not store your full training history on any LiftShift-owned server. All computation happens locally in your browser using IndexedDB. We never see your sets, reps, or exercise history. For full details, read the <a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Privacy</a> page.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Which workout apps are supported?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            LiftShift supports <strong>Hevy</strong> (via API sync, recommended), <strong>Strong</strong> (via CSV import), and <strong>Lyfta</strong> (via CSV import). You can also combine data from multiple apps into one unified dashboard. See <a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Supported apps</a> for step-by-step import guides.
+            LiftShift supports <strong>Hevy</strong> (via API sync, recommended), <strong>Strong</strong> (via CSV import), and <strong>Lyfta</strong> (via CSV import). You can also combine data from multiple apps into one unified dashboard. See <a href={assetPath('supported-apps/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Supported apps</a> for step-by-step import guides.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">How does plateau detection work?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            LiftShift analyzes your recent workout history for each exercise and checks whether your performance (volume load, estimated 1RM, and rep quality) has stalled or declined over a configurable window. When a plateau is detected, it provides a status label (Getting stronger, Plateauing, or Taking a dip) along with specific, actionable suggestions &mdash; like changing rep ranges, adding accessory work, or adjusting frequency. Read the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> guide for the full methodology.
+            LiftShift analyzes your recent workout history for each exercise and checks whether your performance (volume load, estimated 1RM, and rep quality) has stalled or declined over a configurable window. When a plateau is detected, it provides a status label (Getting stronger, Plateauing, or Taking a dip) along with specific, actionable suggestions &mdash; like changing rep ranges, adding accessory work, or adjusting frequency. Read the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> guide for the full methodology.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Can I export my data for AI analysis?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            Yes. LiftShift includes a one-click AI-ready export that formats your training data with built-in analysis modules including junk volume audit, structural balance, joint health, program adherence, and more. You can paste the export into any LLM for personalized training insights. See the <a href={assetPath('ai/')} className="text-slate-400 hover:text-emerald-300 transition-colors">AI reference</a> page for details.
+            Yes. LiftShift includes a one-click AI-ready export that formats your training data with built-in analysis modules including junk volume audit, structural balance, joint health, program adherence, and more. You can paste the export into any LLM for personalized training insights. See the <a href={assetPath('ai/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">AI reference</a> page for details.
           </p>
         </section>
 
@@ -64,7 +64,7 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Why do some charts look wrong?</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            Charts are recalculated based on the selected date range in the calendar filter. If a date range is active, all metrics reflect only that window &mdash; which can make charts look different than expected. Clear the calendar filter or select &ldquo;All time&rdquo; to see your full history. Also, make sure you&rsquo;ve imported enough data for meaningful trends. See the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> guide for calendar filtering details.
+            Charts are recalculated based on the selected date range in the calendar filter. If a date range is active, all metrics reflect only that window &mdash; which can make charts look different than expected. Clear the calendar filter or select &ldquo;All time&rdquo; to see your full history. Also, make sure you&rsquo;ve imported enough data for meaningful trends. See the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> guide for calendar filtering details.
           </p>
         </section>
 
@@ -77,7 +77,7 @@ function Page() {
 
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 mt-6">
           <p className="text-slate-300 text-sm">
-            Didn&rsquo;t find your answer? Check the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> guide for deep dives into every feature, or open an issue on <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 transition-colors">GitHub</a>.
+            Didn&rsquo;t find your answer? Check the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> guide for deep dives into every feature, or open an issue on <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">GitHub</a>.
           </p>
         </div>
       </div>

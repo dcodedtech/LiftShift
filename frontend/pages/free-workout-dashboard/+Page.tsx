@@ -104,7 +104,7 @@ function Page() {
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 mt-6">
           <h2 className="text-base font-semibold text-emerald-200 mb-2">Try LiftShift</h2>
           <p className="text-slate-300 text-sm mb-3">All of the above is completely free. No account needed. Your data never leaves your browser.</p>
-          <a href={assetPath('/')} className="text-slate-400 hover:text-emerald-300 transition-colors text-sm">Open LiftShift →</a>
+          <a href={assetPath('/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200 text-sm">Open LiftShift →</a>
         </div>
 
         <section>

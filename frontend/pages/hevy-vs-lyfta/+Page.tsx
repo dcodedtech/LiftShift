@@ -109,7 +109,7 @@ function Page() {
             LiftShift plugs into either app and adds the analytics layer both are missing. Connect Hevy via API for automatic sync, or upload a CSV from Hevy or Lyfta. You get the same dashboard regardless of which app you use &mdash; and if you&rsquo;ve used both, LiftShift merges the data.
           </p>
           <p className="text-slate-300 leading-relaxed mb-4">
-            See the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> guide for a full walkthrough of every feature.
+            See the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> guide for a full walkthrough of every feature.
           </p>
         </section>
 
@@ -122,7 +122,7 @@ function Page() {
 
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-4 mt-6">
           <p className="text-slate-300 text-sm">
-            Ready to see what your training data actually says? <a href={assetPath('/')} className="text-slate-400 hover:text-emerald-300 transition-colors">Open the dashboard</a> and connect Hevy or upload a CSV from Strong or Lyfta. It&rsquo;s free and takes under a minute.
+            Ready to see what your training data actually says? <a href={assetPath('/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">Open the dashboard</a> and connect Hevy or upload a CSV from Strong or Lyfta. It&rsquo;s free and takes under a minute.
           </p>
         </div>
       </div>

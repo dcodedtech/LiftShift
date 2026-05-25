@@ -15,7 +15,7 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Open source</h2>
           <p className="text-slate-300 leading-relaxed mb-4">
-            LiftShift is fully open source under the <strong>AGPL-3.0</strong> license. The entire codebase is available on <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 transition-colors">GitHub</a>. You can audit the code, run it locally, or contribute. No hidden telemetry, no paywalls, no server-side data collection.
+            LiftShift is fully open source under the <strong>AGPL-3.0</strong> license. The entire codebase is available on <a href="https://github.com/aree6/LiftShift" className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">GitHub</a>. You can audit the code, run it locally, or contribute. No hidden telemetry, no paywalls, no server-side data collection.
           </p>
         </section>
 
@@ -39,7 +39,7 @@ function Page() {
             Hevy, Strong, and Lyfta are great workout loggers. LiftShift is a workout analyst. Your app shows you what you did. LiftShift tells you what it means &mdash; and what to do next.
           </p>
           <p className="text-slate-300 leading-relaxed mb-4">
-            Most analytics tools give you dashboards full of numbers you have to interpret yourself. LiftShift gives you status labels, coaching feedback, and tiny actionable suggestions you can try next session. See the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">How it works</a> guide for a complete walkthrough.
+            Most analytics tools give you dashboards full of numbers you have to interpret yourself. LiftShift gives you status labels, coaching feedback, and tiny actionable suggestions you can try next session. See the <a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">How it works</a> guide for a complete walkthrough.
           </p>
         </section>
 
@@ -57,13 +57,13 @@ function Page() {
           <h2 className="text-lg font-semibold text-white mb-3">Quick links</h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="text-slate-300"><strong>How everything works</strong></div>
-            <div><a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 transition-colors">/how-it-works/</a></div>
+            <div><a href={assetPath('how-it-works/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">/how-it-works/</a></div>
             <div className="text-slate-300"><strong>Privacy model</strong></div>
-            <div><a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 transition-colors">/privacy/</a></div>
+            <div><a href={assetPath('privacy/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">/privacy/</a></div>
             <div className="text-slate-300"><strong>Metrics definitions</strong></div>
-            <div><a href={assetPath('metrics/')} className="text-slate-400 hover:text-emerald-300 transition-colors">/metrics/</a></div>
+            <div><a href={assetPath('metrics/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">/metrics/</a></div>
             <div className="text-slate-300"><strong>FAQ</strong></div>
-            <div><a href={assetPath('faq/')} className="text-slate-400 hover:text-emerald-300 transition-colors">/faq/</a></div>
+            <div><a href={assetPath('faq/')} className="text-slate-400 hover:text-emerald-300 hover:underline transition-all duration-200">/faq/</a></div>
           </div>
         </section>
       </div>
