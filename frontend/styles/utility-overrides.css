@@ -118,6 +118,26 @@
   color: var(--text-secondary) !important;
 }
 
+.hover\:text-emerald-200:hover {
+  color: #a7f3d0 !important;
+}
+
+.hover\:text-emerald-300:hover {
+  color: #6ee7b7 !important;
+}
+
+.hover\:text-emerald-400:hover {
+  color: #34d399 !important;
+}
+
+.hover\:text-emerald-600:hover {
+  color: #059669 !important;
+}
+
+.hover\:text-emerald-800:hover {
+  color: #065f46 !important;
+}
+
 .border-slate-700\/50 {
   border-color: rgb(var(--border-rgb) / 0.3) !important;
 }
