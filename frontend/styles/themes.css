@@ -153,7 +153,7 @@ html[data-theme='light'] {
 
 html[data-theme='light'] .text-emerald-300,
 html[data-theme='light'] .text-emerald-400 {
-  color: #047857 !important;
+  color: #065f46 !important;
 }
 
 html[data-theme='light'] .text-blue-300,
@@ -187,7 +187,7 @@ html[data-theme='light'] .text-indigo-300 {
 html[data-theme='light'] .text-emerald-200,
 html[data-theme='light'] .text-emerald-300,
 html[data-theme='light'] .text-emerald-400 {
-  color: #047857 !important;
+  color: #065f46 !important;
 }
 
 html[data-theme='light'] .text-sky-200,
@@ -230,6 +230,62 @@ html[data-theme='light'] .border-emerald-500\/30 {
 
 html[data-theme='light'] .border-sky-500\/30 {
   border-color: #1d4ed84d !important;
+}
+
+html[data-theme='light'] .text-white {
+  color: #0f172a !important;
+}
+
+html[data-theme='light'] .text-slate-300 {
+  color: #475569 !important;
+}
+
+html[data-theme='light'] .text-slate-200 {
+  color: #1e293b !important;
+}
+
+html[data-theme='light'] .border-white\/10 {
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+html[data-theme='light'] .border-white\/5 {
+  border-color: rgba(0,0,0,0.05) !important;
+}
+
+html[data-theme='light'] .bg-black\/30 {
+  background-color: rgba(255,255,255,0.3) !important;
+}
+
+html[data-theme='light'] .bg-black\/25 {
+  background-color: rgba(255,255,255,0.25) !important;
+}
+
+html[data-theme='light'] .bg-black\/20 {
+  background-color: rgba(255,255,255,0.2) !important;
+}
+
+html[data-theme='light'] .bg-black\/50 {
+  background-color: rgba(255,255,255,0.5) !important;
+}
+
+html[data-theme='light'] .hover\:bg-white\/5:hover {
+  background-color: rgba(0,0,0,0.05) !important;
+}
+
+html[data-theme='light'] .hover\:bg-white\/10:hover {
+  background-color: rgba(0,0,0,0.1) !important;
+}
+
+html[data-theme='light'] .hover\:text-white:hover {
+  color: #0f172a !important;
+}
+
+html[data-theme='light'] a.text-emerald-300\/80 {
+  color: #475569 !important;
+}
+
+html[data-theme='light'] a.text-emerald-300\/80:hover {
+  color: #059669 !important;
 }
 
 html[data-font="loraItalic"] {
