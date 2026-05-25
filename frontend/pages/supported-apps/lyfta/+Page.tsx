@@ -15,7 +15,7 @@ function Page() {
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">Import options</h2>
           <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
-            <li><strong className="text-white">API sync</strong> \u2014 Connect your Lyfta account via OAuth. LiftShift pulls your workout history automatically and keeps your dashboard up to date with each new session.</li>
+            <li><strong className="text-white">API sync</strong> \u2014 Connect your Lyfta account using your API key. LiftShift pulls your workout history automatically and keeps your dashboard up to date with each new session.</li>
             <li><strong className="text-white">CSV import</strong> \u2014 Export your workout history from Lyfta as a CSV file and upload it to LiftShift. This method is always available and gives you full control over which data gets imported. All processing happens locally in your browser.</li>
           </ul>
         </section>

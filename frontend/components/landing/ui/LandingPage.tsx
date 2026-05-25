@@ -56,7 +56,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       name: 'Lyfta',
       image: assetPath('/images/brands/lyfta_small.webp'),
       onClick: () => onSelectPlatform('lyfta'),
-      badge: 'CSV'
+      badge: 'API'
     },
     {
       name: 'Other',
@@ -298,8 +298,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
             <ul className="space-y-2">
               <li><a href={assetPath('supported-apps/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Supported apps</a></li>
               <li><a href={assetPath('metrics/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Metrics glossary</a></li>
-              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs Lyfta</a></li>
               <li><a href={assetPath('ai/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">AI reference</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold mb-3">Compare</h3>
+            <ul className="space-y-2">
+              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs Lyfta vs Strong</a></li>
+              <li><a href={assetPath('hevy-vs-strong/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs Strong</a></li>
+              <li><a href={assetPath('lyfta-vs-strong/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Lyfta vs Strong</a></li>
+              <li><a href={assetPath('hevy-vs-liftshift/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs LiftShift</a></li>
+              <li><a href={assetPath('lyfta-vs-liftshift/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Lyfta vs LiftShift</a></li>
+              <li><a href={assetPath('strong-vs-liftshift/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Strong vs LiftShift</a></li>
             </ul>
           </div>
           <div>

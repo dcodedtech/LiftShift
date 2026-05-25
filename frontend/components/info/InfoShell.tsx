@@ -100,7 +100,7 @@ export const InfoShell: React.FC<InfoShellProps> = ({ activeNav = null, title, s
             <ul className="space-y-2">
               <li><a href={assetPath('supported-apps/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Supported apps</a></li>
               <li><a href={assetPath('metrics/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Metrics glossary</a></li>
-              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">Hevy vs Lyfta</a></li>
+              <li><a href={assetPath('hevy-vs-lyfta/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">App comparison</a></li>
               <li><a href={assetPath('ai/')} className="text-emerald-300/80 hover:text-emerald-400 transition-colors duration-200">AI reference</a></li>
             </ul>
           </div>

@@ -65,7 +65,7 @@ const servePublicIndexHtmlPlugin = () => {
     apply: 'serve' as const,
     configureServer(server: any) {
       const publicDir = path.resolve(__dirname, 'frontend/public');
-      const vikeOwnedRoutes = new Set(['how-it-works', 'features', 'about', 'faq', 'privacy', 'ai', 'hevy-vs-lyfta', 'dashboard-analytics', 'free-workout-dashboard', 'supported-apps', 'metrics']);
+      const vikeOwnedRoutes = new Set(['how-it-works', 'features', 'about', 'faq', 'privacy', 'ai', 'hevy-vs-lyfta', 'hevy-vs-strong', 'lyfta-vs-strong', 'hevy-vs-liftshift', 'lyfta-vs-liftshift', 'strong-vs-liftshift', 'dashboard-analytics', 'free-workout-dashboard', 'supported-apps', 'metrics']);
       server.middlewares.use((req: any, _res: any, next: any) => {
         const rawUrl = typeof req.url === 'string' ? req.url : '';
         const url = rawUrl.split('?')[0]?.split('#')[0] ?? '';
@@ -130,7 +130,7 @@ const SEO_NOSCRIPT = `<noscript>
           <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/features/" style="color:#6ee7b7;">Full feature list</a> — everything LiftShift can do with your training data.</li>
           <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/metrics/" style="color:#6ee7b7;">Metrics glossary</a> — plain-language definitions for volume, PRs, 1RM, and heatmaps.</li>
           <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/supported-apps/" style="color:#6ee7b7;">Supported apps</a> — import guides for Hevy, Strong, and Lyfta.</li>
-          <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/hevy-vs-lyfta/" style="color:#6ee7b7;">Hevy vs Lyfta</a> — honest comparison of both workout trackers.</li>
+          <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/hevy-vs-lyfta/" style="color:#6ee7b7;">Hevy vs Lyfta vs Strong vs LiftShift</a> — honest comparison of all four with user reviews.</li>
           <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/faq/" style="color:#6ee7b7;">FAQ</a> — quick answers to common questions.</li>
           <li style="margin-bottom:0.5rem;color:#94a3b8;"><a href="/ai/" style="color:#6ee7b7;">AI reference</a> — structured definition optimized for AI assistants and LLMs.</li>
         </ul>

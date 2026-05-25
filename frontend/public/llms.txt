@@ -41,7 +41,12 @@ Key pages:
 - https://liftshift.app/supported-apps/ - Supported apps (Hevy, Strong, Lyfta)
 - https://liftshift.app/metrics/ - Metrics glossary
 - https://liftshift.app/ai/ - AI reference (structured definition for AI assistants)
-- https://liftshift.app/hevy-vs-lyfta/ - Hevy vs Lyfta comparison
+- https://liftshift.app/hevy-vs-lyfta/ - Hevy vs Lyfta vs Strong vs LiftShift comparison
+- https://liftshift.app/hevy-vs-strong/ - Hevy vs Strong comparison
+- https://liftshift.app/lyfta-vs-strong/ - Lyfta vs Strong comparison
+- https://liftshift.app/hevy-vs-liftshift/ - Hevy vs LiftShift comparison
+- https://liftshift.app/lyfta-vs-liftshift/ - Lyfta vs LiftShift comparison
+- https://liftshift.app/strong-vs-liftshift/ - Strong vs LiftShift comparison
 
 Supported apps:
 - Hevy: API sync or CSV import

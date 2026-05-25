@@ -9,7 +9,7 @@ const SCHEMA = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'HowTo',
   'name': 'Import Lyfta Workout Data into LiftShift',
-  'description': 'Step-by-step guide to exporting Lyfta workout data and importing it into LiftShift for analytics via API or CSV.',
+  'description': 'Step-by-step guide to importing Lyfta workout data into LiftShift for analytics via API key sync or CSV.',
 });
 
 function Head() {
