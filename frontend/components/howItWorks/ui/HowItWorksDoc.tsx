@@ -171,13 +171,11 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
       const paneRect = pane.getBoundingClientRect();
       const headingRect = heading.getBoundingClientRect();
       const visibleTop = Math.max(paneRect.top, 0);
-      const visibleCenterY = visibleTop + (Math.min(paneRect.bottom, window.innerHeight) - visibleTop) / 2;
+      const visibleHeight = Math.min(paneRect.bottom, window.innerHeight) - visibleTop;
+      const visibleCenterY = visibleTop + visibleHeight / 2;
       const headingCenterY = headingRect.top + headingRect.height / 2;
       pane.scrollBy({ top: headingCenterY - visibleCenterY, behavior: 'smooth' });
     }
-
-    const navLink = sidebarRef.current?.querySelector(`a[href="#${id}"]`);
-    if (navLink) navLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
