@@ -22,7 +22,7 @@ function Page() {
           </p>
         </section>
 
-        <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30">
+        <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
           <img src={assetPath('/images/misc/weeklyset.avif')} alt="LiftShift interactive muscle heatmap with per-muscle volume zone scoring" loading="lazy" className="w-full" />
         </div>
 

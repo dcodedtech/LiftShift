@@ -88,7 +88,7 @@ function Page() {
               <h3 className="text-base font-semibold text-slate-200 mb-3">{s.title}</h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 <div>{s.content}</div>
-                <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30">
+<div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
                   <img
                     src={assetPath(s.image)}
                     alt={s.alt}
@@ -120,7 +120,7 @@ function Page() {
             <p className="text-slate-300 leading-relaxed">
               Every muscle gets a 9-tier journey from <strong>Seedling</strong> to <strong>Legend</strong> based on your cumulative sets. See estimated time to your next milestone. It gamifies consistency — and shows you which muscles have the deepest training history.
             </p>
-            <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30">
+            <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
               <img
                 src={assetPath('/images/misc/hypertrophy.avif')}
                 alt="LiftShift lifetime progress and muscle journey tiers"

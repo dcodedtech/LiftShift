@@ -69,7 +69,7 @@ function Page() {
                   ))}
                 </ul>
               </div>
-              <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30">
+              <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
                 <img
                   src={assetPath(g.image)}
                   alt={g.alt}
