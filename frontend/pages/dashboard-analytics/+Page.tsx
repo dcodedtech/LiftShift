@@ -12,10 +12,10 @@ const sections = [
     content: (
       <>
         <p className="text-slate-300 leading-relaxed mb-4">
-          The body map shows a heatmap of your weekly volume per muscle group. The key difference from basic app heatmaps: <strong>these are rolling 7-day windows</strong>, which matches how your body actually recovers — not arbitrary calendar weeks.
+          The body map shows a heatmap of your weekly volume per muscle group. The key difference from basic app heatmaps: <strong>these are rolling 7-day windows</strong>, which matches how your body actually recovers, not arbitrary calendar weeks.
         </p>
         <p className="text-slate-300 leading-relaxed mb-4">
-          Hover any muscle to see your weekly set rate, current volume zone (maintenance, growth, or overreaching), and estimated progress %. Click a muscle to drill into exactly which exercises contribute — with primary and secondary involvement weighted separately.
+          Hover any muscle to see your weekly set rate, current volume zone (maintenance, growth, or overreaching), and estimated progress %. Click a muscle to drill into exactly which exercises contribute, with primary and secondary involvement weighted separately.
         </p>
         <p className="text-slate-300 leading-relaxed mb-4">
           A &ldquo;top 3 concentration&rdquo; metric warns you if too much volume is concentrated in a few muscles. Green = well-distributed. Red = you might be neglecting something.
@@ -106,7 +106,7 @@ const sections = [
     alt: 'LiftShift calendar filtering with date range selection',
     content: (
       <p className="text-slate-300 leading-relaxed mb-4">
-        This is simple but powerful. Pick any date range — a single day, a week, a month, a year, or multiple custom ranges — and <strong>every chart, every metric, every insight recalculates</strong> for just that window. Compare your 2025 training against 2024 in seconds. Isolate a specific training block and see what changed.
+        This is simple but powerful. Pick any date range, a single day, a week, a month, a year, or multiple custom ranges, and <strong>every chart, every metric, every insight recalculates</strong> for just that window. Compare your 2025 training against 2024 in seconds. Isolate a specific training block and see what changed.
       </p>
     ),
   },
@@ -117,7 +117,7 @@ const sections = [
     content: (
       <>
         <p className="text-slate-300 leading-relaxed mb-4">
-          A GitHub-style heatmap shows your entire year&rsquo;s training at a glance — workout days as colored squares, intensity by volume. You also get a consistency score, weekly streak counter, and average workouts per week.
+          A GitHub-style heatmap shows your entire year&rsquo;s training at a glance, workout days as colored squares, intensity by volume. You also get a consistency score, weekly streak counter, and average workouts per week.
         </p>
         <p className="text-slate-300 leading-relaxed mb-4">
           Flex cards are shareable year-in-review summaries: total volume lifted (with fun real-world comparisons), best month, longest streak, top exercises, muscle balance, and total PRs. Designed to look good when shared.
@@ -139,7 +139,7 @@ function Page() {
   return (
     <InfoShell
       title="How to read your training data like a coach"
-      subtitle="Your workout app gives you numbers — sets, reps, weight, maybe a basic line chart. LiftShift turns those same numbers into answers you can actually act on. Here's how each feature works."
+      subtitle="Your workout app gives you numbers, sets, reps, weight, maybe a basic line chart. LiftShift turns those same numbers into answers you can actually act on. Here's how each feature works."
       activeNav={null}
     >
       <div className="space-y-12">
@@ -149,7 +149,7 @@ function Page() {
             <div className={`grid grid-cols-1 ${s.image ? 'lg:grid-cols-2' : ''} gap-6 items-start`}>
               <div>{s.content}</div>
               {s.image ? (
-                <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
+                <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg mx-auto">
                   <img
                     src={assetPath(s.image)}
                     alt={s.alt || ''}

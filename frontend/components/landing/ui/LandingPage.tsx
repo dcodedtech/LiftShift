@@ -9,7 +9,6 @@ import LightRays from '../lightRays/LightRays';
 import { Flame, CalendarDays, Trophy, BarChart3, Activity } from 'lucide-react';
 import { FANCY_FONT } from '../../../utils/ui/uiConstants';
 import { assetPath } from '../../../constants';
-import { HowItWorksDoc } from '../../howItWorks/ui/HowItWorksDoc';
 
 interface LandingPageProps {
   onSelectPlatform: (source: DataSourceChoice) => void;
@@ -279,22 +278,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
         </div>
       </section>
 
-      <section id="how-it-works" className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-200" style={FANCY_FONT}>
-              How it works
-            </h2>
-            <p className="mt-3 text-slate-400 max-w-2xl mx-auto">
-              Import from Hevy, Strong, or Lyfta in seconds. All analysis runs locally in your browser.
-            </p>
-          </div>
-
-          <div className="mt-8">
-            <HowItWorksDoc showTitle={false} />
-          </div>
-        </div>
-      </section>
       {/* ========== PLATFORM DOCK ========== */}
       <PlatformDock items={platformDockItems} />
 

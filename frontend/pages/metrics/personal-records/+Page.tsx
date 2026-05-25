@@ -22,7 +22,7 @@ function Page() {
           </p>
         </section>
 
-        <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
+        <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg mx-auto">
           <img src={assetPath('/images/misc/plateau.avif')} alt="LiftShift exercise status and PR tracking dashboard" loading="lazy" className="w-full" />
         </div>
 

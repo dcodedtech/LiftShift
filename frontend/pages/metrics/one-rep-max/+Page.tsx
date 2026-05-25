@@ -30,7 +30,7 @@ function Page() {
           </p>
         </section>
 
-        <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
+        <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg mx-auto">
           <img src={assetPath('/images/misc/hypertrophy.avif')} alt="LiftShift strength tracking and 1RM estimation dashboard" loading="lazy" className="w-full" />
         </div>
 

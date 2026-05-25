@@ -27,7 +27,7 @@ const sections = [
     content: (
       <>
         <p className="text-slate-300 leading-relaxed mb-4">
-          Your app might show a line chart of your bench press over time. But it won&rsquo;t tell you if you&rsquo;re plateauing, regressing, or making real progress — and it certainly won&rsquo;t tell you <em>what to do about it</em>.
+          Your app might show a line chart of your bench press over time. But it won&rsquo;t tell you if you&rsquo;re plateauing, regressing, or making real progress, and it certainly won&rsquo;t tell you <em>what to do about it</em>.
         </p>
         <p className="text-slate-300 leading-relaxed mb-4">
           LiftShift labels every exercise with a clear status: <strong>Getting stronger, Plateauing, Taking a dip,</strong> or <strong>New.</strong> When you&rsquo;re stuck, you get a tiny actionable suggestion: &ldquo;add 1 rep to your first set&rdquo; or &ldquo;bump the weight 2.5 kg.&rdquo; It also detects premature PRs (big jumps you couldn&rsquo;t sustain) and PR droughts (no new best in over 2 weeks).
@@ -56,7 +56,7 @@ const sections = [
     alt: 'LiftShift AI-ready training data export',
     content: (
       <p className="text-slate-300 leading-relaxed mb-4">
-        LiftShift can export your full structured training data — sets, exercise stats, trends — in a format designed for AI analysis. Paste it into any AI and ask anything: &ldquo;Do I have any junk volume?&rdquo; &ldquo;Is my push-pull ratio healthy?&rdquo; &ldquo;Are my elbows at risk?&rdquo; Or write your own custom prompt.
+        LiftShift can export your full structured training data, sets, exercise stats, trends, in a format designed for AI analysis. Paste it into any AI and ask anything: &ldquo;Do I have any junk volume?&rdquo; &ldquo;Is my push-pull ratio healthy?&rdquo; &ldquo;Are my elbows at risk?&rdquo; Or write your own custom prompt.
       </p>
     ),
   },
@@ -66,7 +66,7 @@ const sections = [
     alt: 'LiftShift calendar filtering for date range comparisons',
     content: (
       <p className="text-slate-300 leading-relaxed mb-4">
-        Most apps show you all-time data or a fixed window. LiftShift&rsquo;s <strong>calendar filtering</strong> lets you pick any date range — last month, all of 2025, a single week — and every chart, metric, and insight recalculates for just that window. Compare blocks of training in seconds.
+        Most apps show you all-time data or a fixed window. LiftShift&rsquo;s <strong>calendar filtering</strong> lets you pick any date range, last month, all of 2025, a single week, and every chart, metric, and insight recalculates for just that window. Compare blocks of training in seconds.
       </p>
     ),
   },
@@ -88,7 +88,7 @@ function Page() {
               <h3 className="text-base font-semibold text-slate-200 mb-3">{s.title}</h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 <div>{s.content}</div>
-<div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
+<div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg mx-auto">
                   <img
                     src={assetPath(s.image)}
                     alt={s.alt}
@@ -118,9 +118,9 @@ function Page() {
           <h2 className="text-lg font-semibold text-white mb-3">Lifetime Progress tracking</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <p className="text-slate-300 leading-relaxed">
-              Every muscle gets a 9-tier journey from <strong>Seedling</strong> to <strong>Legend</strong> based on your cumulative sets. See estimated time to your next milestone. It gamifies consistency — and shows you which muscles have the deepest training history.
+              Every muscle gets a 9-tier journey from <strong>Seedling</strong> to <strong>Legend</strong> based on your cumulative sets. See estimated time to your next milestone. It gamifies consistency, and shows you which muscles have the deepest training history.
             </p>
-            <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg">
+            <div className="rounded-xl border border-white/10 overflow-hidden bg-black/30 max-w-lg mx-auto">
               <img
                 src={assetPath('/images/misc/hypertrophy.avif')}
                 alt="LiftShift lifetime progress and muscle journey tiers"
