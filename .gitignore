@@ -6,8 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-network.txt
-renderLogs.txt
+
 
 node_modules
 dist
@@ -35,7 +34,7 @@ dist-ssr
 
 # Skills
 .agents/
-skills-lock.json/
+skills-lock.json
 
 # Unused assets for future use
 frontend/components/bodyMap/demomalefront.svg
