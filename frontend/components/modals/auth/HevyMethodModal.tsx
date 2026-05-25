@@ -33,7 +33,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex items-center justify-center w-9 h-9 rounded-md text-xs font-semibold bg-black/60 hover:bg-black/70 border border-slate-700/50 text-slate-200"
+              className="inline-flex items-center justify-center w-9 h-9 rounded-md text-xs font-semibold bg-black/60 hover:bg-black/70 border border-slate-700/50 text-slate-200 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -49,7 +49,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="inline-flex items-center justify-center h-9 px-3 rounded-md text-xs font-semibold bg-black/60 hover:bg-black/70 border border-slate-700/50 text-slate-200"
+                className="inline-flex items-center justify-center h-9 px-3 rounded-md text-xs font-semibold bg-black/60 hover:bg-black/70 border border-slate-700/50 text-slate-200 cursor-pointer"
               >
                 Close
               </button>
@@ -64,7 +64,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
             <button
               type="button"
               onClick={() => onSelect('saved')}
-              className="group rounded-xl border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/20 px-4 py-4 text-left transition-colors"
+              className="group rounded-xl border border-emerald-500/30 bg-emerald-500/15 hover:bg-emerald-500/20 px-4 py-4 text-left transition-colors cursor-pointer"
             >
               <div className="text-white font-semibold text-lg">Continue</div>
               <div className="mt-1 text-xs text-slate-200/90">Auto-sync using your saved session.</div>
@@ -74,7 +74,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
               <button
                 type="button"
                 onClick={onClearCache}
-                className="group rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-4 text-left transition-colors"
+                className="group rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-4 text-left transition-colors cursor-pointer"
               >
                 <div className="text-white font-semibold text-lg">Unload Data</div>
                 <div className="mt-1 text-xs text-slate-200/90">Re-download workout data and restart setup.</div>
@@ -86,7 +86,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
             <button
               type="button"
               onClick={onClearCache}
-              className="w-full rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-3 text-left transition-colors"
+              className="w-full rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-3 text-left transition-colors cursor-pointer"
             >
               <div className="text-white font-semibold">Unload Data</div>
               <div className="mt-1 text-xs text-slate-200/90">Re-download workout data and restart setup.</div>
@@ -98,7 +98,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
           <button
             type="button"
             onClick={() => onSelect('login')}
-            className="group rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-4 text-left transition-colors"
+            className="group rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-4 text-left transition-colors cursor-pointer"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-3 min-w-0">
@@ -114,7 +114,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
           <button
             type="button"
             onClick={() => onSelect('csv')}
-            className="group rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-4 text-left transition-colors"
+            className="group rounded-xl border border-slate-700/60 bg-white/5 hover:bg-white/10 px-4 py-4 text-left transition-colors cursor-pointer"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-3 min-w-0">
@@ -141,7 +141,7 @@ export const HevyMethodModal: React.FC<HevyMethodModalProps> = ({
           <button
             type="button"
             onClick={() => setShowLoginHelp((v) => !v)}
-            className="w-full text-center text-sm font-semibold text-blue-400 hover:text-blue-300 underline underline-offset-4"
+            className="w-full text-center text-sm font-semibold text-blue-400 hover:text-blue-300 underline underline-offset-4 cursor-pointer"
           >
             {showLoginHelp ? 'Hide: See how to login with Hevy' : 'See how to login with Hevy'}
           </button>

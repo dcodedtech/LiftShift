@@ -312,7 +312,7 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 cursor-pointer"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
