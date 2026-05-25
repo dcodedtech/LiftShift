@@ -166,7 +166,15 @@ export const HowItWorksDoc: React.FC<Props> = ({ className = '', showTitle = tru
     if (!el) return;
 
     const heading = el.querySelector('h2, h3') ?? el;
-    heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const pane = contentRef.current;
+    if (pane) {
+      const paneRect = pane.getBoundingClientRect();
+      const headingRect = heading.getBoundingClientRect();
+      const visibleTop = Math.max(paneRect.top, 0);
+      const visibleCenterY = visibleTop + (Math.min(paneRect.bottom, window.innerHeight) - visibleTop) / 2;
+      const headingCenterY = headingRect.top + headingRect.height / 2;
+      pane.scrollBy({ top: headingCenterY - visibleCenterY, behavior: 'smooth' });
+    }
 
     const navLink = sidebarRef.current?.querySelector(`a[href="#${id}"]`);
     if (navLink) navLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
