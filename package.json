@@ -47,7 +47,8 @@
     "styled-components": "^6.4.1",
     "tailwindcss": "^4.2.4",
     "vike": "^0.4.258",
-    "vike-react": "^0.6.21"
+    "vike-react": "^0.6.21",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

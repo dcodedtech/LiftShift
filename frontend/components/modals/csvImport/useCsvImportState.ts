@@ -58,10 +58,15 @@ export const useCsvImportState = ({
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!ensureSelections(selectedGender, selectedUnit)) return;
-      if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
+      const xlsxMimeTypes = new Set([
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroenabled.12',
+      ]);
+      const normalizedFileName = file?.name.toLowerCase() || '';
+      if (file && (file.type === 'text/csv' || normalizedFileName.endsWith('.csv') || normalizedFileName.endsWith('.xlsx') || xlsxMimeTypes.has(file.type))) {
         onFileSelect?.(file, selectedGender!, selectedUnit!);
       } else {
-        alert('Please choose a valid .csv file');
+        alert('Please choose a valid .csv or .xlsx file');
       }
     },
     [onFileSelect, selectedGender, selectedUnit]
@@ -80,10 +85,15 @@ export const useCsvImportState = ({
       if (!ensureSelections(selectedGender, selectedUnit)) return;
 
       const file = event.dataTransfer.files?.[0];
-      if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
+      const xlsxMimeTypes = new Set([
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroenabled.12',
+      ]);
+      const normalizedFileName = file?.name.toLowerCase() || '';
+      if (file && (file.type === 'text/csv' || normalizedFileName.endsWith('.csv') || normalizedFileName.endsWith('.xlsx') || xlsxMimeTypes.has(file.type))) {
         onFileSelect?.(file, selectedGender!, selectedUnit!);
       } else {
-        alert('Drop a valid .csv file');
+        alert('Drop a valid .csv or .xlsx file');
       }
     },
     [onFileSelect, selectedGender, selectedUnit]

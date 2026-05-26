@@ -3,7 +3,7 @@ import { Upload } from 'lucide-react';
 
 interface CSVImportDropzoneProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   hideBodyTypeAndUnit: boolean;
   canUploadCsv: boolean;
   isLoading: boolean;
@@ -15,6 +15,7 @@ interface CSVImportDropzoneProps {
 const platformLabel = (platform: CSVImportDropzoneProps['platform']) => {
   if (platform === 'strong') return 'Strong';
   if (platform === 'lyfta') return 'Lyfta';
+  if (platform === 'motra') return 'Motra';
   if (platform === 'other') return 'CSV';
   return 'Hevy';
 };
@@ -31,8 +32,8 @@ export const CSVImportDropzone: React.FC<CSVImportDropzoneProps> = ({
 }) => {
   const dropLabel = canUploadCsv
     ? platform === 'other'
-      ? 'Drop your CSV here'
-      : `Drop your ${platformLabel(platform)} CSV here`
+      ? 'Drop your CSV or Excel file here'
+      : `Drop your ${platformLabel(platform)} CSV or Excel file here`
     : hideBodyTypeAndUnit
       ? 'Go back to choose body type + unit first'
       : 'Choose body type + unit first';
@@ -62,14 +63,14 @@ export const CSVImportDropzone: React.FC<CSVImportDropzoneProps> = ({
           {dropLabel}
         </p>
         <p className="text-slate-500 text-sm sm:text-base lg:text-lg mt-3">
-          {canUploadCsv ? 'or click to choose a file' : 'Then upload your CSV'}
+          {canUploadCsv ? 'or click to choose a file' : 'Then upload your CSV or Excel file'}
         </p>
       </div>
 
       <input
         ref={fileInputRef}
         type="file"
-        accept=".csv"
+        accept=".csv,.xlsx"
         onChange={onFileChange}
         className="hidden"
         disabled={isLoading || !canUploadCsv}
