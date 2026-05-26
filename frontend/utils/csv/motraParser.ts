@@ -114,7 +114,7 @@ export const parseMotraCSV = async (
                 duration_seconds,
                 rpe: null,
                 parsedDate,
-                source: 'motra'
+                source: 'motra',
               });
               
               setIndex++;

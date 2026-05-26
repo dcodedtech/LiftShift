@@ -29,7 +29,8 @@ export const loadCsvAuto = (
   deps.setIsAnalyzing(true);
   const startedAt = deps.startProgress();
 
-  const parsePromise = options.platform === 'motra'
+  const isMotraFormat = options.platform === 'motra' || (options.platform === 'other' && options.storedCSV.includes('Workout Start'));
+  const parsePromise = isMotraFormat
     ? parseMotraCSV(options.storedCSV, { unit: options.weightUnit })
     : parseWorkoutCSVAsyncWithUnit(options.storedCSV, { unit: options.weightUnit });
 

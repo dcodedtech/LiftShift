@@ -55,7 +55,8 @@ export const runCsvImport = (
       deps.setCsvImportError(null);
 
       const unit = unitOverride ?? deps.weightUnit;
-      const parsePromise = platform === 'motra'
+      const isMotraFormat = platform === 'motra' || (platform === 'other' && text.includes('Workout Start'));
+      const parsePromise = isMotraFormat
         ? parseMotraCSV(text, { unit })
         : parseWorkoutCSVAsyncWithUnit(text, { unit });
 
