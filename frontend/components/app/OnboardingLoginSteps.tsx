@@ -51,7 +51,7 @@ export const HevyLoginStep: React.FC<HevyLoginStepProps> = ({
     onBack={
       intent === 'initial'
         ? () => onSetOnboarding({ intent, step: 'hevy_prefs', platform: 'hevy' })
-        : () => onSetOnboarding(backToCombinePicker ? { intent, step: 'add_source_platform' } : { intent: 'initial', step: 'platform' })
+        : () => onSetOnboarding(backToCombinePicker ? { intent, step: 'add_source_platform' } : { intent: 'update', step: 'platform' })
     }
     onClose={intent === 'update' ? () => onSetOnboarding(null) : undefined}
   />
@@ -97,7 +97,7 @@ export const LyftaLoginStep: React.FC<LyftaLoginStepProps> = ({
     onBack={
       intent === 'initial'
         ? () => onSetOnboarding({ intent, step: 'lyfta_prefs', platform: 'lyfta' })
-        : () => onSetOnboarding(backToCombinePicker ? { intent, step: 'add_source_platform' } : { intent: 'initial', step: 'platform' })
+        : () => onSetOnboarding(backToCombinePicker ? { intent, step: 'add_source_platform' } : { intent: 'update', step: 'platform' })
     }
     onClose={intent === 'update' ? () => onSetOnboarding(null) : undefined}
   />
