@@ -20,7 +20,7 @@ const MILES_TO_KM = 1.609344;
 const METERS_TO_KM = 0.001;
 const FEET_TO_KM = 0.0003048;
 
-const toKg = (weight: number, rowUnit: string | undefined, headerUnit: string | undefined, userUnit: 'kg' | 'lbs'): number => {
+export const toKg = (weight: number, rowUnit: string | undefined, headerUnit: string | undefined, userUnit: 'kg' | 'lbs'): number => {
   if (!Number.isFinite(weight) || weight < 0) return 0;
 
   const unit = normalize(rowUnit ?? '') || normalize(headerUnit ?? '') || userUnit;
