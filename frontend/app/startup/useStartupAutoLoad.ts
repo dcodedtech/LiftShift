@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 
 import { getCSVData, getPreferencesConfirmed, getWeightUnit, savePreferencesConfirmed } from '../../utils/storage/localStorage';
 import {
-  getCombinedDataSources,
   getDataSourceChoice,
   getHevyAuthToken,
   getLastCsvPlatform,
@@ -43,7 +42,6 @@ export const useStartupAutoLoad = (params: StartupAutoLoadParams): void => {
     }
 
     const storedChoice = getDataSourceChoice();
-    const combinedSources = getCombinedDataSources();
     if (!storedChoice) {
       saveSetupComplete(false);
       params.setIsAnalyzing(false);
@@ -90,7 +88,7 @@ export const useStartupAutoLoad = (params: StartupAutoLoadParams): void => {
     ): Promise<boolean> => {
       const resetOnError = options.resetOnError !== false;
       // Platform: Strong / Other - only CSV
-      if (platform === 'strong' || platform === 'other') {
+      if (platform === 'strong' || platform === 'other' || platform === 'motra') {
         if (!storedCSV || lastCsvPlatform !== platform) {
           if (resetOnError) resetToPlatform();
           return false;
@@ -187,28 +185,24 @@ export const useStartupAutoLoad = (params: StartupAutoLoadParams): void => {
       return false;
     };
 
-    // Execute auto-reload
-    const runCombinedReload = async () => {
-      const loadOrder = Array.from(new Set([storedChoice, ...combinedSources])) as DataSourceChoice[];
-      const results = await Promise.all(
-        loadOrder.map(async (source) => {
-          try {
-            const accountKey = source === 'hevy' ? (getHevyUsernameOrEmail() ?? undefined) : undefined;
-            const methodForSource = getLastLoginMethod(source, accountKey);
-            return await attemptReload(source, methodForSource, { resetOnError: false });
-          } catch (err) {
-            console.error('[StartupAutoLoad] Source reload failed', { source, err });
-            return false;
-          }
-        })
-      );
-
-      if (!results.some(Boolean)) {
+    // Execute auto-reload — only reload the primary source, not combined sources.
+    // Reloading combined sources can cause stale data (e.g., demo CSV from
+    // localStorage) to merge with live API data on page refresh.
+    const runPrimaryReload = async () => {
+      try {
+        const accountKey = storedChoice === 'hevy' ? (getHevyUsernameOrEmail() ?? undefined) : undefined;
+        const method = getLastLoginMethod(storedChoice, accountKey);
+        const success = await attemptReload(storedChoice, method, { resetOnError: false });
+        if (!success) {
+          resetToPlatform();
+        }
+      } catch (err) {
+        console.error('[StartupAutoLoad] Unexpected failure', err);
         resetToPlatform();
       }
     };
 
-    runCombinedReload().catch((err) => {
+    runPrimaryReload().catch((err) => {
       console.error('[StartupAutoLoad] Unexpected failure', err);
       resetToPlatform();
     });
