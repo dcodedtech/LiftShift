@@ -22,7 +22,7 @@ type CSVImportVariant = 'csv' | 'preferences';
 
 interface CSVImportModalProps {
   intent: Intent;
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   variant?: CSVImportVariant;
   /** Hide the body type + weight unit selectors (used when preferences were already collected earlier in onboarding). */
   hideBodyTypeAndUnit?: boolean;

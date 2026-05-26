@@ -15,7 +15,9 @@ export type OnboardingStep =
   | 'lyfta_login'
   | 'hevy_prefs'
   | 'hevy_login'
-  | 'hevy_csv';
+  | 'hevy_csv'
+  | 'motra_prefs'
+  | 'motra_csv';
 
 export type OnboardingFlow = {
   intent: OnboardingIntent;

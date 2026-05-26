@@ -1,6 +1,7 @@
 import type { WeightUnit } from '../../utils/storage/localStorage';
 import type { DataSourceChoice } from '../../utils/storage/dataSourceStorage';
 import { parseWorkoutCSVAsyncWithUnit, type ParseWorkoutCsvResult } from '../../utils/csv/csvParser';
+import { parseMotraCSV } from '../../utils/csv/motraParser';
 import { identifyPersonalRecords } from '../../utils/analysis/core';
 import { clearCSVData } from '../../utils/storage/localStorage';
 import { saveSetupComplete } from '../../utils/storage/dataSourceStorage';
@@ -28,7 +29,11 @@ export const loadCsvAuto = (
   deps.setIsAnalyzing(true);
   const startedAt = deps.startProgress();
 
-  parseWorkoutCSVAsyncWithUnit(options.storedCSV, { unit: options.weightUnit })
+  const parsePromise = options.platform === 'motra'
+    ? parseMotraCSV(options.storedCSV, { unit: options.weightUnit })
+    : parseWorkoutCSVAsyncWithUnit(options.storedCSV, { unit: options.weightUnit });
+
+  parsePromise
     .then((result: ParseWorkoutCsvResult) => {
       if (result.sets.length === 0 || result.sets.every((s) => !s.parsedDate)) {
         clearCSVData();

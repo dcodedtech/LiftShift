@@ -2,13 +2,14 @@ import React from 'react';
 
 interface CSVImportIntroProps {
   variant: 'csv' | 'preferences';
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   showBodyTypeAndUnitSelectors: boolean;
 }
 
 const platformLabel = (platform: CSVImportIntroProps['platform']) => {
   if (platform === 'strong') return 'Strong';
   if (platform === 'lyfta') return 'Lyfta';
+  if (platform === 'motra') return 'Motra';
   return 'Hevy';
 };
 

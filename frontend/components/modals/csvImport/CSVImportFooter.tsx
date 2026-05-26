@@ -5,7 +5,7 @@ import { UNIFORM_HEADER_BUTTON_CLASS } from '../../../utils/ui/uiConstants';
 
 interface CSVImportFooterProps {
   variant: 'csv' | 'preferences';
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   showExportHelp: boolean;
   onToggleExportHelp: () => void;
   onClearCache?: () => void;
