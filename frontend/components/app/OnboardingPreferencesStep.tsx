@@ -7,7 +7,7 @@ import { getPreferencesConfirmed, savePreferencesConfirmed } from '../../utils/s
 
 interface OnboardingPreferencesStepProps {
   intent: OnboardingFlow['intent'];
-  platform: 'hevy' | 'lyfta' | 'strong' | 'other';
+  platform: 'hevy' | 'lyfta' | 'strong' | 'other' | 'motra';
   nextStep: OnboardingFlow['step'];
   backStep: OnboardingFlow['step'];
   nextBackStep?: OnboardingFlow['step'];

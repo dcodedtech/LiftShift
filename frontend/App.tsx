@@ -120,7 +120,7 @@ const App: React.FC = () => {
   }, [navigate]);
 
   const [parsedData, setParsedData] = useState<WorkoutSet[]>([]);
-  const [dataBySource, setDataBySource] = useState<Partial<Record<'hevy' | 'lyfta' | 'strong' | 'other', WorkoutSet[]>>>({});
+  const [dataBySource, setDataBySource] = useState<Partial<Record<'hevy' | 'lyfta' | 'strong' | 'other' | 'motra', WorkoutSet[]>>>({});
   const [hasHydratedData, setHasHydratedData] = useState(false);
   const [onboarding, setOnboarding] = useState<OnboardingFlow | null>(() => {
     return getSetupComplete() ? null : { intent: 'initial', step: 'platform' };
@@ -144,12 +144,12 @@ const App: React.FC = () => {
   } = useAppPreferences();
 
   const mergeDatasets = useCallback(
-    (datasets: Partial<Record<'hevy' | 'lyfta' | 'strong' | 'other', WorkoutSet[]>>): WorkoutSet[] => {
+    (datasets: Partial<Record<'hevy' | 'lyfta' | 'strong' | 'other' | 'motra', WorkoutSet[]>>): WorkoutSet[] => {
       const activeSourceCount = Object.values(datasets).filter((sets) => (sets?.length ?? 0) > 0).length;
       const useSourceLabels = activeSourceCount > 1;
-      const normalizedBySource = new Map<'hevy' | 'lyfta' | 'strong' | 'other', Map<string, string>>();
+      const normalizedBySource = new Map<'hevy' | 'lyfta' | 'strong' | 'other' | 'motra', Map<string, string>>();
 
-      const sources = Object.entries(datasets) as Array<['hevy' | 'lyfta' | 'strong' | 'other', WorkoutSet[] | undefined]>;
+      const sources = Object.entries(datasets) as Array<['hevy' | 'lyfta' | 'strong' | 'other' | 'motra', WorkoutSet[] | undefined]>;
       const allCanonicalNames = Array.from(
         new Set(
           sources.flatMap(([_, sets]) => (sets ?? []).map((s) => s.exercise_title || '').filter(Boolean))
@@ -197,7 +197,9 @@ const App: React.FC = () => {
                   ? '@lyfta'
                   : source === 'strong'
                     ? '@strong'
-                    : '@other';
+                    : source === 'motra'
+                      ? '@motra'
+                      : '@other';
           const exerciseTitle = label ? `${canonical || raw} ${label}` : (canonical || raw);
           merged.push({ ...set, exercise_title: exerciseTitle.trim(), source });
         }
@@ -219,7 +221,7 @@ const App: React.FC = () => {
   );
 
   const mergeIntoCombinedData = useCallback(
-    (source: 'hevy' | 'lyfta' | 'strong' | 'other', incoming: WorkoutSet[], replaceMode = true) => {
+    (source: 'hevy' | 'lyfta' | 'strong' | 'other' | 'motra', incoming: WorkoutSet[], replaceMode = true) => {
       const DEMO_MODE_KEY = 'hevy_analytics_demo_mode';
       const isDemoMode = localStorage.getItem(DEMO_MODE_KEY) === '1';
       if (isDemoMode && source !== 'other') {
@@ -329,7 +331,7 @@ const App: React.FC = () => {
     weightUnit,
     setParsedData: (data) => {
       const inferredSource = data[0]?.source;
-      if (inferredSource === 'hevy' || inferredSource === 'lyfta' || inferredSource === 'strong' || inferredSource === 'other') {
+      if (inferredSource === 'hevy' || inferredSource === 'lyfta' || inferredSource === 'strong' || inferredSource === 'other' || inferredSource === 'motra') {
         const shouldMerge = isCombiningRef.current;
         isCombiningRef.current = false;
         clearAllFilters();
@@ -357,7 +359,7 @@ const App: React.FC = () => {
     setDataSource,
     setParsedData: (data) => {
       const inferredSource = data[0]?.source;
-      if (inferredSource === 'hevy' || inferredSource === 'lyfta' || inferredSource === 'strong' || inferredSource === 'other') {
+      if (inferredSource === 'hevy' || inferredSource === 'lyfta' || inferredSource === 'strong' || inferredSource === 'other' || inferredSource === 'motra') {
         mergeIntoCombinedData(inferredSource, data, false);
         return;
       }
