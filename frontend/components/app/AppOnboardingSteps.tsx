@@ -13,7 +13,8 @@ import { AddSourcePickerModal } from './AddSourcePickerModal';
 const chooseNextStep = (
   intent: OnboardingFlow['intent'],
   source: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra',
-  preferencesConfirmed: boolean
+  preferencesConfirmed: boolean,
+  fromCombine = false
 ): OnboardingFlow => {
   if (source === 'strong') {
     return {
@@ -28,7 +29,7 @@ const chooseNextStep = (
       intent,
       step: preferencesConfirmed ? 'lyfta_login' : 'lyfta_prefs',
       platform: 'lyfta',
-      backStep: intent === 'update' && preferencesConfirmed ? 'add_source_platform' : undefined,
+      backStep: fromCombine && intent === 'update' && preferencesConfirmed ? 'add_source_platform' : undefined,
     };
   }
   if (source === 'other') {
@@ -51,7 +52,7 @@ const chooseNextStep = (
     intent,
     step: preferencesConfirmed ? 'hevy_login' : 'hevy_prefs',
     platform: 'hevy',
-    backStep: intent === 'update' && preferencesConfirmed ? 'add_source_platform' : undefined,
+    backStep: fromCombine && intent === 'update' && preferencesConfirmed ? 'add_source_platform' : undefined,
   };
 };
 
@@ -113,7 +114,15 @@ export const AppOnboardingSteps: React.FC<AppOnboardingStepsProps> = ({
     onSetHevyLoginError(null);
     onSetLyfatLoginError(null);
     const skipPrefs = onboarding.intent === 'update' && getPreferencesConfirmed();
-    onSetOnboarding(chooseNextStep(onboarding.intent, source, skipPrefs));
+    onSetOnboarding(chooseNextStep(onboarding.intent, source, skipPrefs, false));
+  };
+
+  const handleSelectPlatformForCombine = (source: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra') => {
+    onSetCsvImportError(null);
+    onSetHevyLoginError(null);
+    onSetLyfatLoginError(null);
+    const skipPrefs = onboarding.intent === 'update' && getPreferencesConfirmed();
+    onSetOnboarding(chooseNextStep(onboarding.intent, source, skipPrefs, true));
   };
 
   if (onboarding.step === 'platform') {
@@ -133,7 +142,7 @@ export const AppOnboardingSteps: React.FC<AppOnboardingStepsProps> = ({
   if (onboarding.step === 'add_source_platform') {
     return (
       <AddSourcePickerModal
-        onSelectSource={handleSelectPlatform}
+        onSelectSource={handleSelectPlatformForCombine}
         onClose={() => onSetOnboarding(null)}
       />
     );
