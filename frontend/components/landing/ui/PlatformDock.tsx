@@ -15,6 +15,7 @@ export type PlatformDockItem = {
   onClick: () => void;
   disabled?: boolean;
   badge?: string;
+  className?: string;
 };
 
 export type PlatformDockProps = {
@@ -74,6 +75,7 @@ function DockItem({ item, mouseX, onHoverStart, onHoverEnd, index = 0, totalItem
   return (
     <motion.div
       style={{ marginLeft, marginRight }}
+      className={item.className}
     >
       <motion.button
         ref={ref}

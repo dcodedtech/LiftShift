@@ -1,7 +1,7 @@
 import { createStorageManager } from './createStorageManager';
 
 // Type moved from dataSources/types.ts
-export type DataSourceChoice = 'strong' | 'hevy' | 'lyfta' | 'other';
+export type DataSourceChoice = 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra';
 
 export type LoginMethod = 'csv' | 'credentials' | 'apiKey';
 
@@ -13,7 +13,7 @@ type LastLoginRecord = {
 type LastLoginMap = Partial<Record<DataSourceChoice, LastLoginRecord>>;
 const COMBINED_SOURCES_KEY = 'hevy_analytics_combined_sources_v1';
 
-const validDataSources: DataSourceChoice[] = ['strong', 'hevy', 'lyfta', 'other'];
+const validDataSources: DataSourceChoice[] = ['strong', 'hevy', 'lyfta', 'other', 'motra'];
 const validLoginMethods: LoginMethod[] = ['csv', 'credentials', 'apiKey'];
 
 // Data Source Choice

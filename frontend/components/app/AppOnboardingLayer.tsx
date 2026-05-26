@@ -6,7 +6,7 @@ import { AppOnboardingSteps } from './AppOnboardingSteps';
 
 interface AppOnboardingLayerProps {
   onboarding: OnboardingFlow | null;
-  dataSource: 'strong' | 'hevy' | 'lyfta' | 'other' | null;
+  dataSource: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra' | null;
   bodyMapGender: BodyMapGender;
   weightUnit: WeightUnit;
   isAnalyzing: boolean;
@@ -21,7 +21,7 @@ interface AppOnboardingLayerProps {
   onSetLyfatLoginError: (msg: string | null) => void;
   onClearCacheAndRestart: () => void;
   onForceRefreshAndRelogin?: () => void;
-  onProcessFile: (file: File, platform: 'strong' | 'hevy' | 'lyfta' | 'other', unitOverride?: WeightUnit) => void;
+  onProcessFile: (file: File, platform: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra', unitOverride?: WeightUnit) => void;
   onHevyLogin: (emailOrUsername: string, password: string) => void;
   onHevyApiKeyLogin: (apiKey: string) => void;
   onHevySyncSaved: () => void;

@@ -3,7 +3,7 @@ import type { BodyMapGender } from '../bodyMap/BodyMap';
 import type { WeightUnit } from '../../utils/storage/localStorage';
 import type { OnboardingFlow } from '../../app/onboarding/types';
 import { LandingPage } from '../landing/ui/LandingPage';
-import { getPreferencesConfirmed } from '../../utils/storage/localStorage';
+import { getPreferencesConfirmed, clearCSVData } from '../../utils/storage/localStorage';
 import { OnboardingPreferencesStep } from './OnboardingPreferencesStep';
 import { OnboardingDemoStep } from './OnboardingDemoStep';
 import { HevyLoginStep, LyftaLoginStep } from './OnboardingLoginSteps';
@@ -12,7 +12,7 @@ import { AddSourcePickerModal } from './AddSourcePickerModal';
 
 const chooseNextStep = (
   intent: OnboardingFlow['intent'],
-  source: 'strong' | 'hevy' | 'lyfta' | 'other',
+  source: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra',
   preferencesConfirmed: boolean
 ): OnboardingFlow => {
   if (source === 'strong') {
@@ -39,6 +39,14 @@ const chooseNextStep = (
       backStep: 'other_prefs',
     };
   }
+  if (source === 'motra') {
+    return {
+      intent,
+      step: preferencesConfirmed ? 'motra_csv' : 'motra_prefs',
+      platform: 'motra',
+      backStep: 'motra_prefs',
+    };
+  }
   return {
     intent,
     step: preferencesConfirmed ? 'hevy_login' : 'hevy_prefs',
@@ -49,7 +57,7 @@ const chooseNextStep = (
 
 interface AppOnboardingStepsProps {
   onboarding: OnboardingFlow;
-  dataSource: 'strong' | 'hevy' | 'lyfta' | 'other' | null;
+  dataSource: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra' | null;
   bodyMapGender: BodyMapGender;
   weightUnit: WeightUnit;
   isAnalyzing: boolean;
@@ -64,7 +72,7 @@ interface AppOnboardingStepsProps {
   onSetLyfatLoginError: (msg: string | null) => void;
   onClearCacheAndRestart: () => void;
   onForceRefreshAndRelogin?: () => void;
-  onProcessFile: (file: File, platform: 'strong' | 'hevy' | 'lyfta' | 'other', unitOverride?: WeightUnit) => void;
+  onProcessFile: (file: File, platform: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra', unitOverride?: WeightUnit) => void;
   onHevyLogin: (emailOrUsername: string, password: string) => void;
   onHevyApiKeyLogin: (apiKey: string) => void;
   onHevySyncSaved: () => void;
@@ -95,9 +103,12 @@ export const AppOnboardingSteps: React.FC<AppOnboardingStepsProps> = ({
   onLyfatLogin,
   onLyfatSyncSaved,
 }) => {
-  const closeForUpdate = onboarding.intent === 'update' ? () => onSetOnboarding(null) : undefined;
+  const closeForUpdate = onboarding.intent === 'update' ? () => {
+    clearCSVData();
+    onSetOnboarding(null);
+  } : undefined;
 
-  const handleSelectPlatform = (source: 'strong' | 'hevy' | 'lyfta' | 'other') => {
+  const handleSelectPlatform = (source: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra') => {
     onSetCsvImportError(null);
     onSetHevyLoginError(null);
     onSetLyfatLoginError(null);
@@ -219,6 +230,25 @@ export const AppOnboardingSteps: React.FC<AppOnboardingStepsProps> = ({
     );
   }
 
+  if (onboarding.step === 'motra_prefs') {
+    return (
+      <OnboardingPreferencesStep
+        intent={onboarding.intent}
+        platform="motra"
+        nextStep="motra_csv"
+        nextBackStep="motra_prefs"
+        backStep="platform"
+        bodyMapGender={bodyMapGender}
+        weightUnit={weightUnit}
+        isAnalyzing={isAnalyzing}
+        onSetOnboarding={onSetOnboarding}
+        onSetBodyMapGender={onSetBodyMapGender}
+        onSetWeightUnit={onSetWeightUnit}
+        onClose={closeForUpdate}
+      />
+    );
+  }
+
   if (onboarding.step === 'hevy_login') {
     return (
       <HevyLoginStep
@@ -286,6 +316,28 @@ export const AppOnboardingSteps: React.FC<AppOnboardingStepsProps> = ({
         isAnalyzing={isAnalyzing}
         csvImportError={csvImportError}
         backStep={onboarding.backStep ?? 'other_prefs'}
+        onSetOnboarding={onSetOnboarding}
+        onSetBodyMapGender={onSetBodyMapGender}
+        onSetWeightUnit={onSetWeightUnit}
+        onSetCsvImportError={onSetCsvImportError}
+        onProcessFile={onProcessFile}
+        onClearCacheAndRestart={onClearCacheAndRestart}
+        onClose={closeForUpdate}
+        onOpenAddSourcePicker={onboarding.backStep === 'add_source_platform' ? undefined : () => onSetOnboarding({ intent: 'update', step: 'add_source_platform' })}
+      />
+    );
+  }
+
+  if (onboarding.step === 'motra_csv') {
+    return (
+      <OnboardingCsvStep
+        intent={onboarding.intent}
+        platform="motra"
+        bodyMapGender={bodyMapGender}
+        weightUnit={weightUnit}
+        isAnalyzing={isAnalyzing}
+        csvImportError={csvImportError}
+        backStep={onboarding.backStep ?? 'motra_prefs'}
         onSetOnboarding={onSetOnboarding}
         onSetBodyMapGender={onSetBodyMapGender}
         onSetWeightUnit={onSetWeightUnit}

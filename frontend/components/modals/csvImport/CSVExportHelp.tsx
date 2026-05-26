@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface CSVExportHelpProps {
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
 }
 
 export const CSVExportHelp: React.FC<CSVExportHelpProps> = ({ platform }) => {

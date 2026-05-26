@@ -22,7 +22,7 @@ export interface WorkoutSet {
   prTypes?: PrType[];
   isSilverPr?: boolean;
   silverPrTypes?: PrType[];
-  source?: 'hevy' | 'lyfta' | 'strong' | 'other';
+  source?: 'hevy' | 'lyfta' | 'strong' | 'other' | 'motra';
 }
 
 export interface ExerciseHistoryEntry {

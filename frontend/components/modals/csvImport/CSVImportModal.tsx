@@ -22,7 +22,7 @@ type CSVImportVariant = 'csv' | 'preferences';
 
 interface CSVImportModalProps {
   intent: Intent;
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   variant?: CSVImportVariant;
   /** Hide the body type + weight unit selectors (used when preferences were already collected earlier in onboarding). */
   hideBodyTypeAndUnit?: boolean;
@@ -75,6 +75,7 @@ export const CSVImportModal: React.FC<CSVImportModalProps> = ({
     handleDrop,
     handleContinue,
   } = useCsvImportState({
+    platform,
     initialGender,
     initialUnit,
     onFileSelect,
@@ -157,7 +158,7 @@ export const CSVImportModal: React.FC<CSVImportModalProps> = ({
               onDrop={handleDrop}
             />
 
-            {variant === 'csv' && platform !== 'other' && showExportHelp ? (
+            {variant === 'csv' && platform !== 'other' && platform !== 'motra' && showExportHelp ? (
               <div className="w-full mt-4 flex-shrink-0">
                 <CSVExportHelp platform={platform} />
               </div>

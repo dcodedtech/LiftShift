@@ -2,13 +2,14 @@ import React from 'react';
 
 interface CSVImportIntroProps {
   variant: 'csv' | 'preferences';
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   showBodyTypeAndUnitSelectors: boolean;
 }
 
 const platformLabel = (platform: CSVImportIntroProps['platform']) => {
   if (platform === 'strong') return 'Strong';
   if (platform === 'lyfta') return 'Lyfta';
+  if (platform === 'motra') return 'Motra';
   return 'Hevy';
 };
 
@@ -31,8 +32,10 @@ export const CSVImportIntro: React.FC<CSVImportIntroProps> = ({
 
     const platformName = platformLabel(platform);
     if (showBodyTypeAndUnitSelectors) {
+      if (platform === 'motra') return 'Choose your body type and unit, then upload your Motra Excel export.';
       return `Choose your body type and unit, then upload your ${platformName} CSV export.`;
     }
+    if (platform === 'motra') return 'Drop your Motra Excel export below.';
     return `Drop your ${platformName} CSV export below.`;
   })();
 

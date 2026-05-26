@@ -7,7 +7,7 @@ import { savePreferencesConfirmed } from '../../utils/storage/localStorage';
 
 interface OnboardingCsvStepProps {
   intent: OnboardingFlow['intent'];
-  platform: 'strong' | 'hevy' | 'lyfta' | 'other';
+  platform: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra';
   bodyMapGender: BodyMapGender;
   weightUnit: WeightUnit;
   isAnalyzing: boolean;
@@ -17,7 +17,7 @@ interface OnboardingCsvStepProps {
   onSetBodyMapGender: (g: BodyMapGender) => void;
   onSetWeightUnit: (u: WeightUnit) => void;
   onSetCsvImportError: (msg: string | null) => void;
-  onProcessFile: (file: File, platform: 'strong' | 'hevy' | 'lyfta' | 'other', unitOverride?: WeightUnit) => void;
+  onProcessFile: (file: File, platform: 'strong' | 'hevy' | 'lyfta' | 'other' | 'motra', unitOverride?: WeightUnit) => void;
   onClearCacheAndRestart: () => void;
   onClose?: () => void;
   withPreferences?: boolean;

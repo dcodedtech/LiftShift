@@ -6,8 +6,10 @@ import { saveCSVData } from '../../utils/storage/localStorage';
 import { identifyPersonalRecords } from '../../utils/analysis/core';
 import { getErrorMessage } from '../../app/ui';
 import { parseWorkoutCSVAsyncWithUnit, ParseWorkoutCsvResult } from '../../utils/csv/csvParser';
+import { parseMotraCSV } from '../../utils/csv/motraParser';
 import { trackEvent } from '../../utils/integrations/analytics';
 import type { AppAuthHandlersDeps } from './appAuthTypes';
+import * as XLSX from 'xlsx';
 
 
 export const runCsvImport = (
@@ -21,15 +23,44 @@ export const runCsvImport = (
   deps.setIsAnalyzing(true);
   const startedAt = deps.startProgress();
 
+  const xlsxMimeTypes = new Set([
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel.sheet.macroenabled.12',
+  ]);
+  const normalizedFileName = file.name.toLowerCase();
+  const isXlsx = normalizedFileName.endsWith('.xlsx') || xlsxMimeTypes.has(file.type);
+
   const reader = new FileReader();
 
   reader.onload = (e) => {
-    const text = e.target?.result;
-    if (typeof text === 'string') {
+    let text = '';
+    try {
+      if (isXlsx) {
+        const data = e.target?.result as ArrayBuffer;
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        if (!firstSheetName) throw new Error('No sheets found in Excel file');
+        const worksheet = workbook.Sheets[firstSheetName];
+        text = XLSX.utils.sheet_to_csv(worksheet);
+      } else {
+        text = e.target?.result as string;
+      }
+    } catch (err) {
+      deps.setCsvImportError('Failed to parse Excel file. Please try exporting as CSV.');
+      deps.finishProgress(startedAt);
+      return;
+    }
+
+    if (typeof text === 'string' && text.length > 0) {
       deps.setCsvImportError(null);
 
       const unit = unitOverride ?? deps.weightUnit;
-      parseWorkoutCSVAsyncWithUnit(text, { unit })
+      const isMotraFormat = platform === 'motra' || (platform === 'other' && text.includes('Workout Start'));
+      const parsePromise = isMotraFormat
+        ? parseMotraCSV(text, { unit })
+        : parseWorkoutCSVAsyncWithUnit(text, { unit });
+
+      parsePromise
         .then((result: ParseWorkoutCsvResult) => {
           const enriched = identifyPersonalRecords(result.sets);
           const sourced = enriched.map((s) => ({ ...s, source: platform }));
@@ -62,6 +93,9 @@ export const runCsvImport = (
           deps.setSelectedDay(null);
           deps.finishProgress(startedAt);
         });
+    } else {
+      deps.setCsvImportError('File is empty or contains invalid characters. Please try exporting again.');
+      deps.finishProgress(startedAt);
     }
   };
 
@@ -70,5 +104,9 @@ export const runCsvImport = (
     deps.finishProgress(startedAt);
   };
 
-  reader.readAsText(file);
+  if (isXlsx) {
+    reader.readAsArrayBuffer(file);
+  } else {
+    reader.readAsText(file);
+  }
 };

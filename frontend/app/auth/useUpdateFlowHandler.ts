@@ -52,6 +52,14 @@ export const useUpdateFlowHandler = ({
       setOnboarding({ intent: 'update', step: 'other_csv', platform: 'other', backStep: 'other_prefs' });
       return;
     }
+    if (dataSource === 'motra') {
+      if (!getPreferencesConfirmed()) {
+        setOnboarding({ intent: 'update', step: 'motra_prefs', platform: 'motra' });
+        return;
+      }
+      setOnboarding({ intent: 'update', step: 'motra_csv', platform: 'motra', backStep: 'motra_prefs' });
+      return;
+    }
     setOnboarding({ intent: 'update', step: 'platform' });
   }, [dataSource, clearCsvImportError, clearHevyLoginError, clearLyfatLoginError, setOnboarding]);
 };

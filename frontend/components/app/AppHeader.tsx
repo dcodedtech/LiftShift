@@ -36,6 +36,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onClearCalendarFilter,
 }) => {
   const handleExitDemo = () => {
+    localStorage.removeItem(DEMO_MODE_KEY);
     clearCSVData();
     onSetOnboarding({ intent: 'update', step: 'platform' });
   };

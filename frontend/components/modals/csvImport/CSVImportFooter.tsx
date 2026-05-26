@@ -5,7 +5,7 @@ import { UNIFORM_HEADER_BUTTON_CLASS } from '../../../utils/ui/uiConstants';
 
 interface CSVImportFooterProps {
   variant: 'csv' | 'preferences';
-  platform: 'hevy' | 'strong' | 'lyfta' | 'other';
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   showExportHelp: boolean;
   onToggleExportHelp: () => void;
   onClearCache?: () => void;
@@ -25,7 +25,7 @@ export const CSVImportFooter: React.FC<CSVImportFooterProps> = ({
   if (variant === 'csv') {
     return (
       <div className="flex flex-wrap items-center justify-center gap-3">
-        {platform !== 'other' ? (
+        {platform !== 'other' && platform !== 'motra' ? (
           <button
             type="button"
             onClick={onToggleExportHelp}

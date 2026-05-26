@@ -4,6 +4,7 @@ import type { BodyMapGender } from '../../bodyMap/BodyMap';
 import type { WeightUnit } from '../../../utils/storage/localStorage';
 
 interface UseCsvImportStateArgs {
+  platform: 'hevy' | 'strong' | 'lyfta' | 'other' | 'motra';
   initialGender?: BodyMapGender;
   initialUnit?: WeightUnit;
   onFileSelect?: (file: File, gender: BodyMapGender, unit: WeightUnit) => void;
@@ -25,6 +26,7 @@ const ensureSelections = (selectedGender: BodyMapGender | null, selectedUnit: We
 };
 
 export const useCsvImportState = ({
+  platform,
   initialGender,
   initialUnit,
   onFileSelect,
@@ -58,13 +60,29 @@ export const useCsvImportState = ({
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!ensureSelections(selectedGender, selectedUnit)) return;
-      if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
-        onFileSelect?.(file, selectedGender!, selectedUnit!);
+      const xlsxMimeTypes = new Set([
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroenabled.12',
+      ]);
+      const normalizedFileName = file?.name.toLowerCase() || '';
+      const isXlsx = normalizedFileName.endsWith('.xlsx') || xlsxMimeTypes.has(file?.type || '');
+      const isCsv = file?.type === 'text/csv' || normalizedFileName.endsWith('.csv');
+
+      if (platform === 'motra') {
+        if (isXlsx) {
+          onFileSelect?.(file!, selectedGender!, selectedUnit!);
+        } else {
+          alert('Please choose a valid .xlsx file (Motra exports Excel files)');
+        }
       } else {
-        alert('Please choose a valid .csv file');
+        if (file && (isCsv || isXlsx)) {
+          onFileSelect?.(file, selectedGender!, selectedUnit!);
+        } else {
+          alert('Please choose a valid .csv or .xlsx file');
+        }
       }
     },
-    [onFileSelect, selectedGender, selectedUnit]
+    [onFileSelect, selectedGender, selectedUnit, platform]
   );
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -80,13 +98,29 @@ export const useCsvImportState = ({
       if (!ensureSelections(selectedGender, selectedUnit)) return;
 
       const file = event.dataTransfer.files?.[0];
-      if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
-        onFileSelect?.(file, selectedGender!, selectedUnit!);
+      const xlsxMimeTypes = new Set([
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroenabled.12',
+      ]);
+      const normalizedFileName = file?.name.toLowerCase() || '';
+      const isXlsx = normalizedFileName.endsWith('.xlsx') || xlsxMimeTypes.has(file?.type || '');
+      const isCsv = file?.type === 'text/csv' || normalizedFileName.endsWith('.csv');
+
+      if (platform === 'motra') {
+        if (isXlsx) {
+          onFileSelect?.(file!, selectedGender!, selectedUnit!);
+        } else {
+          alert('Please drop a valid .xlsx file (Motra exports Excel files)');
+        }
       } else {
-        alert('Drop a valid .csv file');
+        if (file && (isCsv || isXlsx)) {
+          onFileSelect?.(file, selectedGender!, selectedUnit!);
+        } else {
+          alert('Drop a valid .csv or .xlsx file');
+        }
       }
     },
-    [onFileSelect, selectedGender, selectedUnit]
+    [onFileSelect, selectedGender, selectedUnit, platform]
   );
 
   const handleContinue = useCallback(() => {
