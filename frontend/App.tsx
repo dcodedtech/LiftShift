@@ -388,9 +388,11 @@ const App: React.FC = () => {
   const isCombiningRef = useRef(false);
 
   useEffect(() => {
-    if (onboarding?.step === 'add_source_platform' || onboarding?.backStep === 'add_source_platform') {
+    if (onboarding === null) {
+      isCombiningRef.current = false;
+    } else if (onboarding.step === 'add_source_platform') {
       isCombiningRef.current = true;
-    } else {
+    } else if (onboarding.intent !== 'update') {
       isCombiningRef.current = false;
     }
   }, [onboarding]);
