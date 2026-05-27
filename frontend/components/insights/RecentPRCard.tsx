@@ -33,8 +33,9 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
   const clickable = typeof onExerciseClick === 'function';
   const isLowerWeightBetter = getLoadProgressionDirection(exercise) === 'lower';
   const displayImprovement = Math.abs(improvement);
-  
-  // Silver PR styling: slate/gray instead of gold/emerald - darker for visibility
+
+  const isToday = now ? date.toDateString() === now.toDateString() : false;
+
   const cardClass = isSilver 
     ? (isLatest ? 'bg-slate-500/15 border border-slate-500/40' : 'bg-black/50')
     : (isLatest ? 'bg-emerald-500/5 border border-emerald-500/20' : 'bg-black/50');
@@ -57,7 +58,7 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium text-[color:var(--text-primary)] truncate" style={SEMI_FANCY_FONT}>{exercise}</div>
-        <div className="text-[10px] text-slate-500">{formatHumanReadableDate(date, { now })}</div>
+        <div className={`text-[10px] ${isToday ? 'text-yellow-400 font-bold' : 'text-slate-500'}`}>{formatHumanReadableDate(date, { now })}</div>
       </div>
       <div className="text-right">
         <div className="text-sm font-bold text-[color:var(--text-primary)]">{convertWeight(weight, weightUnit)}{weightUnit}</div>
