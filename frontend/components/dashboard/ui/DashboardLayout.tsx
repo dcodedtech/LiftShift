@@ -183,6 +183,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           assetsLowerMap={assetsLowerMap}
           dailyData={dailyData}
           timelineProgress={timelineProgress}
+          weeklySetsDashboard={weeklySetsDashboard}
         />
 
         <DashboardPrimaryCharts

@@ -8,6 +8,7 @@ import type { WeightUnit } from '../../../utils/storage/localStorage';
 import type { DailySummary } from '../../../types';
 import type { TimelineProgress } from '../../../utils/training/trainingTimeline';
 import type { DashboardSummaryResult } from '../../../utils/analysis/dashboardSummary/dashboardSummary';
+import type { WeeklySetsDashboardResult } from '../../../utils/muscle/analytics/dashboardWeeklySets';
 import { stripExerciseSourceLabel } from '../../../utils/exercise/exerciseSourceLabel';
 
 interface DashboardInsightsSectionProps {
@@ -25,6 +26,7 @@ interface DashboardInsightsSectionProps {
   assetsLowerMap?: Map<string, any> | null;
   dailyData: DailySummary[];
   timelineProgress: TimelineProgress;
+  weeklySetsDashboard: WeeklySetsDashboardResult | null;
 }
 
 export const DashboardInsightsSection: React.FC<DashboardInsightsSectionProps> = ({
@@ -42,15 +44,16 @@ export const DashboardInsightsSection: React.FC<DashboardInsightsSectionProps> =
   assetsLowerMap,
   dailyData,
   timelineProgress,
+  weeklySetsDashboard,
 }) => (
   <>
     <DashboardSummaryCard summary={dashboardSummary} onExerciseClick={onExerciseClick} onDayClick={onDayClick} />
 
     <InsightsPanel
       insights={dashboardInsights}
-      totalWorkouts={totalWorkouts}
-      totalSets={totalSets}
       totalPRs={totalPrs}
+      weightUnit={weightUnit}
+      weeklySetsDashboard={weeklySetsDashboard}
     />
 
     <RecentPRsPanel prInsights={dashboardInsights.prInsights} weightUnit={weightUnit} now={effectiveNow} onExerciseClick={onExerciseClick} />
