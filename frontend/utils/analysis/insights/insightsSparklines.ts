@@ -43,6 +43,8 @@ export const buildWeeklySparklineBundle = (
   prSparkline: SparklinePoint[];
   setsSparkline: SparklinePoint[];
   consistencySparkline: SparklinePoint[];
+  weeklyVolumeSparkline: SparklinePoint[];
+  muscleAvgSparkline: SparklinePoint[];
 } => {
   const baseWeekStart = startOfWeek(now, { weekStartsOn: 1 });
   const weekStarts: Date[] = [];
@@ -56,8 +58,10 @@ export const buildWeeklySparklineBundle = (
   }
 
   const sessionBuckets: Array<Set<string>> = weekStarts.map(() => new Set());
+  const exerciseBuckets: Array<Set<string>> = weekStarts.map(() => new Set());
   const setCounts = new Array<number>(weekStarts.length).fill(0);
   const prCounts = new Array<number>(weekStarts.length).fill(0);
+  const volumeCounts = new Array<number>(weekStarts.length).fill(0);
 
   for (const s of data) {
     const d = s.parsedDate;
@@ -72,6 +76,10 @@ export const buildWeeklySparklineBundle = (
 
     setCounts[idx] += setWeight;
     if (s.isPr) prCounts[idx] += 1;
+    volumeCounts[idx] += (s.weight_kg || 0) * (s.reps || 0);
+
+    const name = (s.exercise_title || '').toLowerCase().trim();
+    if (name) exerciseBuckets[idx].add(name);
 
     const sessionKey = getSessionKey(s);
     if (sessionKey) sessionBuckets[idx].add(sessionKey);
@@ -92,10 +100,25 @@ export const buildWeeklySparklineBundle = (
     label: formatWeekContraction(weekStart),
   }));
 
+  const weeklyVolumeSparkline = weekStarts.map((weekStart, idx) => ({
+    value: volumeCounts[idx],
+    label: formatWeekContraction(weekStart),
+  }));
+
+  const muscleAvgSparkline = weekStarts.map((weekStart, idx) => {
+    const distinctExercises = exerciseBuckets[idx].size;
+    return {
+      value: distinctExercises > 0 ? setCounts[idx] / distinctExercises : 0,
+      label: formatWeekContraction(weekStart),
+    };
+  });
+
   return {
     workoutSparkline,
     prSparkline,
     setsSparkline,
     consistencySparkline: workoutSparkline,
+    weeklyVolumeSparkline,
+    muscleAvgSparkline,
   };
 };

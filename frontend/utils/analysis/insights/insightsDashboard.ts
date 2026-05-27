@@ -19,6 +19,8 @@ export interface DashboardInsights {
   prSparkline: SparklinePoint[];
   setsSparkline: SparklinePoint[];
   consistencySparkline: SparklinePoint[];
+  weeklyVolumeSparkline: SparklinePoint[];
+  muscleAvgSparkline: SparklinePoint[];
 }
 
 export const calculateDashboardInsights = (
@@ -26,8 +28,8 @@ export const calculateDashboardInsights = (
   dailyData: DailySummary[],
   now: Date = new Date(0)
 ): DashboardInsights => {
-  const { workoutSparkline, prSparkline, setsSparkline, consistencySparkline } =
-    buildWeeklySparklineBundle(data, 8, now);
+  const { workoutSparkline, prSparkline, setsSparkline, consistencySparkline, weeklyVolumeSparkline, muscleAvgSparkline } =
+    buildWeeklySparklineBundle(data, 4, now);
   return {
     rolling7d: getRollingWindowComparison(data, 7, now, 1),
     rolling30d: getRollingWindowComparison(data, 30, now, 1),
@@ -39,5 +41,7 @@ export const calculateDashboardInsights = (
     prSparkline,
     setsSparkline,
     consistencySparkline,
+    weeklyVolumeSparkline,
+    muscleAvgSparkline,
   };
 };
