@@ -145,7 +145,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             className={`w-full flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-md whitespace-nowrap focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border transition-all duration-200 cursor-pointer ${activeTab === Tab.DASHBOARD ? 'bg-white/10 border-slate-600/70 text-white shadow-sm' : 'bg-transparent border-black/70 text-slate-400 hover:border-white hover:text-white hover:bg-white/5'}`}
           >
             <LayoutDashboard className="w-5 h-5" />
-            <span className="font-medium text-[7px] sm:text-xs">Dashboard</span>
+            <span className="font-medium text-[7px] sm:text-xs scale-150 sm:scale-100">Dashboard</span>
           </button>
 
           <button
@@ -170,7 +170,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
               <path d="M9.09766 5.73407C9.09766 5.04662 9.65502 4.48926 10.3425 4.48926C11.0299 4.48926 11.5873 5.04662 11.5873 5.73407C11.5873 6.42152 11.0299 6.97889 10.3425 6.97889C9.65502 6.97889 9.09766 6.42152 9.09766 5.73407Z" />
               <path d="M2 22H22.0001" />
             </svg>
-            <span className="font-medium text-[7px] sm:text-xs">Exercises</span>
+            <span className="font-medium text-[7px] sm:text-xs scale-150 sm:scale-100">Exercises</span>
           </button>
 
           <button
@@ -189,7 +189,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             >
               <path d="M195.935,84.745c-2.07-15.789-20.983-37.722-20.983-37.722c-4.933-12.69-17.677-8.47-17.677-8.47l-8.507,2.295 c-8.421,2.533-8.025,13.555-4.372,15.789c1.602,0.978,6.297,1.233,7.685,0c0.414-0.374,0.098-2.165,0.098-2.165 c8.933,0.487,9.584-4.688,9.584-4.688l3.039-0.606c3.044-1.665,3.72,5.395,3.72,5.395c-2.07,20.009,6.595,27.334,6.595,27.334 c-1.254,3.973-5.62,3.206-5.62,3.206c-13.853-7.197-24.131,6.403-24.131,6.403c-7.831-6.671-23.991,5.148-23.991,5.148 c-9.055,1.79-9.591-9.106-9.591-9.106s-0.42-6.941-0.713-7.578c-0.426-1.084,1.925-0.536,1.925-0.536 c7.965-14.495,0-12.559,0-12.559c1.93-25.008-19.991-19.759-19.991-19.759C76.143,51.748,82.32,68.544,82.32,68.544 c-3.702-0.904-1.927,4.616-1.927,4.616c0.956,8.473,3.985,6.552,3.985,6.552c0.393,2.968,2.058,7.054,2.058,7.054l0.256,6.808 c-1.903,11.298-13.829,1.927-13.829,1.927c-6.996-9.864-24.536-4.348-24.536-4.348c-9.061-13.479-23.333-5.785-23.333-5.785 c1.516-3.349-0.256-20.009-0.256-20.009c1.772-2.058,5.331-13.712,5.331-13.712c1.522,2.058,8.388,2.42,8.388,2.42 c0.524,3.093,2.731,4.351,2.731,4.351c4.665,1.934,2.731-13.335,2.731-13.335c1.221-4.847-6.573-6.013-6.573-6.013 c-13.594-3.739-16.742,4.847-16.742,4.847l-3.547,7.712c-5.063,5.52-14.565,24.368-14.565,24.368 C-2.977,90.999,2.26,93.705,2.26,93.705l9.864,7.667c16.736,16.203,26.85,13.877,26.85,13.877 c13.46-0.256,12.352,8.458,12.352,8.458c0.536,13.342,9.852,27.182,9.852,27.182c0.685,2.326,1.172,4.786,1.656,7.222h63.811 c1.182-2.636,2.412-5.097,3.508-6.625c5.225-7.38,12.361-16.952,14.991-23.297c5.151-12.477,7.594-12.185,7.594-12.185 c18.383,0,28.527-13.329,28.527-13.329c3.014-3.86,7.593-8.616,10.948-10.522C196.726,89.571,195.935,84.745,195.935,84.745z" />
             </svg>
-            <span className="font-medium text-[7px] sm:text-xs">Muscle</span>
+            <span className="font-medium text-[7px] sm:text-xs scale-150 sm:scale-100">Muscle</span>
           </button>
 
           <button
@@ -221,7 +221,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
  			c-6.682,0-12.105,5.426-12.105,12.105c0,6.685,5.423,12.104,12.105,12.104h131.14c6.685,0,12.104-5.42,12.104-12.104
  			C380.015,379.778,374.601,374.353,367.91,374.353z" />
             </svg>
-            <span className="font-medium text-[7px] sm:text-xs">History</span>
+            <span className="font-medium text-[7px] sm:text-xs scale-150 sm:scale-100">History</span>
           </button>
 
           <button
@@ -240,7 +240,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             >
               <path d="M426.667,0H85.334C73.552,0,64,9.552,64,21.334v469.333C64,502.449,73.552,512,85.334,512h341.333 c11.782,0,21.333-9.551,21.333-21.333V21.334C448,9.552,438.449,0,426.667,0z M182.326,469.334l223.007-207.078v69.398 l-157.349,137.68H182.326z M405.334,96.987L106.667,358.32v-50.35L392.378,42.667h12.956V96.987z M329.674,42.667L106.667,249.745 v-69.398l157.349-137.68H329.674z M199.223,42.667l-92.556,80.986V42.667H199.223z M106.667,415.014l298.667-261.333v50.35 L119.623,469.334h-12.956V415.014z M312.778,469.334l92.556-80.986v80.986H312.778z" />
             </svg>
-            <span className="font-medium text-[7px] sm:text-xs">Flex</span>
+            <span className="font-medium text-[7px] sm:text-xs scale-150 sm:scale-100 ">Flex</span>
           </button>
 
           <button
