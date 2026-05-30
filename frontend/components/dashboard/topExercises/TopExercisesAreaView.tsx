@@ -54,6 +54,17 @@ export const TopExercisesAreaView: React.FC<TopExercisesAreaViewProps> = ({
     <LazyRender className="w-full" placeholder={<ChartSkeleton style={{ height: 320 }} />}>
       <ResponsiveContainer width="100%" height={320}>
         <AreaChart data={percentData} margin={{ top: 10, ...RECHARTS_YAXIS_MARGIN, bottom: 0 }}>
+          <defs>
+            <linearGradient id="efGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <mask id="efMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+              <rect x="0" y="0" width="1" height="1" fill="url(#efGrad)" />
+            </mask>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
           <XAxis
             dataKey="date"
@@ -71,7 +82,7 @@ export const TopExercisesAreaView: React.FC<TopExercisesAreaViewProps> = ({
           />
           <Legend wrapperStyle={{ fontSize: '11px', left: '52%', transform: 'translateX(-50%)', position: 'absolute' }} />
           {topExerciseNames.map((exerciseName, idx) => (
-            <Area
+              <Area
               key={exerciseName}
               type="monotone"
               dataKey={exerciseName}
@@ -80,6 +91,7 @@ export const TopExercisesAreaView: React.FC<TopExercisesAreaViewProps> = ({
               stroke={pieColors[idx % pieColors.length]}
               fill={pieColors[idx % pieColors.length]}
               fillOpacity={0.25}
+              mask="url(#efMask)"
               animationDuration={500}
             />
           ))}

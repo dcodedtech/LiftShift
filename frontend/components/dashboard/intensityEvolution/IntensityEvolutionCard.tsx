@@ -124,6 +124,15 @@ export const IntensityEvolutionCard = ({
                       <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
                       <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                     </linearGradient>
+                    <linearGradient id="efGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                      <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
+                      <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
+                      <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                    </linearGradient>
+                    <mask id="efMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+                      <rect x="0" y="0" width="1" height="1" fill="url(#efGrad)" />
+                    </mask>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                   <XAxis
@@ -148,9 +157,9 @@ export const IntensityEvolutionCard = ({
                   />
                   <Legend {...({ wrapperStyle: { fontSize: '11px', left: '52%', transform: 'translateX(-50%)', position: 'absolute' }, payload: legendPayload } as any)} />
 
-                  <Area type="monotone" dataKey="Strength" name="Strength (1-5)" stackId="1" stroke="#3b82f6" fill="url(#gStrength)" animationDuration={500} />
-                  <Area type="monotone" dataKey="Hypertrophy" name="Hypertrophy (6-12)" stackId="1" stroke="#10b981" fill="url(#gHyper)" animationDuration={500} />
-                  <Area type="monotone" dataKey="Endurance" name="Endurance (13+)" stackId="1" stroke="#a855f7" fill="url(#gEndure)" animationDuration={500} />
+                  <Area type="monotone" dataKey="Strength" name="Strength (1-5)" stackId="1" stroke="#3b82f6" fill="url(#gStrength)" mask="url(#efMask)" animationDuration={500} />
+                  <Area type="monotone" dataKey="Hypertrophy" name="Hypertrophy (6-12)" stackId="1" stroke="#10b981" fill="url(#gHyper)" mask="url(#efMask)" animationDuration={500} />
+                  <Area type="monotone" dataKey="Endurance" name="Endurance (13+)" stackId="1" stroke="#a855f7" fill="url(#gEndure)" mask="url(#efMask)" animationDuration={500} />
 
                 </AreaChart>
               </ResponsiveContainer>

@@ -88,6 +88,17 @@ export const MuscleTrendChart: React.FC<MuscleTrendChartProps> = ({
       <ResponsiveContainer width="100%" height={280}>
         {muscleTrendView === 'area' ? (
             <AreaChart key={`area-${musclePeriod}-${muscleGrouping}`} data={percentData} margin={{ top: 10, ...RECHARTS_YAXIS_MARGIN, bottom: 0 }}>
+              <defs>
+                <linearGradient id="efGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                </linearGradient>
+                <mask id="efMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+                  <rect x="0" y="0" width="1" height="1" fill="url(#efGrad)" />
+                </mask>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
               <XAxis
                 dataKey="dateFormatted"
@@ -113,6 +124,7 @@ export const MuscleTrendChart: React.FC<MuscleTrendChartProps> = ({
                     stroke={color}
                     fill={color}
                     fillOpacity={0.25}
+                    mask="url(#efMask)"
                     animationDuration={500}
                   />
                 );

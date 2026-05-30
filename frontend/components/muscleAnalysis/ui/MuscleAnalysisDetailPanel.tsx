@@ -121,6 +121,15 @@ export const MuscleAnalysisDetailPanel: React.FC<MuscleAnalysisDetailPanelProps>
                         <stop offset="5%" stopColor={volumeDelta?.direction === 'down' ? '#f43f5e' : '#10b981'} stopOpacity={0.4} />
                         <stop offset="95%" stopColor={volumeDelta?.direction === 'down' ? '#f43f5e' : '#10b981'} stopOpacity={0} />
                       </linearGradient>
+                      <linearGradient id="efGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                        <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
+                        <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                      </linearGradient>
+                      <mask id="efMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+                        <rect x="0" y="0" width="1" height="1" fill="url(#efGrad)" />
+                      </mask>
                     </defs>
                     <XAxis
                       dataKey="period"
@@ -155,6 +164,7 @@ export const MuscleAnalysisDetailPanel: React.FC<MuscleAnalysisDetailPanelProps>
                       stroke={volumeDelta?.direction === 'down' ? '#f43f5e' : '#10b981'}
                       strokeWidth={2}
                       fill="url(#muscleColorGradient)"
+                      mask="url(#efMask)"
                       animationDuration={500}
                     />
                   </AreaChart>

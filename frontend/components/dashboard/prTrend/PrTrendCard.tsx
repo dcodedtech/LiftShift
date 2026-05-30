@@ -113,6 +113,15 @@ export const PrTrendCard = ({
                   <stop offset="5%" stopColor="#eab308" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="#eab308" stopOpacity={0} />
                 </linearGradient>
+                <linearGradient id="efGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                  <stop offset="12%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="88%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                </linearGradient>
+                <mask id="efMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+                  <rect x="0" y="0" width="1" height="1" fill="url(#efGrad)" />
+                </mask>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
               <XAxis
@@ -143,6 +152,7 @@ export const PrTrendCard = ({
                   stroke="#eab308"
                   strokeWidth={1}
                   fill="url(#gPRs)"
+                  mask="url(#efMask)"
                   dot={<ValueDot valueKey="count" unit="" data={chartData} color="#eab308" showAtIndexMap={tickIndexMap} showDotWhenHidden={false} />}
                   activeDot={{ r: 1, strokeWidth: 0 }}
                   animationDuration={500}
