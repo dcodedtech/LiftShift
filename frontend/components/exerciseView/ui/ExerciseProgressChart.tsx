@@ -286,14 +286,21 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                     ))}
                   </linearGradient>
                   <linearGradient id="areaTopFadeMask" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity={1} />
-                    <stop offset="40%" stopColor="#ffffff" stopOpacity={0.6} />
-                    <stop offset="60%" stopColor="#ffffff" stopOpacity={0.4} />
-                    <stop offset="80%" stopColor="#ffffff" stopOpacity={0.2} />
-                    <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#ffffff" />
+                    <stop offset="40%" stopColor="#999999" />
+                    <stop offset="60%" stopColor="#666666" />
+                    <stop offset="80%" stopColor="#333333" />
+                    <stop offset="100%" stopColor="#000000" />
+                  </linearGradient>
+                  <linearGradient id="efGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#000000" />
+                    <stop offset="12%" stopColor="#ffffff" />
+                    <stop offset="88%" stopColor="#ffffff" />
+                    <stop offset="100%" stopColor="#000000" />
                   </linearGradient>
                   <mask id="areaTopFadeMaskDef" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
                     <rect x="0" y="0" width="1" height="1" fill="url(#areaTopFadeMask)" />
+                    <rect x="0" y="0" width="1" height="1" fill="url(#efGrad)" style={{ mixBlendMode: 'multiply' }} />
                   </mask>
                   <linearGradient id="colorLeftRM" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.25} />

@@ -403,9 +403,9 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
       return (
         <div
           id="all-muscles-graph"
-          className="bg-black/30 rounded-xl border border-slate-700/50 overflow-hidden flex flex-col h-full min-h-0"
+          className="bg-black/20 rounded-xl border border-slate-700/50 overflow-hidden flex flex-col h-full min-h-0"
         >
-          <div className="bg-black/30 p-3 flex items-center justify-between flex-shrink-0 gap-2">
+          <div className="bg-black/20 p-3 flex items-center justify-between flex-shrink-0 gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <h2 className="text-sm font-bold text-white truncate" style={SEMI_FANCY_FONT}>{title}</h2>
               <span className="text-[10px] text-slate-400 whitespace-nowrap">
@@ -535,27 +535,35 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
                         x2="0"
                         y2="1"
                       >
-                        <stop offset="0%" stopColor="#ffffff" stopOpacity={1} />
+                        <stop offset="0%" stopColor="#ffffff" />
                         <stop
                           offset="40%"
-                          stopColor="#ffffff"
-                          stopOpacity={0.6}
+                          stopColor="#999999"
                         />
                         <stop
                           offset="60%"
-                          stopColor="#ffffff"
-                          stopOpacity={0.4}
+                          stopColor="#666666"
                         />
                         <stop
                           offset="80%"
-                          stopColor="#ffffff"
-                          stopOpacity={0.2}
+                          stopColor="#333333"
                         />
                         <stop
                           offset="100%"
-                          stopColor="#ffffff"
-                          stopOpacity={0}
+                          stopColor="#000000"
                         />
+                      </linearGradient>
+                      <linearGradient
+                        id="efGrad"
+                        x1="0"
+                        y1="0"
+                        x2="1"
+                        y2="0"
+                      >
+                        <stop offset="0%" stopColor="#000000" />
+                        <stop offset="12%" stopColor="#ffffff" />
+                        <stop offset="88%" stopColor="#ffffff" />
+                        <stop offset="100%" stopColor="#000000" />
                       </linearGradient>
                       <mask
                         id="zoneAreaTopFadeMaskDef"
@@ -568,6 +576,14 @@ export const MuscleAnalysisGraphPanel: React.FC<MuscleAnalysisGraphPanelProps> =
                           width="1"
                           height="1"
                           fill="url(#zoneAreaTopFadeMask)"
+                        />
+                        <rect
+                          x="0"
+                          y="0"
+                          width="1"
+                          height="1"
+                          fill="url(#efGrad)"
+                          style={{ mixBlendMode: 'multiply' }}
                         />
                       </mask>
                     </defs>
