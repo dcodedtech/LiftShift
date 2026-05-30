@@ -1,8 +1,8 @@
+@import "tailwindcss";
+
 @import './styles/base.css';
 @import './styles/themes.css';
 @import './styles/utility-overrides.css';
-
-@import "tailwindcss";
 
 @theme {
   --breakpoint-xs: 440px;
