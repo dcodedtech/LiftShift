@@ -99,7 +99,7 @@ export const ExerciseListPanel: React.FC<ExerciseListPanelProps> = ({
         <input
           type="text"
           placeholder="Search for exercises..."
-          className="w-full bg-black/70 border border-slate-700/50 rounded-lg pl-9 pr-[8.5rem] py-1 sm:py-2 text-[11px] sm:text-xs text-slate-200 focus:outline-none focus:border-transparent transition-all"
+          className="w-full bg-black/20 border border-slate-700/50 rounded-lg pl-9 pr-[8.5rem] py-1 sm:py-2 text-[11px] sm:text-xs text-slate-200 focus:outline-none focus:border-transparent transition-all"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -108,7 +108,7 @@ export const ExerciseListPanel: React.FC<ExerciseListPanelProps> = ({
           <button
             type="button"
             onClick={() => setIsSortOpen(!isSortOpen)}
-            className="flex items-center gap-1 p-1.5 rounded-lg bg-black/70 border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-black/60 transition-colors cursor-pointer"
+            className="flex items-center gap-1 p-1.5 rounded-lg bg-black/20 border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-black/60 transition-colors cursor-pointer"
             aria-label="Sort exercises"
           >
             {exerciseListSortMode === 'trend' ? (
@@ -147,7 +147,7 @@ export const ExerciseListPanel: React.FC<ExerciseListPanelProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 bg-black/70 border border-slate-700/50 rounded-lg overflow-hidden flex flex-col min-h-0">
+      <div className="flex-1 bg-black/20 border border-slate-700/50 rounded-lg overflow-hidden flex flex-col min-h-0">
         <div className="overflow-y-auto p-1.5 space-y-0.5 custom-scrollbar flex-1">
           {filteredExercises.map((exercise) => {
             const status = statusMap[exercise.name];

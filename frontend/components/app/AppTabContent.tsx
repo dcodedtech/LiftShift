@@ -86,7 +86,7 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
   return (
     <main
       ref={mainRef}
-      className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-contain bg-black/70 px-2 py-0 sm:px-3 sm:py-0 md:px-1 md:py-0 lg:px-2 lg:py-0"
+      className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-contain bg-black/20 px-2 py-0 sm:px-3 sm:py-0 md:px-1 md:py-0 lg:px-2 lg:py-0"
     >
       <Suspense
         fallback={

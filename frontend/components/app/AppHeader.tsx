@@ -42,7 +42,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   };
 
   return (
-    <header className="bg-black/70 flex-shrink-0">
+    <header className="bg-black/30 flex-shrink-0">
       <div className="px-2 sm:px-3 py-1 flex flex-col gap-1">
         {/* Top Row: Logo and Nav Buttons */}
         <div className="flex items-center justify-between">
@@ -248,7 +248,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             className={`sm:hidden w-full h-full relative flex flex-col items-center justify-center px-2 py-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
               hasActiveCalendarFilter
                 ? 'bg-white/10 border border-yellow-500/50 text-white shadow-sm'
-                : 'bg-black/30 hover:bg-black/60 text-slate-200'
+                : 'bg-black/70 hover:bg-black/60 text-slate-200'
             }`}
             title="Calendar"
             aria-label="Calendar"

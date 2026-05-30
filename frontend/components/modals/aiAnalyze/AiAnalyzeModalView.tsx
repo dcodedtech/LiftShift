@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { assetPath } from '../../../constants';
 import type { TooltipData } from '../../ui/Tooltip';
 import type {
   AnalysisCategory,
@@ -62,11 +63,12 @@ export const AiAnalyzeModalView: React.FC<AiAnalyzeModalViewProps> = ({
           style={{ height: '85vh', maxHeight: '700px' }}
         >
           {!isLightTheme && (
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute -top-24 -right-28 w-72 h-72 rounded-full blur-3xl bg-emerald-500/10" />
-              <div className="absolute -bottom-28 -left-28 w-72 h-72 rounded-full blur-3xl bg-violet-500/10" />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/20" />
-            </div>
+            <img
+              src={assetPath('/images/misc/P15.avif')}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+            />
           )}
 
           <AiAnalyzeHeader onClose={onClose} />

@@ -10,7 +10,7 @@ export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({ className = '', st
     <div
       className={`relative w-full overflow-hidden rounded-lg border ${className}`}
       style={{
-        backgroundColor: 'rgb(var(--panel-rgb) / 0.35)',
+        backgroundColor: 'rgb(var(--panel-rgb) / 0.5)',
         borderColor: 'rgb(var(--border-rgb) / 0.5)',
         ...style,
       }}

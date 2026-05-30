@@ -18,7 +18,7 @@ export const ToggleSwitch: React.FC<{
       onClick={() => onChange(!checked)}
       className={
         className ??
-        `inline-flex items-center gap-2 rounded-md border px-2 py-1 bg-black/50 transition-colors ${
+        `inline-flex items-center gap-2 rounded-md border px-2 py-1 bg-black/20 transition-colors ${
           disabled
             ? 'opacity-50 cursor-not-allowed border-slate-800'
             : 'border-slate-700/50 hover:border-slate-600/70'

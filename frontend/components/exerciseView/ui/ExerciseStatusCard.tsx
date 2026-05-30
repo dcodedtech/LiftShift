@@ -121,7 +121,7 @@ export const ExerciseStatusCard: React.FC<ExerciseStatusCardProps> = ({
           {currentStatus.subtext && (
             <div className="mt-2">
               <div className={`relative inline-flex flex-col w-fit max-w-full rounded-md border px-2 py-1.5 ${currentStatus.borderColor} overflow-hidden`}>
-                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-0 bg-black/20" />
                 <div className={`absolute inset-0 ${currentStatus.bgColor}`} />
                 <div className="relative z-10">
                   <div className={`text-[10px] uppercase tracking-wider font-bold ${currentStatus.color}`}>Next</div>

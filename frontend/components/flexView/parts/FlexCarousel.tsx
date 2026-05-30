@@ -10,7 +10,7 @@ interface FlexCarouselProps {
 }
 
 const FlexCarouselPlaceholder = () => (
-  <div className="min-h-[500px] rounded-2xl border border-slate-700/50 bg-black/70 p-6">
+  <div className="min-h-[500px] rounded-2xl border border-slate-700/50 bg-black/20 p-6" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
     <div className="animate-pulse">
       <div className="h-6 w-1/2 rounded bg-slate-800/60" />
       <div className="mt-4 h-24 rounded bg-slate-800/40" />

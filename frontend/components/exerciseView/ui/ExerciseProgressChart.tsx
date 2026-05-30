@@ -125,7 +125,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
   }, [chartData, isBodyweightLike]);
 
   return (
-    <div className="w-full bg-black/70 border border-slate-700/50 rounded-2xl p-1 sm:p-2 relative flex flex-col h-[280px] sm:h-[322px]">
+    <div className="w-full bg-black/20 border border-slate-700/50 rounded-2xl p-1 sm:p-2 relative flex flex-col h-[280px] sm:h-[322px]">
       {/* Mobile header - compact 2-line layout */}
       <div className="sm:hidden flex flex-col gap-1 mb-2 shrink-0">
         <div className="flex items-center justify-between gap-2">
@@ -199,7 +199,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
         </div>
         <div className="flex items-center gap-4 text-xs font-medium">
           <div className="hidden sm:flex items-center gap-2">
-            <div className="flex items-center gap-2 px-2 py-1.5 min-h-8 bg-black/70 border border-slate-700/50 rounded-lg">
+            <div className="flex items-center gap-2 px-2 py-1.5 min-h-8 bg-black/20 border border-slate-700/50 rounded-lg">
               <Activity className="w-3 h-3 text-slate-400" />
               <div className="flex items-center gap-1 text-[10px]">
                 <span className="text-white font-bold">{sessionsCount}</span>

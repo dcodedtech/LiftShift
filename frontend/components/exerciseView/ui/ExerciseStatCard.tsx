@@ -32,7 +32,7 @@ export const StatCard = ({
         </div>
       )}
     </div>
-    <div className="h-9 w-9 rounded-md bg-black/50 flex items-center justify-center text-slate-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors flex-shrink-0">
+    <div className="h-9 w-9 rounded-md bg-black/20 flex items-center justify-center text-slate-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors flex-shrink-0">
       <Icon size={16} />
     </div>
   </div>

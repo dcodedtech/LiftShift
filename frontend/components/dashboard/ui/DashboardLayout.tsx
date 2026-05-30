@@ -161,7 +161,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
   return (
     <>
       <style>{animationKeyframes}</style>
-      <div className={`space-y-2 pb-2 transition-opacity duration-700 ease-out ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="space-y-2 pb-2 animate-[fadeIn_0.3s_ease-out]">
         <DashboardHeaderBar
           totalWorkouts={totalWorkouts}
           filtersSlot={filtersSlot}

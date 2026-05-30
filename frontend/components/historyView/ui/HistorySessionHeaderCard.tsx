@@ -87,7 +87,7 @@ export const HistorySessionHeaderCard: React.FC<
         toggleCollapsed();
       }}
       className="border border-slate-700/50 rounded-2xl p-5 pb-7 sm:p-7 sm:min-h-[170px] flex flex-row justify-between items-stretch gap-2 sm:gap-6 shadow-xl relative overflow-visible group hover:border-slate-600/50 cursor-pointer"
-      style={{ backgroundColor: "rgb(var(--panel-rgb) / 0.78)" }}
+     
     >
       <div
         className="absolute inset-0 pointer-events-none rounded-2xl"

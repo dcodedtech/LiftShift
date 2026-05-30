@@ -491,7 +491,7 @@ export const LifetimeAchievementCard: React.FC<LifetimeAchievementCardProps> = (
   ] as const;
 
   return (
-    <div className="bg-black/70 rounded-xl border border-slate-700/50 overflow-hidden h-full min-h-0 flex flex-col">
+    <div className="bg-black/70 rounded-xl border border-slate-700/50 overflow-hidden h-full min-h-0 flex flex-col" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.7)' }}>
       {/* Header */}
       <div className="p-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-3">

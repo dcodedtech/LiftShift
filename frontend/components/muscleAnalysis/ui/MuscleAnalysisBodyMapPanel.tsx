@@ -70,7 +70,7 @@ export const MuscleAnalysisBodyMapPanel: React.FC<MuscleAnalysisBodyMapPanelProp
   };
 
   return (
-    <div className="bg-black/70 rounded-xl border border-slate-700/50 p-4 relative flex flex-col h-full">
+    <div className="bg-black/50 rounded-xl border border-slate-700/50 p-4 relative flex flex-col h-full">
       <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-end gap-2">
         <SegmentControl
           options={[

@@ -95,7 +95,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className={`fixed inset-0 z-50 overflow-y-auto overflow-x-hidden font-sans ${isLight ? 'bg-white text-slate-900' : 'bg-slate-950 text-slate-200'}`}
+      className={`fixed inset-0 z-50 overflow-y-auto overflow-x-hidden font-sans ${isLight ? 'bg-white text-slate-900' : 'text-slate-200'}`}
     >
       {/* Light Rays Effect */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
@@ -171,7 +171,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
                     >
                       <span>Try it with sample data</span>
                     </button>
-                    
                   </div>
                 )}
               </div>

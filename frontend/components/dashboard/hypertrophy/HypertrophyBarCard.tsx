@@ -151,7 +151,7 @@ export const HypertrophyBarCard: React.FC<HypertrophyBarCardProps> = ({
   };
 
   return (
-    <div className="bg-black/70 rounded-xl border border-slate-700/50 px-2 sm:px-3 py-4 sm:py-6 min-h-[400px] sm:min-h-[520px] lg:min-h-0 lg:h-full flex flex-col">
+    <div className="bg-black/50 rounded-xl border border-slate-700/50 px-2 sm:px-3 py-4 sm:py-6 min-h-[400px] sm:min-h-[520px] lg:min-h-0 lg:h-full flex flex-col" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
       <div className="flex-shrink-0">
         <div className="flex items-center justify-between mb-3 gap-3">
           <div>

@@ -47,7 +47,7 @@ export const DashboardAIAnalysisCard: React.FC<DashboardAIAnalysisCardProps> = (
   });
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 rounded-xl p-4 sm:p-5 space-y-4">
+    <div className="bg-black/50 border border-slate-700/50 rounded-xl p-4 sm:p-5 space-y-4" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
       <div className="flex items-center gap-2">
         <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-300">
           <Brain className="w-4 h-4" />

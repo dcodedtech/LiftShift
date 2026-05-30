@@ -81,7 +81,7 @@ export const ExerciseThumbnail: React.FC<ExerciseThumbnailProps> = ({
 
     if (!asset) {
         return (
-            <div className={`${className} bg-black/50 flex items-center justify-center text-slate-500 overflow-hidden`}>
+            <div className={`${className} bg-black/20 flex items-center justify-center text-slate-500 overflow-hidden`}>
                 <Dumbbell className="w-1/3 h-1/3 opacity-50" />
             </div>
         );
@@ -125,7 +125,7 @@ export const ExerciseThumbnail: React.FC<ExerciseThumbnailProps> = ({
 
     // Fallback if asset exists but no visual source
     return (
-        <div className={`${className} bg-black/50 flex items-center justify-center text-slate-500 overflow-hidden`}>
+        <div className={`${className} bg-black/20 flex items-center justify-center text-slate-500 overflow-hidden`}>
             <Dumbbell className="w-1/3 h-1/3 opacity-50" />
         </div>
     );

@@ -30,7 +30,7 @@ export const RecentPRsPanel: React.FC<RecentPRsPanelProps> = memo(function Recen
   const displayPRs = recentPRs.slice(0, 5);
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 rounded-xl p-4">
+    <div className="bg-black/70 border border-slate-700/50 rounded-xl p-4" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.7)' }}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-yellow-500/10">

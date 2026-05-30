@@ -74,7 +74,7 @@ export const VolumeDensityCard = ({
   }, [chartData.length]);
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 px-2 sm:px-3 py-4 sm:py-6 rounded-xl min-h-[400px] sm:min-h-[520px] flex flex-col transition-all duration-300">
+    <div className="bg-black/50 border border-slate-700/50 px-2 sm:px-3 py-4 sm:py-6 rounded-xl min-h-[400px] sm:min-h-[520px] flex flex-col transition-[opacity,transform] duration-300" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
       <div className={`flex flex-row justify-between items-center mb-3 gap-3 transition-opacity duration-700 ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
         <h3 className="text-sm sm:text-lg font-semibold text-white flex items-center gap-2 transition-opacity duration-200 hover:opacity-90">
           <Timer className="w-5 h-5 text-purple-500 transition-opacity duration-200 hover:opacity-80" />

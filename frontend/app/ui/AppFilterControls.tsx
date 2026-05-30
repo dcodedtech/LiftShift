@@ -27,7 +27,7 @@ export const AppFilterControls: React.FC<AppFilterControlsProps> = ({
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
-            className="inline-flex items-center gap-2 h-8 px-2.5 rounded-md bg-black/50 hover:bg-white/5 border border-slate-700/50 text-slate-200 text-xs font-semibold transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-2 h-8 px-2.5 rounded-md bg-black/20 hover:bg-white/5 border border-slate-700/50 text-slate-200 text-xs font-semibold transition-colors whitespace-nowrap"
             title={calendarSummaryText}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-slate-300/80" />
@@ -44,7 +44,7 @@ export const AppFilterControls: React.FC<AppFilterControlsProps> = ({
         <button
           type="button"
           onClick={() => setCalendarOpen(true)}
-          className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-black/50 hover:bg-white/5 border border-slate-700/50 text-slate-200 transition-colors"
+          className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-black/20 hover:bg-white/5 border border-slate-700/50 text-slate-200 transition-colors"
           title="Edit filter"
           aria-label="Edit filter"
         >
@@ -53,7 +53,7 @@ export const AppFilterControls: React.FC<AppFilterControlsProps> = ({
         <button
           type="button"
           onClick={clearAllFilters}
-          className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-black/50 hover:bg-white/5 border border-slate-700/50 text-slate-200 transition-colors"
+          className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-black/20 hover:bg-white/5 border border-slate-700/50 text-slate-200 transition-colors"
           title="Clear filter"
           aria-label="Clear filter"
         >
@@ -63,7 +63,7 @@ export const AppFilterControls: React.FC<AppFilterControlsProps> = ({
     ) : (
       <button
         onClick={toggleCalendarOpen}
-        className="inline-flex items-center gap-2 h-8 px-2 rounded-md bg-black/50 hover:bg-white/5 border border-slate-700/50 text-xs font-semibold text-slate-200 whitespace-nowrap transition-colors cursor-pointer"
+        className="inline-flex items-center gap-2 h-8 px-2 rounded-md bg-black/20 hover:bg-white/5 border border-slate-700/50 text-xs font-semibold text-slate-200 whitespace-nowrap transition-colors cursor-pointer"
       >
         <Calendar className="w-4 h-4 text-slate-400" />
         <span>Calendar</span>

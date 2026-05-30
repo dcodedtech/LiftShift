@@ -160,10 +160,11 @@ export const KPICard: React.FC<KPICardProps> = ({
   return (
     <div
       className={`bg-black/70 border border-slate-700/50 rounded-xl ${compact ? 'p-3' : 'p-4'} hover:border-slate-600/50 transition-all group overflow-hidden`}
+      style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.7)' }}
     >
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className={`p-1.5 rounded-lg bg-black/50 ${iconColor} flex-shrink-0`}>
+          <div className={`p-1.5 rounded-lg bg-black/20 ${iconColor} flex-shrink-0`}>
             <Icon className="w-4 h-4" />
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 truncate">{title}</span>

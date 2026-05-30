@@ -65,7 +65,7 @@ export const MuscleFocusCard: React.FC<{
               setShowHeatmap((v) => !v);
             }}
             className={`p-2 rounded-full border transition-all cursor-pointer ${isDark
-                ? 'bg-black/30 border-slate-700/50 text-slate-200 hover:border-slate-600'
+                ? 'bg-black/70 border-slate-700/50 text-slate-200 hover:border-slate-600'
                 : 'bg-white/70 border-slate-200 text-slate-700 hover:border-slate-300'
               }`}
             title="Flip view"

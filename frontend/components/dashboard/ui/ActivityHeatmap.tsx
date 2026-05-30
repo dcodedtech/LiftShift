@@ -202,7 +202,7 @@ export const ActivityHeatmap = memo(({
   };
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 p-2 sm:p-3 rounded-xl flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-hidden">
+    <div className="bg-black/50 border border-slate-700/50 p-2 sm:p-3 rounded-xl flex flex-col lg:flex-row gap-4 lg:gap-5 overflow-hidden" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
       <div className="flex-shrink-0 min-w-[160px] sm:min-w-[200px] lg:min-w-[240px] border-b lg:border-b-0 lg:border-r border-slate-700/50 pb-4 lg:pb-0 lg:pr-6 lg:flex lg:flex-col">
         <div className="flex flex-col gap-3 lg:flex-1">
           <div className="flex items-center justify-between">

@@ -130,10 +130,9 @@ export const DashboardSummaryCard: React.FC<DashboardSummaryCardProps> = ({
 
   return (
     <div 
-      className={`bg-black/70 border border-emerald-500/10 rounded-xl p-4 overflow-hidden relative sm:h-auto ${isExpanded ? 'h-auto' : 'h-[120px]'}`}
+      className={`bg-black/50 border border-slate-700/50 rounded-xl p-4 overflow-hidden relative sm:h-auto ${isExpanded ? 'h-auto' : 'h-[120px]'}`}
       onClick={() => !isExpanded && isLongText && setIsExpanded(true)}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-blue-500/5 pointer-events-none" />
       <div className="relative flex items-start gap-3">
         <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 flex-shrink-0 mt-0.5">
           <Sparkles className="w-3 h-3" />

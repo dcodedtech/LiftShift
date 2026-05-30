@@ -29,7 +29,7 @@ export const CalendarYearNav: React.FC<CalendarYearNavProps> = ({
   <div className="flex items-center justify-center gap-3 mb-3">
     <button
       onClick={() => setViewMonth(addYears(viewMonth, -1))}
-      className="px-3 py-2 rounded-lg bg-black/70 hover:bg-black/60 text-base font-bold text-slate-200 border border-slate-700/50"
+      className="px-3 py-2 rounded-lg bg-black/20 hover:bg-black/60 text-base font-bold text-slate-200 border border-slate-700/50"
       title="Previous year"
     >
       ‹
@@ -42,7 +42,7 @@ export const CalendarYearNav: React.FC<CalendarYearNavProps> = ({
             ? 'border-slate-500/60 bg-white/10 text-slate-200'
             : yearStatus === 'partial'
               ? 'border-slate-600/60 bg-white/5 text-slate-200'
-              : (yearHasData ? 'border-emerald-500/30 bg-emerald-500/10 text-slate-200 hover:bg-emerald-500/15' : 'border-slate-700/50 bg-black/70 text-slate-200 hover:bg-white/5')
+              : (yearHasData ? 'border-emerald-500/30 bg-emerald-500/10 text-slate-200 hover:bg-emerald-500/15' : 'border-slate-700/50 bg-black/20 text-slate-200 hover:bg-white/5')
         } ${tooltipYear ? '' : ''}`}
         title="Click again to set start/end for the year"
       >
@@ -60,7 +60,7 @@ export const CalendarYearNav: React.FC<CalendarYearNavProps> = ({
     </div>
     <button
       onClick={() => setViewMonth(addYears(viewMonth, 1))}
-      className="px-3 py-2 rounded-lg bg-black/70 hover:bg-black/60 text-base font-bold text-slate-200 border border-slate-700/50"
+      className="px-3 py-2 rounded-lg bg-black/20 hover:bg-black/60 text-base font-bold text-slate-200 border border-slate-700/50"
       title="Next year"
     >
       ›

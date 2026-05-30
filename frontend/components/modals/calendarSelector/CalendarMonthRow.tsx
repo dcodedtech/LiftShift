@@ -42,8 +42,8 @@ export const CalendarMonthRow: React.FC<CalendarMonthRowProps> = ({
             className={`group relative aspect-square w-full rounded-md flex items-center justify-center text-[11px] font-semibold border-2 transition-all duration-200
               ${status === 'full' ? 'border-slate-500/60 bg-white/10 text-white'
                 : status === 'partial' ? 'border-slate-600/60 bg-white/5 text-slate-200'
-                : isCurrentView ? (hasDataInMonth ? 'border-emerald-500/30 bg-emerald-500/10 text-slate-200' : 'border-slate-600/60 bg-black/50 text-slate-200')
-                : (hasDataInMonth ? 'border-emerald-500/20 bg-emerald-500/5 text-slate-200 hover:bg-emerald-500/10' : 'border-slate-700/50 bg-black/70 text-slate-300 hover:bg-white/5')}
+                : isCurrentView ? (hasDataInMonth ? 'border-emerald-500/30 bg-emerald-500/10 text-slate-200' : 'border-slate-600/60 bg-black/20 text-slate-200')
+                : (hasDataInMonth ? 'border-emerald-500/20 bg-emerald-500/5 text-slate-200 hover:bg-emerald-500/10' : 'border-slate-700/50 bg-black/20 text-slate-300 hover:bg-white/5')}
               ${disabled || !hasDataInMonth ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
               ${showTooltip ? '' : ''}
             `}

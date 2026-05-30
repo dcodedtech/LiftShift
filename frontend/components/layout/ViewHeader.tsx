@@ -32,12 +32,12 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
   const leftItems = leftStats ?? stats;
 
   return (
-    <div className={`${sticky ? 'sticky top-0 z-30' : ''} bg-black/70 p-2 sm:p-3 rounded-xl`}>
+    <div className={`${sticky ? 'sticky top-0 z-30' : ''} bg-black/30 p-2 sm:p-3 rounded-xl mt-1 mb-1`}>
       <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
         {/* Left: Stats */}
         <div className="hidden sm:flex items-center gap-2 justify-start min-w-0">
           {leftItems.map((stat, i) => (
-            <div key={i} className="flex items-center gap-2 px-3 h-10 bg-black/70 border border-slate-700/50 rounded-lg">
+            <div key={i} className="flex items-center gap-2 px-3 h-10 bg-black/20 border border-slate-700/50 rounded-lg">
               <stat.icon className="w-4 h-4 text-slate-400" />
               <div className="text-xs">
                 <div className="text-white font-bold leading-4">{stat.value}</div>
@@ -58,7 +58,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
         <div className="hidden sm:flex justify-end min-w-0">
           <div className="flex items-center gap-2 justify-end min-w-0">
             {(rightStats || []).map((stat, i) => (
-              <div key={i} className="flex items-center gap-2 px-3 h-10 bg-black/70 border border-slate-700/50 rounded-lg">
+              <div key={i} className="flex items-center gap-2 px-3 h-10 bg-black/20 border border-slate-700/50 rounded-lg">
                 <stat.icon className="w-4 h-4 text-slate-400" />
                 <div className="text-xs">
                   <div className="text-white font-bold leading-4">{stat.value}</div>

@@ -42,7 +42,7 @@ export const CalendarRangeBanner: React.FC<CalendarRangeBannerProps> = ({
           <div className="flex items-center gap-2 text-sm font-semibold">
             <button
               onClick={() => rangeStart && jumpToDate(rangeStart)}
-              className="px-2 py-0.5 rounded-md bg-black/50 hover:bg-white/5 text-slate-200 transition-colors"
+              className="px-2 py-0.5 rounded-md bg-black/20 hover:bg-white/5 text-slate-200 transition-colors"
               title="Go to start date"
             >
               {rangeStart ? formatDayYearContraction(rangeStart) : ''}
@@ -52,7 +52,7 @@ export const CalendarRangeBanner: React.FC<CalendarRangeBannerProps> = ({
                 <span className="text-slate-500">↔</span>
                 <button
                   onClick={() => jumpToDate(rangeEnd)}
-                  className="px-2 py-0.5 rounded-md bg-black/50 hover:bg-white/5 text-slate-200 transition-colors"
+                  className="px-2 py-0.5 rounded-md bg-black/20 hover:bg-white/5 text-slate-200 transition-colors"
                   title="Go to end date"
                 >
                   {formatDayYearContraction(rangeEnd)}

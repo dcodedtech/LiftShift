@@ -26,6 +26,7 @@ import { useCalendarSelectionHandlers } from './app/state';
 import { useUpdateFlowHandler } from './app/auth';
 import { calculatePRInsights } from './utils/analysis/insights';
 import { createFingerprintMatcher } from './utils/exercise/exerciseFingerprint';
+import { assetPath } from './constants';
 
 const CHUNK_RELOAD_KEY = 'liftshift_chunk_reload_once';
 
@@ -127,6 +128,7 @@ const App: React.FC = () => {
   });
   const [dataSource, setDataSource] = useState(() => getDataSourceChoice());
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
+  const [bgImageLoaded, setBgImageLoaded] = useState(false);
 
   const {
     mode,
@@ -141,6 +143,8 @@ const App: React.FC = () => {
     setExerciseTrendMode,
     secondarySetMultiplier,
     setSecondarySetMultiplier,
+    showBackgroundImage,
+    setShowBackgroundImage,
   } = useAppPreferences();
 
   const mergeDatasets = useCallback(
@@ -575,9 +579,18 @@ const App: React.FC = () => {
     <ToastProvider>
       <ToastNotifier />
       <div
-        className="flex flex-col min-h-[100svh] h-[100dvh] overscroll-none bg-transparent text-[color:var(--app-fg)] font-sans"
-        style={{ background: 'var(--app-bg)' }}
+        className="relative flex flex-col min-h-[100svh] h-[100dvh] overscroll-none bg-transparent text-[color:var(--app-fg)] font-sans"
       >
+        {/* Full-page Background Image (dark mode only, user preference) */}
+        {mode !== 'light' && showBackgroundImage && (
+          <img
+            src={assetPath('/images/misc/P15.avif')}
+            alt=""
+            aria-hidden="true"
+            onLoad={() => setBgImageLoaded(true)}
+            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgImageLoaded ? 'opacity-40' : 'opacity-0'}`}
+          />
+        )}
         <AppShell
         onboardingIntent={onboarding?.intent ?? null}
         onSetOnboarding={setOnboarding}
@@ -645,6 +658,8 @@ const App: React.FC = () => {
         onSecondarySetMultiplierChange={setSecondarySetMultiplier}
         font={font}
         onFontChange={setFont}
+        showBackgroundImage={showBackgroundImage}
+        onShowBackgroundImageChange={setShowBackgroundImage}
       />
 
       <AppOnboardingLayer

@@ -111,7 +111,7 @@ export const MuscleAnalysisDetailPanel: React.FC<MuscleAnalysisDetailPanelProps>
               <h3 className="text-sm font-semibold text-white">Weekly sets</h3>
             </div>
           </div>
-          <div className="h-32 bg-black/50 rounded-lg p-2">
+          <div className="h-32 bg-black/20 rounded-lg p-2">
             {trendData.length > 0 ? (
               <LazyRender className="w-full h-full" placeholder={<ChartSkeleton className="h-full" />}>
                 <ResponsiveContainer width="100%" height="100%">

@@ -131,7 +131,7 @@ export const HistoryExerciseCard: React.FC<HistoryExerciseCardProps> = ({
       placeholder={<HistoryCardSkeleton minHeight={260} />}
       rootMargin="400px 0px"
     >
-      <div className="bg-black/70 border border-slate-700/50 rounded-2xl p-4 sm:p-5 transition-all flex flex-col h-full">
+      <div className="bg-black/50 border border-slate-700/50 rounded-2xl p-4 sm:p-5 transition-all flex flex-col h-full" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
         <HistoryExerciseHeader
           group={group}
           asset={asset}

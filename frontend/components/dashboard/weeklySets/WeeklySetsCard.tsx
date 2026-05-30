@@ -123,7 +123,7 @@ export const WeeklySetsCard = ({
   };
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 p-4 sm:p-6 rounded-xl min-h-[400px] sm:min-h-[480px] flex flex-col transition-all duration-300 min-w-0">
+    <div className="bg-black/50 border border-slate-700/50 p-4 sm:p-6 rounded-xl min-h-[400px] sm:min-h-[480px] flex flex-col transition-[opacity,transform] duration-300 min-w-0" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
       <WeeklySetsHeader
         weeklySetsView={weeklySetsView}
         setWeeklySetsView={setWeeklySetsView}

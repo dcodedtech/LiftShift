@@ -399,7 +399,7 @@ export const TrainingTimelineCard: React.FC<TrainingTimelineCardProps> = ({ prog
   };
 
   return (
-    <div className="bg-black/70 border border-slate-700/50 rounded-xl p-4 transition-all duration-300">
+    <div className="bg-black/50 border border-slate-700/50 rounded-xl p-4 transition-[opacity,transform] duration-300" style={{ backgroundColor: 'rgb(var(--panel-rgb) / 0.5)' }}>
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
