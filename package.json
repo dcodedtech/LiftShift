@@ -21,11 +21,11 @@
     "typescript"
   ],
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22"
   },
   "type": "module",
   "scripts": {
-    "dev": "vike dev",
+    "dev": "npm run build --prefix backend && concurrently -n tsc,backend,frontend --hide tsc -c yellow,blue,cyan \"tsc -w --preserveWatchOutput -p backend/tsconfig.json\" \"node --watch --watch-preserve-output --env-file=backend/.env backend/dist/index.js\" \"vike dev\"",
     "build": "vike build",
     "preview": "vike preview"
   },
@@ -56,6 +56,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^10.0.0",
     "svgpath": "^2.6.0",
     "terser": "^5.46.2",
     "typescript": "~6.0.3",

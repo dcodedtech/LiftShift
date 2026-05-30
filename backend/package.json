@@ -5,11 +5,12 @@
   "license": "AGPL-3.0-only",
   "main": "dist/index.js",
   "engines": {
-    "node": "20.x"
+    "node": ">=22"
   },
   "scripts": {
-    "dev": "tsc -w -p tsconfig.json",
-    "dev:serve": "node --watch dist/index.js",
+    "dev": "tsc -w --preserveWatchOutput -p tsconfig.json",
+    "dev:serve": "node --watch --watch-preserve-output --env-file=.env dist/index.js",
+    "dev:all": "npm run build && concurrently -n tsc,serve -c yellow,blue \"npm run dev\" \"npm run dev:serve\"",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js"
   },
@@ -27,6 +28,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
+    "concurrently": "^10.0.0",
     "typescript": "~6.0.3"
   }
 }
