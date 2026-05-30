@@ -30,7 +30,7 @@ export type ChartAggregation = 'daily' | 'weekly' | 'monthly';
 
 // Target max plotted points for time-series charts.
 // Lower values force more aggressive bucketing (fewer points).
-export const DEFAULT_CHART_MAX_POINTS = 8;
+export const DEFAULT_CHART_MAX_POINTS = 5;
 
 export const pickChartAggregation = (args: {
   /** earliest timestamp (ms) */
@@ -41,8 +41,10 @@ export const pickChartAggregation = (args: {
   preferred: ChartAggregation;
   /** hard cap for plotted points */
   maxPoints: number;
+  /** floor: never collapse below this many points when a finer level exists */
+  minPoints?: number;
 }): ChartAggregation => {
-  const { minTs, maxTs, preferred, maxPoints } = args;
+  const { minTs, maxTs, preferred, maxPoints, minPoints = 3 } = args;
 
   if (!Number.isFinite(minTs) || !Number.isFinite(maxTs) || maxTs <= minTs) return preferred;
 
@@ -60,10 +62,30 @@ export const pickChartAggregation = (args: {
 
   for (let i = startIdx; i < order.length; i += 1) {
     const candidate = order[i];
-    if (estimatePoints(candidate) <= maxPoints) return candidate;
+    if (estimatePoints(candidate) <= maxPoints) {
+      if (estimatePoints(candidate) < minPoints && i > 0) {
+        return order[i - 1];
+      }
+      return candidate;
+    }
   }
 
   return 'monthly';
+};
+
+/**
+ * Uniformly downsample an array to at most maxPoints entries.
+ * Picks evenly spaced entries so the first and last are always included.
+ * Returns the original array unchanged if it's already within the limit.
+ */
+export const uniformDownsample = <T>(data: T[], maxPoints: number): T[] => {
+  if (!Array.isArray(data) || data.length <= maxPoints) return data;
+  const step = (data.length - 1) / (maxPoints - 1);
+  const result: T[] = [];
+  for (let i = 0; i < maxPoints; i++) {
+    result.push(data[Math.round(i * step)]);
+  }
+  return result;
 };
 
 export const formatRollingWindowAbbrev = (days: number): string => {
