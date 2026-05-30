@@ -2,43 +2,27 @@ import React from 'react';
 import { Scale, Users } from 'lucide-react';
 import { WeightUnit } from '../../../utils/storage/localStorage';
 import { BodyMapGender } from '../../bodyMap/BodyMap';
+import { Select } from '../../ui/Select';
 
 interface WeightUnitSectionProps {
   weightUnit: WeightUnit;
   onWeightUnitChange: (unit: WeightUnit) => void;
 }
 
+const WEIGHT_OPTIONS = [
+  { value: 'kg' as const, label: 'kg' },
+  { value: 'lbs' as const, label: 'lbs' },
+] as const;
+
 export const WeightUnitSection: React.FC<WeightUnitSectionProps> = ({ weightUnit, onWeightUnitChange }) => (
-  <div className="space-y-2">
-    <div className="flex items-center gap-2 text-slate-200">
-      <Scale className="w-3.5 h-3.5 text-slate-500" />
-      <span className="text-xs font-medium">Weight Unit</span>
-    </div>
-    <div className="grid grid-cols-2 gap-2">
-      <button
-        type="button"
-        onClick={() => onWeightUnitChange('kg')}
-        className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border transition-all ${
-          weightUnit === 'kg'
-            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-            : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-        }`}
-      >
-        <span className="text-sm font-bold">kg</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => onWeightUnitChange('lbs')}
-        className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border transition-all ${
-          weightUnit === 'lbs'
-            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-            : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-        }`}
-      >
-        <span className="text-sm font-bold">lbs</span>
-      </button>
-    </div>
-  </div>
+  <Select
+    options={WEIGHT_OPTIONS}
+    value={weightUnit}
+    onChange={onWeightUnitChange}
+    label="Weight Unit"
+    subtitle="How weights are displayed across the app"
+    icon={<Scale className="w-3.5 h-3.5 text-slate-500" />}
+  />
 );
 
 interface BodyMapGenderSectionProps {
@@ -46,38 +30,21 @@ interface BodyMapGenderSectionProps {
   onBodyMapGenderChange: (gender: BodyMapGender) => void;
 }
 
+const GENDER_OPTIONS = [
+  { value: 'male' as const, label: 'Male' },
+  { value: 'female' as const, label: 'Female' },
+] as const;
+
 export const BodyMapGenderSection: React.FC<BodyMapGenderSectionProps> = ({
   bodyMapGender,
   onBodyMapGenderChange,
 }) => (
-  <div className="space-y-2">
-    <div className="flex items-center gap-2 text-slate-200">
-      <Users className="w-3.5 h-3.5 text-slate-500" />
-      <span className="text-xs font-medium">Body Map Style</span>
-    </div>
-    <div className="grid grid-cols-2 gap-2">
-      <button
-        type="button"
-        onClick={() => onBodyMapGenderChange('male')}
-        className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border transition-all ${
-          bodyMapGender === 'male'
-            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-            : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-        }`}
-      >
-        <span className="text-sm font-medium">Male</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => onBodyMapGenderChange('female')}
-        className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border transition-all ${
-          bodyMapGender === 'female'
-            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-            : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-        }`}
-      >
-        <span className="text-sm font-medium">Female</span>
-      </button>
-    </div>
-  </div>
+  <Select
+    options={GENDER_OPTIONS}
+    value={bodyMapGender}
+    onChange={onBodyMapGenderChange}
+    label="Body Map Style"
+    subtitle="Male or female muscle map visualization"
+    icon={<Users className="w-3.5 h-3.5 text-slate-500" />}
+  />
 );

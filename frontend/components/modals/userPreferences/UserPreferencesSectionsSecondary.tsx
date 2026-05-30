@@ -1,6 +1,7 @@
 import React from 'react';
-import { Moon, Palette, SlidersHorizontal, Sparkles, Sun, Type } from 'lucide-react';
+import { Moon, Palette, SlidersHorizontal, Sparkles, Sun, Type, Image } from 'lucide-react';
 import { ExerciseTrendMode, FontChoice, ThemeMode } from '../../../utils/storage/localStorage';
+import { Select } from '../../ui/Select';
 import { CompactThemeOption } from './UserPreferencesThemeOption';
 
 const formatSecondaryInput = (value: number): string => {
@@ -13,60 +14,23 @@ interface TrendModeSectionProps {
   onExerciseTrendModeChange: (mode: ExerciseTrendMode) => void;
 }
 
+const TREND_OPTIONS = [
+  { value: 'stable' as const, label: 'Stable', description: 'More stable, slower to react' },
+  { value: 'reactive' as const, label: 'Reactive', description: 'Responds faster to recent sessions (recommended)' },
+] as const;
+
 export const TrendModeSection: React.FC<TrendModeSectionProps> = ({
   exerciseTrendMode,
   onExerciseTrendModeChange,
 }) => (
-  <div className="space-y-2">
-    <div className="flex items-center gap-2 text-slate-200">
-      <Sparkles className="w-3.5 h-3.5 text-slate-500" />
-      <span className="text-xs font-medium">Trend Reactiveness</span>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-      <button
-        type="button"
-        onClick={() => onExerciseTrendModeChange('stable')}
-        className={`flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
-          exerciseTrendMode === 'stable'
-            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-            : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-        }`}
-      >
-        <div
-          className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
-            exerciseTrendMode === 'stable' ? 'bg-emerald-500/20' : 'bg-slate-800'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-        </div>
-        <div className="min-w-0">
-          <div className="text-xs font-medium truncate">Stable</div>
-          <div className="text-[10px] text-slate-500 truncate">More stable, slower to react</div>
-        </div>
-      </button>
-      <button
-        type="button"
-        onClick={() => onExerciseTrendModeChange('reactive')}
-        className={`flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
-          exerciseTrendMode === 'reactive'
-            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-            : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-        }`}
-      >
-        <div
-          className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
-            exerciseTrendMode === 'reactive' ? 'bg-emerald-500/20' : 'bg-slate-800'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-        </div>
-        <div className="min-w-0">
-          <div className="text-xs font-medium truncate">Reactive</div>
-          <div className="text-[10px] text-slate-500 truncate">Responds faster to recent sessions (recommended)</div>
-        </div>
-      </button>
-    </div>
-  </div>
+  <Select
+    options={TREND_OPTIONS}
+    value={exerciseTrendMode}
+    onChange={onExerciseTrendModeChange}
+    label="Trend Reactiveness"
+    subtitle="How quickly trend lines adapt to recent workout data"
+    icon={<Sparkles className="w-3.5 h-3.5 text-slate-500" />}
+  />
 );
 
 interface ThemeSectionProps {
@@ -74,43 +38,63 @@ interface ThemeSectionProps {
   onThemeModeChange: (mode: ThemeMode) => void;
 }
 
+const THEME_OPTIONS = [
+  { value: 'pure-black' as const, label: 'Pure Black' },
+  { value: 'midnight-dark' as const, label: 'Midnight' },
+  { value: 'medium-dark' as const, label: 'Medium' },
+  { value: 'light' as const, label: 'Light' },
+] as const;
+
 export const ThemeSection: React.FC<ThemeSectionProps> = ({ themeMode, onThemeModeChange }) => (
-  <div className="space-y-2">
-    <div className="flex items-center gap-2 text-slate-200">
-      <Palette className="w-3.5 h-3.5 text-slate-500" />
-      <span className="text-xs font-medium">Theme</span>
-    </div>
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-      <CompactThemeOption
-        mode="pure-black"
-        currentMode={themeMode}
-        onClick={() => onThemeModeChange('pure-black')}
-        label="Pure Black"
-        icon={<Moon className="w-3.5 h-3.5" />}
-      />
-      <CompactThemeOption
-        mode="midnight-dark"
-        currentMode={themeMode}
-        onClick={() => onThemeModeChange('midnight-dark')}
-        label="Midnight"
-        icon={<Sparkles className="w-3.5 h-3.5" />}
-      />
-      <CompactThemeOption
-        mode="medium-dark"
-        currentMode={themeMode}
-        onClick={() => onThemeModeChange('medium-dark')}
-        label="Medium"
-        icon={<Moon className="w-3.5 h-3.5" />}
-      />
-      <CompactThemeOption
-        mode="light"
-        currentMode={themeMode}
-        onClick={() => onThemeModeChange('light')}
-        label="Light"
-        icon={<Sun className="w-3.5 h-3.5" />}
+  <>
+    <div className="md:hidden">
+      <Select
+        options={THEME_OPTIONS}
+        value={themeMode}
+        onChange={onThemeModeChange}
+        label="Theme"
+        subtitle="Choose the app color scheme"
+        icon={<Palette className="w-3.5 h-3.5 text-slate-500" />}
       />
     </div>
-  </div>
+    <div className="hidden md:block space-y-2">
+      <div className="flex items-center gap-2">
+        <Palette className="w-3.5 h-3.5 text-slate-500" />
+        <span className="text-xs font-medium text-slate-300">Theme</span>
+      </div>
+      <p className="text-[10px] text-slate-500">Choose the app color scheme</p>
+      <div className="grid grid-cols-4 gap-2">
+        <CompactThemeOption
+          mode="pure-black"
+          currentMode={themeMode}
+          onClick={() => onThemeModeChange('pure-black')}
+          label="Pure Black"
+          icon={<Moon className="w-3.5 h-3.5" />}
+        />
+        <CompactThemeOption
+          mode="midnight-dark"
+          currentMode={themeMode}
+          onClick={() => onThemeModeChange('midnight-dark')}
+          label="Midnight"
+          icon={<Sparkles className="w-3.5 h-3.5" />}
+        />
+        <CompactThemeOption
+          mode="medium-dark"
+          currentMode={themeMode}
+          onClick={() => onThemeModeChange('medium-dark')}
+          label="Medium"
+          icon={<Moon className="w-3.5 h-3.5" />}
+        />
+        <CompactThemeOption
+          mode="light"
+          currentMode={themeMode}
+          onClick={() => onThemeModeChange('light')}
+          label="Light"
+          icon={<Sun className="w-3.5 h-3.5" />}
+        />
+      </div>
+    </div>
+  </>
 );
 
 interface FontSectionProps {
@@ -118,41 +102,21 @@ interface FontSectionProps {
   onFontChange: (font: FontChoice) => void;
 }
 
-const FONT_OPTIONS: { key: FontChoice; label: string; description: string }[] = [
-  { key: 'original', label: 'Classic', description: 'System default' },
-  { key: 'loraItalic', label: 'Journal', description: 'Elegant italic serif' },
-  { key: 'nunito', label: 'Modern', description: 'Warm rounded sans' },
-];
+const FONT_OPTIONS = [
+  { value: 'original' as const, label: 'Classic', description: 'System default' },
+  { value: 'loraItalic' as const, label: 'Journal', description: 'Elegant italic serif' },
+  { value: 'nunito' as const, label: 'Modern', description: 'Warm rounded sans' },
+] as const;
 
 export const FontSection: React.FC<FontSectionProps> = ({ font, onFontChange }) => (
-  <div className="space-y-2">
-    <div className="flex items-center gap-2 text-slate-200">
-      <Type className="w-3.5 h-3.5 text-slate-500" />
-      <span className="text-xs font-medium">Base Font</span>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-      {FONT_OPTIONS.map((opt) => (
-        <button
-          key={opt.key}
-          type="button"
-          onClick={() => onFontChange(opt.key)}
-          className={`flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
-            font === opt.key
-              ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-              : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
-          }`}
-        >
-          <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${font === opt.key ? 'bg-emerald-500/20' : 'bg-slate-800'}`}>
-            <Type className="w-3.5 h-3.5" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs font-medium truncate">{opt.label}</div>
-            <div className="text-[10px] text-slate-500 truncate">{opt.description}</div>
-          </div>
-        </button>
-      ))}
-    </div>
-  </div>
+  <Select
+    options={FONT_OPTIONS}
+    value={font}
+    onChange={onFontChange}
+    label="Base Font"
+    subtitle="Typography style for the app interface"
+    icon={<Type className="w-3.5 h-3.5 text-slate-500" />}
+  />
 );
 
 interface SecondarySetMultiplierSectionProps {
@@ -214,7 +178,7 @@ export const SecondarySetMultiplierSection: React.FC<SecondarySetMultiplierSecti
             commitDraft();
           }
         }}
-        className="w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        className="w-full rounded-md border border-slate-800 bg-slate-950 px-2 py-1.5 text-xs text-slate-200 hover:ring-1 hover:ring-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
         placeholder="0.00 to 1.00"
         aria-label="Secondary set multiplier"
       />
@@ -223,3 +187,27 @@ export const SecondarySetMultiplierSection: React.FC<SecondarySetMultiplierSecti
     </div>
   );
 };
+
+interface BackgroundImageSectionProps {
+  showBackgroundImage: boolean;
+  onShowBackgroundImageChange: (value: boolean) => void;
+}
+
+const BG_IMAGE_OPTIONS = [
+  { value: 'true' as const, label: 'On', description: 'Show background image (dark mode)' },
+  { value: 'false' as const, label: 'Off', description: 'Solid background (default style)' },
+] as const;
+
+export const BackgroundImageSection: React.FC<BackgroundImageSectionProps> = ({
+  showBackgroundImage,
+  onShowBackgroundImageChange,
+}) => (
+  <Select
+    options={BG_IMAGE_OPTIONS}
+    value={showBackgroundImage ? 'true' : 'false'}
+    onChange={(v) => onShowBackgroundImageChange(v === 'true')}
+    label="Background Image"
+    subtitle="Show decorative background image in dark mode"
+    icon={<Image className="w-3.5 h-3.5 text-slate-500" />}
+  />
+);

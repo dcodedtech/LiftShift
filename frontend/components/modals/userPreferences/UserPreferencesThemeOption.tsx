@@ -22,7 +22,7 @@ export const CompactThemeOption: React.FC<CompactThemeOptionProps> = ({
     className={`flex items-center gap-2 p-2 rounded-lg border transition-all ${
       currentMode === mode
         ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-        : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:border-slate-600 hover:bg-slate-900/40'
+        : 'bg-slate-900/20 border-slate-700/50 text-slate-300 hover:ring-1 hover:ring-emerald-500 hover:bg-slate-900/40'
     }`}
     title={label}
   >
