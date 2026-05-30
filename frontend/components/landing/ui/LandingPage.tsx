@@ -125,13 +125,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       </div>
 
       {view === 'how-it-works' ? (
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-1">
           <div className="max-w-6xl mx-auto">
             <HowItWorksDoc linkTarget="_self" />
           </div>
         </div>
       ) : view === 'features' ? (
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-1">
           <div className="max-w-6xl mx-auto">
             <FeaturesDoc />
           </div>
