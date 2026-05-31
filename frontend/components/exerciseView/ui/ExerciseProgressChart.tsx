@@ -278,10 +278,6 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
                 key={`${selectedStats.name}:${viewMode}:${allAggregationMode}:${weightUnit}:${showUnilateral}`}
                 data={chartData}
                 margin={{ top: 10, ...RECHARTS_YAXIS_MARGIN, bottom: 0 }}
-                style={{
-                  maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-                }}
               >
                 <defs>
                   <linearGradient id="color1RM" x1="0" y1="0" x2="1" y2="0">
