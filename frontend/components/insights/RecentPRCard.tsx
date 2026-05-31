@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TrendingUp } from 'lucide-react';
+
 
 import type { RecentPR } from '../../utils/analysis/insights';
 import type { ExerciseAsset } from '../../utils/data/exerciseAssets';
@@ -8,7 +8,6 @@ import type { WeightUnit } from '../../utils/storage/localStorage';
 import { convertWeight } from '../../utils/format/units';
 import { formatHumanReadableDate } from '../../utils/date/dateUtils';
 import { ExerciseThumbnail } from '../common/ExerciseThumbnail';
-import { getLoadProgressionDirection } from '../../utils/exercise/loadProgression';
 import { SEMI_FANCY_FONT } from '../../utils/ui/uiConstants';
 
 // Recent PR Card with image and improvement
@@ -29,10 +28,8 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
   now,
   onExerciseClick,
 }) => {
-  const { exercise, weight, reps, date, improvement, isSilver } = pr;
+  const { exercise, weight, date, isSilver, type } = pr;
   const clickable = typeof onExerciseClick === 'function';
-  const isLowerWeightBetter = getLoadProgressionDirection(exercise) === 'lower';
-  const displayImprovement = Math.abs(improvement);
 
   const isToday = now ? date.toDateString() === now.toDateString() : false;
 
@@ -62,16 +59,9 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
       </div>
       <div className="text-right">
         <div className="text-sm font-bold text-[color:var(--text-primary)]">{convertWeight(weight, weightUnit)}{weightUnit}</div>
-        {improvement > 0 ? (
-          <div className={`text-[10px] font-bold ${improvementClass} flex items-center justify-end gap-0.5`}>
-            <TrendingUp className="w-3 h-3" />+{convertWeight(displayImprovement, weightUnit)}{weightUnit}{isLowerWeightBetter ? ' less assistance' : ''}
-          </div>
-        ) : (
-          <div className="text-[10px] text-slate-500">×{reps}</div>
-        )}
-        {isSilver && (
-          <div className="text-[10px] text-slate-300 font-medium">2-Month Best</div>
-        )}
+        <div className={`text-[10px] font-bold ${improvementClass} flex items-center justify-end gap-0.5`}>
+          <TrendingUp className="w-3 h-3" />{type === 'oneRm' ? '1RM' : type === 'volume' ? 'Volume' : 'Weight'} PR
+        </div>
       </div>
     </button>
   );
