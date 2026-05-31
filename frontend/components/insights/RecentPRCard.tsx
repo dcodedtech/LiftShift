@@ -1,5 +1,4 @@
 import React from 'react';
-import { BarChart3, Dumbbell, Trophy } from 'lucide-react';
 
 import type { RecentPR } from '../../utils/analysis/insights';
 import type { ExerciseAsset } from '../../utils/data/exerciseAssets';
@@ -36,8 +35,7 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
     ? (isLatest ? 'bg-slate-500/15 border border-slate-500/40' : 'bg-black/20')
     : (isLatest ? 'bg-emerald-500/5 border border-emerald-500/20' : 'bg-black/20');
     
-  const iconClass = isSilver ? 'text-slate-400' : 'text-yellow-400';
-  const labelClass = isSilver ? 'text-slate-300' : 'text-yellow-400';
+  const improvementClass = isSilver ? 'text-slate-300' : 'text-emerald-400';
 
   return (
     <button
@@ -59,10 +57,9 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
       </div>
       <div className="text-right">
         <div className="text-sm font-bold text-[color:var(--text-primary)]">{convertWeight(weight, weightUnit)}{weightUnit}</div>
-        <div className={`text-[10px] font-bold ${labelClass} flex items-center justify-end gap-0.5`}>
-          {type === 'oneRm' ? <><Trophy className={`w-3 h-3 mr-0.5 ${iconClass}`} /> 1RM</> : type === 'volume' ? <><BarChart3 className={`w-3 h-3 mr-0.5 ${iconClass}`} /> Volume</> : <><Dumbbell className={`w-3 h-3 mr-0.5 ${iconClass}`} /> Weight</>} PR
+        <div className={`text-[10px] font-bold ${improvementClass} flex items-center justify-end gap-0.5`}>
+          {type === 'oneRm' ? '1RM' : type === 'volume' ? 'Volume' : 'Weight'} PR
         </div>
-        {isSilver && <div className="text-[10px] text-slate-500 font-medium">2-Month Best</div>}
       </div>
     </button>
   );
