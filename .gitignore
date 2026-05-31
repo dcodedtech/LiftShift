@@ -39,6 +39,9 @@ skills-lock.json
 # CodeGraph
 .codegraph/
 
+# OpenCode project config (personal overrides)
+opencode.json
+
 # Unused assets for future use
 frontend/components/bodyMap/demomalefront.svg
 frontend/components/bodyMap/demomaleback.svg
