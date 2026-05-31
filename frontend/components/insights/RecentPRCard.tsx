@@ -1,4 +1,5 @@
 import React from 'react';
+import { Dumbbell, Trophy, BarChart3 } from 'lucide-react';
 
 import type { RecentPR } from '../../utils/analysis/insights';
 import type { ExerciseAsset } from '../../utils/data/exerciseAssets';
@@ -31,11 +32,14 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
 
   const isToday = now ? date.toDateString() === now.toDateString() : false;
 
+  const PrIcon = type === 'weight' ? Dumbbell : type === 'oneRm' ? Trophy : BarChart3;
+  const iconColor = isSilver ? 'text-slate-300' : 'text-yellow-400';
+
   const cardClass = isSilver 
     ? (isLatest ? 'bg-slate-500/15 border border-slate-500/40' : 'bg-black/20')
     : (isLatest ? 'bg-emerald-500/5 border border-emerald-500/20' : 'bg-black/20');
     
-  const improvementClass = isSilver ? 'text-slate-300' : 'text-emerald-400';
+  const improvementClass = isSilver ? 'text-slate-300' : 'text-yellow-400';
 
   return (
     <button
@@ -57,8 +61,9 @@ export const RecentPRCard: React.FC<RecentPRCardProps> = ({
       </div>
       <div className="text-right">
         <div className="text-sm font-bold text-[color:var(--text-primary)]">{convertWeight(weight, weightUnit)}{weightUnit}</div>
-        <div className={`text-[10px] font-bold ${improvementClass} flex items-center justify-end gap-0.5`}>
-          {type === 'oneRm' ? '1RM' : type === 'volume' ? 'Volume' : 'Weight'} PR
+        <div className={`text-[10px] font-bold ${improvementClass} flex items-center justify-end gap-1`}>
+          <PrIcon className={`w-3 h-3 ${iconColor}`} />
+          {type === 'oneRm' ? '1RM' : type === 'volume' ? 'Volume' : 'Weight'} PR{isSilver ? ' (2mo)' : ''}
         </div>
       </div>
     </button>
