@@ -40,6 +40,7 @@ interface HistorySessionHeaderCardProps {
   bodyMapGender: BodyMapGender;
   setTooltip: (state: TooltipState | null) => void;
   toggleCollapsed: () => void;
+  onNavigateToSession?: (sessionKey: string) => void;
 }
 
 export const HistorySessionHeaderCard: React.FC<
@@ -59,6 +60,7 @@ export const HistorySessionHeaderCard: React.FC<
   bodyMapGender,
   setTooltip,
   toggleCollapsed,
+  onNavigateToSession,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -308,7 +310,8 @@ export const HistorySessionHeaderCard: React.FC<
                   current={session.totalVolume}
                   previous={prevSession.totalVolume}
                   label="volume"
-                  context="vs lst"
+                  context={`vs lst - ${prevSession.title} ${prevSession.date ? formatRelativeTime(prevSession.date, effectiveNow) : ''}`}
+                  onClick={() => onNavigateToSession?.(prevSession.key)}
                 />
               </span>
             )}

@@ -8,6 +8,7 @@ interface SessionDeltaBadgeProps {
   suffix?: string;
   label: string;
   context?: string;
+  onClick?: () => void;
 }
 
 export const SessionDeltaBadge: React.FC<SessionDeltaBadgeProps> = ({
@@ -16,6 +17,7 @@ export const SessionDeltaBadge: React.FC<SessionDeltaBadgeProps> = ({
   suffix = '',
   label,
   context = 'vs lst',
+  onClick,
 }) => {
   const delta = current - previous;
   if (delta === 0 || previous === 0) return null;
@@ -27,13 +29,35 @@ export const SessionDeltaBadge: React.FC<SessionDeltaBadgeProps> = ({
 
   const formattedPercent = formatDeltaPercentage(deltaPercent, getDeltaFormatPreset('badge'));
 
+  const content = (
+    <>
+      <Icon className={`w-3 h-3 ${colorClass}`} />
+      <span>{formattedPercent}{suffix}</span>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+        className={`relative -top-[2px] inline-flex items-center gap-0.5 ml-1 text-[10px] font-bold leading-none ${colorClass} hover:opacity-80 transition-opacity cursor-pointer`}
+        title={`${deltaPercent}% ${label} ${context} — click to view`}
+      >
+        {content}
+      </button>
+    );
+  }
+
   return (
     <span
       className={`relative -top-[2px] inline-flex items-center gap-0.5 ml-1 text-[10px] font-bold leading-none ${colorClass}`}
       title={`${deltaPercent}% ${label} ${context}`}
     >
-      <Icon className={`w-3 h-3 ${colorClass}`} />
-      <span>{formattedPercent}{suffix}</span>
+      {content}
     </span>
   );
 };

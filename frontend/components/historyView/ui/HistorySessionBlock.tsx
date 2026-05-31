@@ -9,6 +9,7 @@ import { HistorySessionHeaderCard } from './HistorySessionHeaderCard';
 import { HistorySessionExercises } from './HistorySessionExercises';
 import { HistoryRestDivider } from './HistoryRestDivider';
 import { formatRestDuration, formatWorkoutDuration, getSessionDurationMs, isSameCalendarDay } from '../utils/historyViewConstants';
+import { findPreviousRoutineSession } from '../utils/routineNameMatcher';
 import type { ExerciseBestEvent, ExerciseVolumePrEvent } from '../utils/historyViewTypes';
 import type { TooltipState } from './HistoryTooltipPortal';
 import { ExerciseAsset } from '../../../utils/data/exerciseAssets';
@@ -40,6 +41,7 @@ interface HistorySessionBlockProps {
   onMouseEnter: (e: React.MouseEvent, data: any, variant: 'set' | 'macro') => void;
   onClearTooltip: () => void;
   setTooltip: (state: TooltipState | null) => void;
+  onNavigateToSession?: (sessionKey: string) => void;
 }
 
 export const HistorySessionBlock: React.FC<HistorySessionBlockProps> = ({
@@ -67,6 +69,7 @@ export const HistorySessionBlock: React.FC<HistorySessionBlockProps> = ({
   onMouseEnter,
   onClearTooltip,
   setTooltip,
+  onNavigateToSession,
 }) => {
   const allSessionSets = session.exercises.flatMap((e) => e.sets);
   const sessionHeatmap = buildSessionMuscleHeatmap(allSessionSets, exerciseMuscleData, secondarySetMultiplier);
@@ -85,8 +88,10 @@ export const HistorySessionBlock: React.FC<HistorySessionBlockProps> = ({
   const restText = restMs != null ? formatRestDuration(restMs) : null;
   const restIsDayBreak = !!(previousDisplayedSession?.date && session.date && !isSameCalendarDay(previousDisplayedSession.date, session.date));
 
-  const sessionIdx = sessions.findIndex((s) => s.key === session.key);
-  const prevSession = sessionIdx < sessions.length - 1 ? sessions[sessionIdx + 1] : null;
+  const prevSession = React.useMemo(
+    () => findPreviousRoutineSession(session, sessions),
+    [session, sessions],
+  );
 
   const toggleCollapsed = () => {
     setCollapsedSessions((prev) => {
@@ -121,6 +126,7 @@ export const HistorySessionBlock: React.FC<HistorySessionBlockProps> = ({
           bodyMapGender={bodyMapGender}
           setTooltip={setTooltip}
           toggleCollapsed={toggleCollapsed}
+          onNavigateToSession={onNavigateToSession}
         />
 
         {!isCollapsed && (

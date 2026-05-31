@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { WorkoutSet } from '../../../types';
 import { Calendar, Dumbbell } from 'lucide-react';
 import { getExerciseAssets, ExerciseAsset } from '../../../utils/data/exerciseAssets';
@@ -93,6 +93,21 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   const sessions: Session[] = useMemo(() => buildHistorySessions(data), [data]);
   const totalPages = Math.ceil(sessions.length / ITEMS_PER_PAGE);
   const currentSessions = sessions.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  const navigateToSession = useCallback((key: string) => {
+    const idx = sessions.findIndex((s) => s.key === key);
+    if (idx === -1) return;
+
+    const page = Math.floor(idx / ITEMS_PER_PAGE) + 1;
+
+    if (page !== currentPage) {
+      setCurrentPage(page);
+    }
+
+    setTimeout(() => {
+      document.getElementById(`session-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, page !== currentPage ? 100 : 0);
+  }, [sessions, currentPage]);
 
   useEffect(() => {
     if (!targetDate || sessions.length === 0) return;
@@ -202,6 +217,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             onMouseEnter={handleMouseEnter}
             onClearTooltip={() => setTooltip(null)}
             setTooltip={setTooltip}
+            onNavigateToSession={navigateToSession}
           />
         ))}
       </div>
