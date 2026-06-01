@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Info, ArrowUp } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import type { DataSourceChoice } from '../../../utils/storage/dataSourceStorage';
 import { useTheme } from '../../theme/ThemeProvider';
 import { Navigation } from '../../layout/Navigation';
@@ -10,10 +10,6 @@ import LightRays from '../lightRays/LightRays';
 import { Flame, CalendarDays, Trophy, BarChart3, Activity } from 'lucide-react';
 import { FANCY_FONT } from '../../../utils/ui/uiConstants';
 import { assetPath } from '../../../constants';
-import { HowItWorksDoc } from '../../howItWorks/ui/HowItWorksDoc';
-import { FeaturesDoc } from '../../features/ui/FeaturesDoc';
-
-type View = 'dashboard' | 'how-it-works' | 'features';
 
 interface LandingPageProps {
   onSelectPlatform: (source: DataSourceChoice) => void;
@@ -24,16 +20,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
   const { mode } = useTheme();
   const isLight = mode === 'light';
   const [showScrollTop, setShowScrollTop] = React.useState(false);
-  const [view, setView] = React.useState<View>('dashboard');
   const containerRef = React.useRef<HTMLDivElement>(null);
-
-  const handleNavClick = (nav: 'how-it-works' | 'features') => {
-    setView((prev) => (prev === nav ? 'dashboard' : nav));
-  };
-
-  const handleLogoClick = () => {
-    setView('dashboard');
-  };
 
   // Handle scroll to top visibility
   React.useEffect(() => {
@@ -48,6 +35,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
 
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Handle platform deep link from URL query param
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const platform = params.get('platform');
+    if (!platform) return;
+    const validPlatforms: DataSourceChoice[] = ['hevy', 'strong', 'lyfta', 'other', 'motra'];
+    if (!(validPlatforms as string[]).includes(platform)) return;
+
+    onSelectPlatform(platform as DataSourceChoice);
+
+    params.delete('platform');
+    const nextSearch = params.toString();
+    const newUrl = window.location.pathname + (nextSearch ? `?${nextSearch}` : '');
+    window.history.replaceState(null, '', newUrl);
   }, []);
 
   const scrollToTop = () => {
@@ -118,27 +121,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
         <Navigation
           variant="landing"
           className="px-4 sm:px-6 lg:px-8"
-          activeNav={view === 'dashboard' ? null : view}
-          onNavClick={handleNavClick}
-          onLogoClick={handleLogoClick}
         />
       </div>
 
-      {view === 'how-it-works' ? (
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-1">
-          <div className="max-w-6xl mx-auto">
-            <HowItWorksDoc linkTarget="_self" />
-          </div>
-        </div>
-      ) : view === 'features' ? (
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-1">
-          <div className="max-w-6xl mx-auto">
-            <FeaturesDoc />
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* ========== HERO SECTION ========== */}
+      {/* ========== HERO SECTION ========== */}
           <section className="relative z-10 min-h-screen flex flex-col pt-2 pb-32">
             <div className="max-w-6xl mx-auto w-full">
               {/* Hero Content */}
@@ -314,8 +300,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
 
           {/* ========== PLATFORM DOCK ========== */}
           <PlatformDock items={platformDockItems} />
-        </>
-      )}
 
       {/* ========== FOOTER ========== */}
       <footer className={`relative z-10 border-t mt-16 px-4 sm:px-6 lg:px-8 py-10 ${isLight ? 'border-black/10' : 'border-white/10'}`}>
@@ -341,11 +325,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
             <h3 className={`font-semibold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>Compare</h3>
             <ul className="space-y-2">
               <li><a href={assetPath('hevy-vs-lyfta/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Hevy vs Lyfta vs Strong</a></li>
-              <li><a href={assetPath('hevy-vs-strong/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Hevy vs Strong</a></li>
-              <li><a href={assetPath('lyfta-vs-strong/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Lyfta vs Strong</a></li>
-              <li><a href={assetPath('hevy-vs-liftshift/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Hevy vs LiftShift</a></li>
-              <li><a href={assetPath('lyfta-vs-liftshift/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Lyfta vs LiftShift</a></li>
-              <li><a href={assetPath('strong-vs-liftshift/')} className={`${isLight ? 'text-slate-600 hover:text-emerald-600' : 'text-slate-400 hover:text-emerald-400'} transition-colors duration-200`}>Strong vs LiftShift</a></li>
             </ul>
           </div>
           <div>
