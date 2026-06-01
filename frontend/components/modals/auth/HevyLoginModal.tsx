@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Eye, EyeOff, GitMerge, HelpCircle, Key, LogIn, MinusCircle, RefreshCw, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, EyeOff, GitMerge, HelpCircle, MinusCircle } from 'lucide-react';
 import { UNIFORM_HEADER_BUTTON_CLASS, UNIFORM_HEADER_ICON_BUTTON_CLASS } from '../../../utils/ui/uiConstants';
 import { OnboardingModalShell } from '../ui/OnboardingModalShell';
 import { HevyLoginHelp } from './HevyLoginHelp';
+import { SegmentControl, type SegmentOption } from '../../ui/SegmentControl';
 import {
   getHevyPassword,
   getHevyUsernameOrEmail,
@@ -125,13 +126,29 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
     };
   }, []);
 
-  // When in API key mode, back should return to credentials view, not unit/gender screen
   const handleBack = () => {
-    if (loginMode === 'apiKey') {
-      setLoginMode('credentials');
-    } else if (onBack) {
-      onBack();
+    onBack?.();
+  };
+
+  type LoginSegment = 'credentials' | 'apiKey' | 'csv';
+
+  const loginSegments = React.useMemo<SegmentOption<LoginSegment>[]>(() => {
+    const items: SegmentOption<LoginSegment>[] = [
+      { value: 'credentials', label: 'Login' },
+      { value: 'apiKey', label: 'API key' },
+    ];
+    if (onImportCsv) {
+      items.push({ value: 'csv', label: 'CSV' });
     }
+    return items;
+  }, [onImportCsv]);
+
+  const handleSegmentChange = (value: LoginSegment) => {
+    if (value === 'csv') {
+      onImportCsv?.();
+      return;
+    }
+    setLoginMode(value);
   };
 
   useEffect(() => {
@@ -177,39 +194,42 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
   return (
     <OnboardingModalShell
       header={
-        <div className="flex items-start justify-between gap-3">
-          <div className="w-[72px]">
-            {(onBack || loginMode === 'apiKey') ? (
-              <button
-                type="button"
-                onClick={handleBack}
-                className={UNIFORM_HEADER_ICON_BUTTON_CLASS}
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            ) : null}
-          </div>
+        <div className="flex flex-col items-center gap-3 w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="w-[72px]">
+              {onBack ? (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className={UNIFORM_HEADER_ICON_BUTTON_CLASS}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+              ) : null}
+            </div>
 
-              <div className="text-center mt-12">
-                <h2 className="text-2xl font-bold text-slate-200 inline-flex items-center justify-center gap-2">
-              <LogIn className="w-5 h-5 text-slate-200" />
-              <span>{loginMode === 'apiKey' ? 'Login with API key' : 'Login with Hevy'}</span>
-            </h2>
-            <p className="mt-1 text-sm text-slate-300">
-              {loginMode === 'apiKey' ? 'Enter your Hevy Pro API key to sync your workouts.' : 'Login with Hevy directly to auto-sync your workouts.'}
-            </p>
-          </div>
+            <div className="flex flex-col items-center gap-1">
+              <SegmentControl<LoginSegment>
+                options={loginSegments}
+                value={loginMode}
+                onChange={handleSegmentChange}
+              />
+              <p className="text-sm text-slate-300">
+                {loginMode === 'apiKey' ? 'Enter your Hevy Pro API key to sync your workouts.' : 'Login with Hevy directly to auto-sync your workouts.'}
+              </p>
+            </div>
 
-          <div className="w-[72px] flex justify-end">
-            {intent === 'update' && onClose ? (
-              <button
-                type="button"
-                onClick={onClose}
-                className={UNIFORM_HEADER_BUTTON_CLASS}
-              >
-                Close
-              </button>
-            ) : null}
+            <div className="w-[72px] flex justify-end">
+              {intent === 'update' && onClose ? (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className={UNIFORM_HEADER_BUTTON_CLASS}
+                >
+                  Close
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
       }
@@ -347,50 +367,28 @@ export const HevyLoginModal: React.FC<HevyLoginModalProps> = ({
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <div className="pt-2">
-                <div className="grid grid-cols-3 gap-2 items-center">
+              <div className="pt-2 flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowLoginHelp((v) => !v)}
+                  className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 px-4 text-[12px] font-semibold gap-1.5`}
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  <span>How to login</span>
+                </button>
+
+                {onAddDataSource ? (
                   <button
                     type="button"
-                    onClick={() => setShowLoginHelp((v) => !v)}
-                    className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 px-2 w-full text-[11px] font-semibold gap-1.5 justify-center`}
+                    onClick={onAddDataSource}
+                    disabled={isLoading}
+                    className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 px-4 text-[12px] font-semibold disabled:opacity-60 gap-2`}
+                    title="Combine Sources"
                   >
-                    <HelpCircle className="w-4 h-4" />
-                    <span className="whitespace-nowrap">How to get key</span>
+                    <GitMerge className="w-4 h-4" />
+                    <span>Combine Sources</span>
                   </button>
-
-                  {onAddDataSource ? (
-                    <button
-                      type="button"
-                      onClick={onAddDataSource}
-                      disabled={isLoading}
-                      className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 px-2.5 w-full text-[12px] font-semibold disabled:opacity-60 gap-2 justify-center`}
-                      title="Combine Sources"
-                    >
-                      <GitMerge className="w-4 h-4" />
-                      <span>Combine Sources</span>
-                    </button>
-                  ) : (
-                    <div />
-                  )}
-
-                  {onImportCsv ? (
-                    <button
-                      type="button"
-                      onClick={onImportCsv}
-                      disabled={isLoading}
-                      className={`${UNIFORM_HEADER_BUTTON_CLASS} h-10 px-2.5 w-full text-[12px] font-semibold disabled:opacity-60 gap-2 justify-center`}
-                      title="Import .csv instead"
-                    >
-                      <Upload className="w-4 h-4" />
-                      <span className="flex flex-col items-center leading-[1.05]">
-                        <span>Import</span>
-                        <span className="text-slate-300 text-[10px]">.csv</span>
-                      </span>
-                    </button>
-                  ) : (
-                    <div />
-                  )}
-                </div>
+                ) : null}
               </div>
             </form>
 
