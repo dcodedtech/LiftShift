@@ -25,7 +25,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "npm run build --prefix backend && concurrently -n tsc,backend,frontend --hide tsc -c yellow,blue,cyan \"tsc -w --preserveWatchOutput -p backend/tsconfig.json\" \"node --watch --watch-preserve-output --env-file=backend/.env backend/dist/index.js\" \"vike dev\"",
+    "dev": "npm run build --prefix backend && concurrently -n tsc,backend,frontend --hide tsc -c yellow,blue,yellow \"tsc -w --preserveWatchOutput -p backend/tsconfig.json\" \"node --watch --watch-preserve-output --env-file=backend/.env backend/dist/index.js\" \"vike dev\"",
     "build": "vike build",
     "preview": "vike preview"
   },
