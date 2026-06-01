@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { trackEvent } from '../../utils/integrations/analytics';
-import { getPreferencesConfirmed } from '../../utils/storage/localStorage';
 import type { OnboardingFlow } from '../onboarding/types';
 
 interface UpdateFlowArgs {
@@ -10,6 +9,8 @@ interface UpdateFlowArgs {
   clearHevyLoginError: () => void;
   clearLyfatLoginError: () => void;
 }
+
+const VALID_PLATFORMS = ['strong', 'hevy', 'lyfta', 'other', 'motra'] as const;
 
 export const useUpdateFlowHandler = ({
   dataSource,
@@ -24,42 +25,10 @@ export const useUpdateFlowHandler = ({
     clearHevyLoginError();
     clearLyfatLoginError();
 
-    if (dataSource === 'strong') {
-      setOnboarding({ intent: 'update', step: 'strong_prefs', platform: 'strong' });
-      return;
-    }
-    if (dataSource === 'lyfta') {
-      if (!getPreferencesConfirmed()) {
-        setOnboarding({ intent: 'update', step: 'lyfta_prefs', platform: 'lyfta' });
-        return;
-      }
-      setOnboarding({ intent: 'update', step: 'lyfta_login', platform: 'lyfta' });
-      return;
-    }
-    if (dataSource === 'hevy') {
-      if (!getPreferencesConfirmed()) {
-        setOnboarding({ intent: 'update', step: 'hevy_prefs', platform: 'hevy' });
-        return;
-      }
-      setOnboarding({ intent: 'update', step: 'hevy_login', platform: 'hevy' });
-      return;
-    }
-    if (dataSource === 'other') {
-      if (!getPreferencesConfirmed()) {
-        setOnboarding({ intent: 'update', step: 'other_prefs', platform: 'other' });
-        return;
-      }
-      setOnboarding({ intent: 'update', step: 'other_csv', platform: 'other', backStep: 'other_prefs' });
-      return;
-    }
-    if (dataSource === 'motra') {
-      if (!getPreferencesConfirmed()) {
-        setOnboarding({ intent: 'update', step: 'motra_prefs', platform: 'motra' });
-        return;
-      }
-      setOnboarding({ intent: 'update', step: 'motra_csv', platform: 'motra', backStep: 'motra_prefs' });
-      return;
-    }
-    setOnboarding({ intent: 'update', step: 'platform' });
+    const platform = VALID_PLATFORMS.includes(dataSource as typeof VALID_PLATFORMS[number])
+      ? (dataSource as typeof VALID_PLATFORMS[number])
+      : 'other';
+
+    setOnboarding({ intent: 'update', step: 'unified_modal', platform });
   }, [dataSource, clearCsvImportError, clearHevyLoginError, clearLyfatLoginError, setOnboarding]);
 };
