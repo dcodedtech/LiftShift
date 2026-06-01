@@ -1,7 +1,6 @@
 import React from 'react';
 import { Brain } from 'lucide-react';
 import type { DailySummary, ExerciseStats, WorkoutSet } from '../../../types';
-import type { ThemeMode } from '../../../utils/storage/localStorage';
 import { Tooltip, useTooltip } from '../../ui/Tooltip';
 import { AiAnalyzeFooter } from '../../modals/aiAnalyze/AiAnalyzeFooter';
 import { AiAnalyzeModuleGrid } from '../../modals/aiAnalyze/AiAnalyzeModuleGrid';
@@ -13,7 +12,6 @@ interface DashboardAIAnalysisCardProps {
   dailyData: DailySummary[];
   exerciseStats: ExerciseStats[];
   effectiveNow: Date;
-  themeMode: ThemeMode;
 }
 
 export const DashboardAIAnalysisCard: React.FC<DashboardAIAnalysisCardProps> = ({
@@ -21,9 +19,7 @@ export const DashboardAIAnalysisCard: React.FC<DashboardAIAnalysisCardProps> = (
   dailyData,
   exerciseStats,
   effectiveNow,
-  themeMode,
 }) => {
-  const isLightTheme = themeMode === 'light';
   const { tooltip, showTooltip, hideTooltip } = useTooltip();
 
   const {
@@ -67,7 +63,6 @@ export const DashboardAIAnalysisCard: React.FC<DashboardAIAnalysisCardProps> = (
           onToggleModule={toggleModule}
           showTooltip={showTooltip}
           hideTooltip={hideTooltip}
-          isLightTheme={isLightTheme}
         />
       </div>
 

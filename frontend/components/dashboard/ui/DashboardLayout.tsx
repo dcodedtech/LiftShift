@@ -1,7 +1,7 @@
 import React from 'react';
 import type { BodyMapGender } from '../../bodyMap/BodyMap';
 import type { DailySummary, ExerciseStats, WorkoutSet } from '../../../types';
-import type { WeightUnit, TimeFilterMode, ThemeMode } from '../../../utils/storage/localStorage';
+import type { WeightUnit, TimeFilterMode } from '../../../utils/storage/localStorage';
 import type { TimelineProgress } from '../../../utils/training/trainingTimeline';
 import type { DashboardSummaryResult } from '../../../utils/analysis/dashboardSummary/dashboardSummary';
 import { DashboardHeaderBar } from './DashboardHeaderBar';
@@ -75,7 +75,6 @@ interface DashboardLayoutProps {
   tooltipStyle: any;
   fullData: WorkoutSet[];
   exerciseStats: ExerciseStats[];
-  themeMode: ThemeMode;
   animationKeyframes: string;
   hypertrophyData: any[];
   hypertrophyData30d?: any[];
@@ -150,7 +149,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
     tooltipStyle,
     fullData,
     exerciseStats,
-    themeMode,
     animationKeyframes,
     hypertrophyData,
     hypertrophyData30d,
@@ -226,7 +224,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
           fullData={fullData}
           dailyData={dailyData}
           exerciseStats={exerciseStats}
-          themeMode={themeMode}
           hypertrophyData={hypertrophyData}
           hypertrophyData30d={hypertrophyData30d}
           hypertrophyPeriod={hypertrophyPeriod}

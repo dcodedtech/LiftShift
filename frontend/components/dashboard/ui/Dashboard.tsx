@@ -17,7 +17,6 @@ import { useDashboardPrTrend } from '../hooks/useDashboardPrTrend';
 import { useDashboardTopExercises } from '../hooks/useDashboardTopExercises';
 import { useDashboardVolumeDensity } from '../hooks/useDashboardVolumeDensity';
 import { useDashboardWeeklySetsDashboard } from '../hooks/useDashboardWeeklySetsDashboard';
-import { useTheme } from '../../theme/ThemeProvider';
 import { DashboardLayout } from './DashboardLayout';
 import { useDashboardPlateaus } from '../hooks/useDashboardPlateaus';
 import { useWeeklyRhythm } from '../hooks/useWeeklyRhythm';
@@ -66,7 +65,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   secondarySetMultiplier = 0.5,
 }) => {
   const [isMounted, setIsMounted] = useState(true);
-  const { mode: themeMode } = useTheme();
 
   const effectiveNow = useMemo(() => now ?? getEffectiveNowFromWorkoutData(parsedData), [now, parsedData]);
 
@@ -428,7 +426,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       tooltipStyle={TooltipStyle as any}
       fullData={filteredData}
       exerciseStats={exerciseStats}
-      themeMode={themeMode}
       animationKeyframes={ANIMATION_KEYFRAMES}
       hypertrophyData={hypertrophyData}
       hypertrophyData30d={hypertrophyData30d}
