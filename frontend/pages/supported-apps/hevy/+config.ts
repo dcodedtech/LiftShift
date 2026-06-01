@@ -2,7 +2,7 @@ import type { Config } from 'vike/types';
 
 export default {
   prerender: true,
-  title: 'Hevy Workout Analytics — CSV Import &amp; Sync Guide | LiftShift',
+  title: 'Hevy API & CSV Export — Get Free Workout Analytics | LiftShift',
   description:
-    'Turn your Hevy workout history into detailed analytics with LiftShift. Step-by-step CSV import guide, supported sync methods, and troubleshooting tips.',
+    'Export your Hevy workout data via API or CSV and import into LiftShift. Get muscle heatmaps, plateau detection, PR tracking, and set-by-set feedback — free, no account needed. Step-by-step guide with troubleshooting.',
 } satisfies Config;

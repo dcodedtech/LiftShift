@@ -3,7 +3,7 @@ import type { Config } from 'vike/types';
 export default {
   ssr: false,
   prerender: true,
-  title: 'LiftShift — Free & Open Source Workout Analytics Dashboard for Hevy, Strong, Lyfta etc.',
+  title: 'LiftShift — Free Workout Analytics for Hevy, Strong & Lyfta | No Account Needed',
   description:
-    'Free and open source workout analytics. Import your gym logs from Hevy, Strong, or Lyfta — get muscle heatmaps, plateau detection, set-by-set feedback, and AI-ready exports. Runs in your browser, no account needed.',
+    'Turn your Hevy, Strong, or Lyfta workout logs into pro-level analytics. Muscle heatmaps, plateau detection, PR tracking, and set-by-set coaching — all free, runs in your browser. Connect in seconds.',
 } satisfies Config;
