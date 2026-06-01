@@ -35,7 +35,7 @@ export function OnboardingModalShell({
 
             {header ? <div className="relative flex-shrink-0">{header}</div> : null}
 
-            <div className="relative flex-auto min-h-0 overflow-y-auto">
+            <div className="relative flex-auto min-h-0 overflow-y-scroll flex flex-col justify-center">
               {children}
             </div>
 
