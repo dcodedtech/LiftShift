@@ -4,6 +4,8 @@ import type { BodyMapGender } from '../bodyMap/BodyMap';
 import type { ExerciseTrendMode, WeightUnit } from '../../utils/storage/localStorage';
 import { Tab } from '../../app/navigation';
 import { SupportLinks } from '../layout/SupportLinks';
+import { TabSkeleton } from '../ui/TabSkeleton';
+import { DashboardSkeleton } from '../dashboard/ui/DashboardSkeleton';
 
 const Dashboard = React.lazy(() => import('../dashboard/ui/Dashboard').then((m) => ({ default: m.Dashboard })));
 const ExerciseView = React.lazy(() => import('../exerciseView/ui/ExerciseView').then((m) => ({ default: m.ExerciseView })));
@@ -88,14 +90,8 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
       ref={mainRef}
       className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto overscroll-contain bg-black/20 px-2 py-0 sm:px-3 sm:py-0 md:px-1 md:py-0 lg:px-2 lg:py-0"
     >
-      <Suspense
-        fallback={
-          <div className="flex min-h-[50vh] items-center justify-center text-slate-400 p-4">
-            Loading...
-          </div>
-        }
-      >
-        {activeTab === Tab.DASHBOARD && (
+      {activeTab === Tab.DASHBOARD && (
+        <Suspense fallback={<DashboardSkeleton />}>
           <Dashboard
             dailyData={dailySummaries}
             exerciseStats={exerciseStats}
@@ -112,8 +108,10 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
             secondarySetMultiplier={secondarySetMultiplier}
             now={now}
           />
-        )}
-        {activeTab === Tab.EXERCISES && (
+        </Suspense>
+      )}
+      {activeTab === Tab.EXERCISES && (
+        <Suspense fallback={<TabSkeleton rows={5} />}>
           <ExerciseView
             stats={exerciseStats}
             filteredData={filteredData}
@@ -129,8 +127,10 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
             now={now}
             secondarySetMultiplier={secondarySetMultiplier}
           />
-        )}
-        {activeTab === Tab.HISTORY && (
+        </Suspense>
+      )}
+      {activeTab === Tab.HISTORY && (
+        <Suspense fallback={<TabSkeleton rows={5} />}>
           <HistoryView
             data={filteredData}
             filterCacheKey={filterCacheKey}
@@ -145,8 +145,10 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
             now={now}
             secondarySetMultiplier={secondarySetMultiplier}
           />
-        )}
-        {activeTab === Tab.MUSCLE_ANALYSIS && (
+        </Suspense>
+      )}
+      {activeTab === Tab.MUSCLE_ANALYSIS && (
+        <Suspense fallback={<TabSkeleton rows={6} />}>
           <MuscleAnalysis
             data={filteredData}
             lifetimeData={parsedData}
@@ -162,8 +164,10 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
             secondarySetMultiplier={secondarySetMultiplier}
             exerciseStats={exerciseStats}
           />
-        )}
-        {activeTab === Tab.FLEX && (
+        </Suspense>
+      )}
+      {activeTab === Tab.FLEX && (
+        <Suspense fallback={<TabSkeleton rows={4} />}>
           <FlexView
             data={filteredData}
             filtersSlot={filtersSlot}
@@ -175,8 +179,8 @@ export const AppTabContent: React.FC<AppTabContentProps> = ({
             now={now}
             secondarySetMultiplier={secondarySetMultiplier}
           />
-        )}
-      </Suspense>
+        </Suspense>
+      )}
 
       <div className="hidden sm:block mt-5">
         <SupportLinks variant="secondary" layout="footer" />
