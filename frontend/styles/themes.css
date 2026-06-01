@@ -268,12 +268,36 @@ html[data-theme='light'] .bg-black\/50 {
   background-color: rgba(255,255,255,0.5) !important;
 }
 
+html[data-theme='light'] .bg-black\/70 {
+  background-color: rgba(255,255,255,0.7) !important;
+}
+
+html[data-theme='light'] .bg-black\/60 {
+  background-color: rgba(255,255,255,0.6) !important;
+}
+
+html[data-theme='light'] .bg-black\/40 {
+  background-color: rgba(255,255,255,0.4) !important;
+}
+
+html[data-theme='light'] .hover\:bg-black\/60:hover {
+  background-color: rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme='light'] .hover\:bg-black\/20:hover {
+  background-color: rgba(0,0,0,0.08) !important;
+}
+
 html[data-theme='light'] .hover\:bg-white\/5:hover {
   background-color: rgba(0,0,0,0.05) !important;
 }
 
 html[data-theme='light'] .hover\:bg-white\/10:hover {
   background-color: rgba(0,0,0,0.1) !important;
+}
+
+html[data-theme='light'] .text-purple-300 {
+  color: #7c3aed !important;
 }
 
 html[data-theme='light'] .hover\:text-white:hover {
@@ -314,10 +338,17 @@ body {
   color: var(--app-fg);
 }
 
+/* Remove body background in light mode when background image is enabled */
+html[data-theme='light'][data-show-bg] body {
+  background: transparent;
+}
+
 html[data-theme='light'] {
   background: var(--app-bg);
 }
 
-html[data-theme='light'] #root {
+html[data-theme='light']:not([data-show-bg]) #root {
   background: var(--app-bg);
 }
+
+

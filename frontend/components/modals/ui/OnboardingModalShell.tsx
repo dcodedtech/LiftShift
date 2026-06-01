@@ -1,6 +1,7 @@
 import React from 'react';
-import bgImage from '../../../src/assets/images/misc/P15.avif';
+import { resolveDarkBgByMode, resolveLightBg } from '../../../src/assets/images/misc/bgConfig';
 import { useTheme } from '../../theme/ThemeProvider';
+import { useAppPreferences } from '../../../hooks/app';
 
 type OnboardingModalShellProps = {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ export function OnboardingModalShell({
   maxWidthClassName = 'max-w-xl',
 }: OnboardingModalShellProps) {
   const { mode } = useTheme();
+  const { darkBgChoice, lightBgChoice } = useAppPreferences();
   const isLightTheme = mode === 'light';
 
   return (
@@ -24,12 +26,19 @@ export function OnboardingModalShell({
       <div className="min-h-full w-full px-3 sm:px-6 py-8 flex items-center justify-center">
         <div className={`w-full ${maxWidthClassName} mx-auto`}>
           <div className="relative bg-black/60 border border-slate-700/50 rounded-2xl p-5 sm:p-6 overflow-hidden backdrop-blur-md flex flex-col min-h-[500px] max-h-[min(720px,calc(100vh-5rem))]">
-            {!isLightTheme && (
+            {!isLightTheme ? (
               <img
-                src={bgImage}
+                src={resolveDarkBgByMode(mode, darkBgChoice)}
                 alt=""
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+              />
+            ) : (
+              <img
+                src={resolveLightBg(lightBgChoice)}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
               />
             )}
 

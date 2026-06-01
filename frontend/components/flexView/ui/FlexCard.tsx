@@ -1,5 +1,7 @@
 import React from 'react';
-import bgImage from '../../../src/assets/images/misc/P15.avif';
+import { resolveDarkBgByMode, resolveLightBg } from '../../../src/assets/images/misc/bgConfig';
+import { useTheme } from '../../theme/ThemeProvider';
+import { useAppPreferences } from '../../../hooks/app';
 
 export type CardTheme = 'dark' | 'light';
 
@@ -11,24 +13,22 @@ interface FlexCardProps {
 
 // Shared card wrapper for consistent styling
 export const FlexCard: React.FC<FlexCardProps> = ({ children, theme, className = '' }) => {
+  const { mode } = useTheme();
+  const { darkBgChoice, lightBgChoice } = useAppPreferences();
   const isDark = theme === 'dark';
-  const cardBgClass = isDark
-    ? 'bg-cover bg-center bg-no-repeat'
-    : 'bg-gradient-to-b from-[#F5F7FA] via-[#EAF2F5] to-[#5CC6D0]';
+  const cardBgClass = 'bg-cover bg-center bg-no-repeat';
   const cardBgStyle = isDark
-    ? { backgroundImage: `url(${bgImage})` }
-    : {};
-  const glassSurface = isDark ? 'bg-[#0F172A]/72' : 'bg-white/70';
+    ? { backgroundImage: `url(${resolveDarkBgByMode(mode, darkBgChoice)})` }
+    : { backgroundImage: `url(${resolveLightBg(lightBgChoice)})` };
+  const glassSurface = isDark ? 'bg-black/50' : '';
   const cardShadow = isDark
     ? 'shadow-[0_28px_65px_rgba(0,0,0,0.42)]'
     : 'shadow-[0_28px_60px_rgba(13,71,88,0.14)]';
-  const glowClass = isDark ? 'bg-[#39B8C8]/8' : 'bg-cyan-100/45';
 
   return (
     <div className={`relative isolate overflow-hidden rounded-3xl ${cardShadow} transition-all duration-500`}>
       <div className={`absolute inset-0 ${cardBgClass}`} style={cardBgStyle} />
-      <div className={`absolute inset-0  ${glassSurface}`} />
-      <div className={`pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full blur-3xl ${glowClass}`} />
+      {isDark && <div className="absolute inset-0 bg-black/50" />}
       <div className={`relative z-10 h-full ${className}`}>
         {children}
       </div>

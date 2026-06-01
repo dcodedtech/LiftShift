@@ -26,7 +26,7 @@ import { useCalendarSelectionHandlers } from './app/state';
 import { useUpdateFlowHandler } from './app/auth';
 import { calculatePRInsights } from './utils/analysis/insights';
 import { createFingerprintMatcher } from './utils/exercise/exerciseFingerprint';
-import bgImage from './src/assets/images/misc/P15.avif';
+import { resolveDarkBgByMode, resolveLightBg } from './src/assets/images/misc/bgConfig';
 
 const CHUNK_RELOAD_KEY = 'liftshift_chunk_reload_once';
 
@@ -128,7 +128,7 @@ const App: React.FC = () => {
   });
   const [dataSource, setDataSource] = useState(() => getDataSourceChoice());
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
-  const [bgImageLoaded, setBgImageLoaded] = useState(false);
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   const {
     mode,
@@ -145,7 +145,20 @@ const App: React.FC = () => {
     setSecondarySetMultiplier,
     showTransparency,
     setShowTransparency,
+    darkBgChoice,
+    setDarkBgChoice,
+    lightBgChoice,
+    setLightBgChoice,
   } = useAppPreferences();
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    if (mode === 'light' && showTransparency) {
+      root.dataset.showBg = 'true';
+    } else {
+      delete root.dataset.showBg;
+    }
+  }, [mode, showTransparency]);
 
   const mergeDatasets = useCallback(
     (datasets: Partial<Record<'hevy' | 'lyfta' | 'strong' | 'other' | 'motra', WorkoutSet[]>>): WorkoutSet[] => {
@@ -584,11 +597,21 @@ const App: React.FC = () => {
         {/* Full-page Background Image (dark mode only, user preference) */}
         {mode !== 'light' && showTransparency && (
           <img
-            src={bgImage}
+            src={resolveDarkBgByMode(mode, darkBgChoice)}
             alt=""
             aria-hidden="true"
-            onLoad={() => setBgImageLoaded(true)}
-            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgImageLoaded ? 'opacity-40' : 'opacity-0'}`}
+            onLoad={() => setBgLoaded(true)}
+            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgLoaded ? 'opacity-40' : 'opacity-0'}`}
+          />
+        )}
+        {/* Light mode background */}
+        {mode === 'light' && showTransparency && (
+          <img
+            src={resolveLightBg(lightBgChoice)}
+            alt=""
+            aria-hidden="true"
+            onLoad={() => setBgLoaded(true)}
+            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgLoaded ? 'opacity-60' : 'opacity-0'}`}
           />
         )}
         {onboarding?.step !== 'platform' && (
@@ -662,6 +685,10 @@ const App: React.FC = () => {
         onFontChange={setFont}
         showTransparency={showTransparency}
         onShowTransparencyChange={setShowTransparency}
+        darkBgChoice={darkBgChoice}
+        onDarkBgChoiceChange={setDarkBgChoice}
+        lightBgChoice={lightBgChoice}
+        onLightBgChoiceChange={setLightBgChoice}
       />
 
       <AppOnboardingLayer

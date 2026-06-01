@@ -10,7 +10,6 @@ interface AiAnalyzeModuleGridProps {
   onToggleModule: (id: AnalysisModuleId) => void;
   showTooltip: (e: React.MouseEvent, data: Omit<TooltipData, 'rect'>) => void;
   hideTooltip: () => void;
-  isLightTheme: boolean;
 }
 
 export const AiAnalyzeModuleGrid: React.FC<AiAnalyzeModuleGridProps> = ({
@@ -19,7 +18,6 @@ export const AiAnalyzeModuleGrid: React.FC<AiAnalyzeModuleGridProps> = ({
   onToggleModule,
   showTooltip,
   hideTooltip,
-  isLightTheme,
 }) => (
   <div
     style={{ height: '256px' }}
@@ -36,9 +34,7 @@ export const AiAnalyzeModuleGrid: React.FC<AiAnalyzeModuleGridProps> = ({
               className={`text-left p-3 rounded-xl border transition-all ${
                 selected
                   ? 'bg-emerald-500/10 border-emerald-500/40'
-                  : isLightTheme
-                    ? 'bg-white border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                    : 'bg-slate-900/10 border-slate-700/50 hover:border-slate-600 hover:bg-slate-900/30'
+                  : 'bg-black/20 border-slate-700/50 hover:border-slate-600 hover:bg-white/10'
               }`}
             >
               <div className="flex items-center justify-between gap-3">
@@ -47,8 +43,8 @@ export const AiAnalyzeModuleGrid: React.FC<AiAnalyzeModuleGridProps> = ({
                     <div
                       className={`w-5 h-5 rounded-md border flex items-center justify-center ${
                         selected
-                          ? `bg-emerald-500/20 border-emerald-500/40 ${isLightTheme ? 'text-emerald-600' : 'text-emerald-300'}`
-                          : `border text-transparent ${isLightTheme ? 'bg-white border-gray-300' : 'bg-transparent border-slate-600'}`
+                          ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                          : 'border border-slate-600 bg-transparent text-transparent'
                       }`}
                       aria-hidden
                     >
@@ -59,12 +55,8 @@ export const AiAnalyzeModuleGrid: React.FC<AiAnalyzeModuleGridProps> = ({
                     <div
                       className={`text-sm font-semibold truncate ${
                         selected
-                          ? isLightTheme
-                            ? 'text-emerald-700'
-                            : 'text-emerald-200'
-                          : isLightTheme
-                            ? 'text-gray-700'
-                            : 'text-slate-200'
+                          ? 'text-emerald-300'
+                          : 'text-slate-200'
                       }`}
                     >
                       {m.label}

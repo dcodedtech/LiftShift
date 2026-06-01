@@ -3,7 +3,7 @@ import { ThemeMode } from '../../../utils/storage/localStorage';
 
 interface CompactThemeOptionProps {
   mode: ThemeMode;
-  currentMode: ThemeMode;
+  currentMode: ThemeMode | string;
   onClick: () => void;
   label: string;
   icon: React.ReactNode;

@@ -3,6 +3,8 @@ import { Navigation } from '../layout/Navigation';
 import { useTheme } from '../theme/ThemeProvider';
 import { assetPath } from '../../constants';
 import { clientOnly } from 'vike-react/clientOnly';
+import lightBgImage from '../../src/assets/images/misc/light-bg1.avif';
+import darkBgImage from '../../src/assets/images/misc/dark-bg5.avif';
 
 const LightRays = clientOnly(() => import('../landing/lightRays/LightRays'));
 const PlatformDock = clientOnly(() => import('../landing/ui/PlatformDock'));
@@ -17,6 +19,13 @@ type InfoShellProps = {
 export const InfoShell: React.FC<InfoShellProps> = ({ activeNav = null, title, subtitle, children }) => {
   const { mode } = useTheme();
   const isLight = mode === 'light';
+
+  React.useLayoutEffect(() => {
+    const root = document.documentElement;
+    root.dataset.showBg = 'true';
+    return () => { delete root.dataset.showBg; };
+  }, []);
+
   const platformDockItems = [
     {
       name: 'Hevy',
@@ -63,26 +72,49 @@ export const InfoShell: React.FC<InfoShellProps> = ({ activeNav = null, title, s
   ];
 
   return (
-    <div className={`min-h-screen font-sans ${isLight ? 'bg-white text-slate-900' : 'bg-black text-white'}`}>
-      <div className="fixed inset-0 z-[1] pointer-events-none">
-        <LightRays
-          fallback={null}
-          raysOrigin="top-center"
-          raysColor="#10b981"
-          raysSpeed={0.75}
-          lightSpread={1.2}
-          rayLength={1.5}
-          followMouse={true}
-          mouseInfluence={0.06}
-          noiseAmount={0.05}
-          distortion={0.03}
-          fadeDistance={1.2}
-          saturation={0.9}
+    <div className={`min-h-screen font-sans ${isLight ? 'text-slate-900' : 'text-white'}`}>
+      {/* Background image for light mode */}
+      {isLight && (
+        <img
+          src={lightBgImage}
+          alt=""
+          aria-hidden="true"
+          className="fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none"
+          loading="lazy"
         />
-      </div>
+      )}
+      {/* Background image for dark mode */}
+      {!isLight && (
+        <img
+          src={darkBgImage}
+          alt=""
+          aria-hidden="true"
+          className="fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none opacity-20"
+          loading="lazy"
+        />
+      )}
+      {/* Light rays - dark mode only */}
+      {!isLight && (
+        <div className="fixed inset-0 z-[1] pointer-events-none">
+          <LightRays
+            fallback={null}
+            raysOrigin="top-center"
+            raysColor="#ef4444"
+            raysSpeed={0.75}
+            lightSpread={1.2}
+            rayLength={1.5}
+            followMouse={true}
+            mouseInfluence={0.06}
+            noiseAmount={0.05}
+            distortion={0.03}
+            fadeDistance={1.2}
+            saturation={0.9}
+          />
+        </div>
+      )}
 
       {/* Navigation */}
-      <div className="mx-auto max-w-6xl w-full pt-2">
+      <div className="relative z-10 mx-auto max-w-6xl w-full pt-2">
         <Navigation variant="info" activeNav={activeNav} className="px-4 sm:px-6 lg:px-8" />
       </div>
 

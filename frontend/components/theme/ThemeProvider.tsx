@@ -10,7 +10,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const THEME_CYCLE_ORDER: ThemeMode[] = ['pure-black', 'light', 'midnight-dark', 'medium-dark'];
+const THEME_CYCLE_ORDER: ThemeMode[] = ['pure-black', 'light', 'medium-dark'];
 
 const getNextMode = (current: ThemeMode): ThemeMode => {
   const idx = THEME_CYCLE_ORDER.indexOf(current);

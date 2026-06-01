@@ -1,6 +1,6 @@
 import React from 'react';
 
-import bgImage from '../../../src/assets/images/misc/P15.avif';
+import { resolveDarkBgByMode, resolveLightBg } from '../../../src/assets/images/misc/bgConfig';
 import type { TooltipData } from '../../ui/Tooltip';
 import type {
   AnalysisCategory,
@@ -16,6 +16,9 @@ import { AiAnalyzeTimeframePicker } from './AiAnalyzeTimeframePicker';
 
 interface AiAnalyzeModalViewProps {
   isLightTheme: boolean;
+  themeMode: string;
+  darkBgChoice: string;
+  lightBgChoice: string;
   onClose: () => void;
   months: TimeframeMonths;
   setMonths: (value: TimeframeMonths) => void;
@@ -37,6 +40,9 @@ interface AiAnalyzeModalViewProps {
 
 export const AiAnalyzeModalView: React.FC<AiAnalyzeModalViewProps> = ({
   isLightTheme,
+  themeMode,
+  darkBgChoice,
+  lightBgChoice,
   onClose,
   months,
   setMonths,
@@ -62,12 +68,19 @@ export const AiAnalyzeModalView: React.FC<AiAnalyzeModalViewProps> = ({
           className="relative bg-slate-950 border border-slate-700/50 rounded-xl overflow-hidden backdrop-blur-md shadow-lg"
           style={{ height: '85vh', maxHeight: '700px' }}
         >
-          {!isLightTheme && (
+          {!isLightTheme ? (
             <img
-              src={bgImage}
+              src={resolveDarkBgByMode(themeMode, darkBgChoice)}
               alt=""
               aria-hidden="true"
               className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
+            />
+          ) : (
+            <img
+              src={resolveLightBg(lightBgChoice)}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
             />
           )}
 
@@ -90,7 +103,6 @@ export const AiAnalyzeModalView: React.FC<AiAnalyzeModalViewProps> = ({
                   onToggleModule={onToggleModule}
                   showTooltip={showTooltip}
                   hideTooltip={hideTooltip}
-                  isLightTheme={isLightTheme}
                 />
               </div>
             </div>

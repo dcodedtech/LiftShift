@@ -1,5 +1,5 @@
 import React from 'react';
-import { Moon, Palette, SlidersHorizontal, Sparkles, Sun, Type, Image } from 'lucide-react';
+import { Moon, Palette, SlidersHorizontal, Sparkles, Sun, Type, Image, Layers } from 'lucide-react';
 import { ExerciseTrendMode, FontChoice, ThemeMode } from '../../../utils/storage/localStorage';
 import { Select } from '../../ui/Select';
 import { CompactThemeOption } from './UserPreferencesThemeOption';
@@ -36,66 +36,129 @@ export const TrendModeSection: React.FC<TrendModeSectionProps> = ({
 interface ThemeSectionProps {
   themeMode: ThemeMode;
   onThemeModeChange: (mode: ThemeMode) => void;
+  showTransparency?: boolean;
+  darkBgChoice?: string;
+  onDarkBgChoiceChange?: (value: string) => void;
 }
 
 const THEME_OPTIONS = [
   { value: 'pure-black' as const, label: 'Pure Black' },
-  { value: 'midnight-dark' as const, label: 'Midnight' },
-  { value: 'medium-dark' as const, label: 'Medium' },
   { value: 'light' as const, label: 'Light' },
+  { value: 'medium-dark' as const, label: 'Medium' },
 ] as const;
 
-export const ThemeSection: React.FC<ThemeSectionProps> = ({ themeMode, onThemeModeChange }) => (
-  <>
-    <div className="md:hidden">
-      <Select
-        options={THEME_OPTIONS}
-        value={themeMode}
-        onChange={onThemeModeChange}
-        label="Theme"
-        subtitle="Choose the app color scheme"
-        icon={<Palette className="w-3.5 h-3.5 text-slate-500" />}
-      />
-    </div>
-    <div className="hidden md:block space-y-2">
-      <div className="flex items-center gap-2">
-        <Palette className="w-3.5 h-3.5 text-slate-500" />
-        <span className="text-xs font-medium text-slate-300">Theme</span>
+export const ThemeSection: React.FC<ThemeSectionProps> = ({
+  themeMode,
+  onThemeModeChange,
+  showTransparency,
+  darkBgChoice,
+  onDarkBgChoiceChange,
+}) => {
+  const showDarkBgToggle = showTransparency && themeMode !== 'light';
+
+  return (
+    <>
+      <div className="md:hidden">
+        <Select
+          options={THEME_OPTIONS}
+          value={themeMode}
+          onChange={onThemeModeChange}
+          label="Theme"
+          subtitle="Choose the app color scheme"
+          icon={<Palette className="w-3.5 h-3.5 text-slate-500" />}
+        />
+        {showDarkBgToggle && (
+          <div className="mt-2 flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => onDarkBgChoiceChange?.('dark-bg1')}
+              className={`flex-1 py-1.5 rounded-md border text-[11px] font-medium transition-all cursor-pointer ${
+                darkBgChoice === 'dark-bg1'
+                  ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                  : 'bg-slate-900/20 border-slate-700/50 text-slate-400 hover:ring-1 hover:ring-emerald-500'
+              }`}
+            >
+              Default
+            </button>
+            <button
+              type="button"
+              onClick={() => onDarkBgChoiceChange?.('dark-bg5')}
+              className={`flex-1 py-1.5 rounded-md border text-[11px] font-medium transition-all cursor-pointer ${
+                darkBgChoice === 'dark-bg5'
+                  ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                  : 'bg-slate-900/20 border-slate-700/50 text-slate-400 hover:ring-1 hover:ring-emerald-500'
+              }`}
+            >
+              Red
+            </button>
+          </div>
+        )}
       </div>
-      <p className="text-[10px] text-slate-500">Choose the app color scheme</p>
-      <div className="grid grid-cols-4 gap-2">
-        <CompactThemeOption
-          mode="pure-black"
-          currentMode={themeMode}
-          onClick={() => onThemeModeChange('pure-black')}
-          label="Pure Black"
-          icon={<Moon className="w-3.5 h-3.5" />}
-        />
-        <CompactThemeOption
-          mode="midnight-dark"
-          currentMode={themeMode}
-          onClick={() => onThemeModeChange('midnight-dark')}
-          label="Midnight"
-          icon={<Sparkles className="w-3.5 h-3.5" />}
-        />
-        <CompactThemeOption
-          mode="medium-dark"
-          currentMode={themeMode}
-          onClick={() => onThemeModeChange('medium-dark')}
-          label="Medium"
-          icon={<Moon className="w-3.5 h-3.5" />}
-        />
-        <CompactThemeOption
-          mode="light"
-          currentMode={themeMode}
-          onClick={() => onThemeModeChange('light')}
-          label="Light"
-          icon={<Sun className="w-3.5 h-3.5" />}
-        />
+      <div className="hidden md:block space-y-2">
+        <div className="flex items-center gap-2">
+          <Palette className="w-3.5 h-3.5 text-slate-500" />
+          <span className="text-xs font-medium text-slate-300">Theme</span>
+        </div>
+        <p className="text-[10px] text-slate-500">Choose the app color scheme</p>
+        <div className="grid grid-cols-3 gap-2">
+          <CompactThemeOption
+            mode="pure-black"
+            currentMode={themeMode}
+            onClick={() => onThemeModeChange('pure-black')}
+            label="Pure Black"
+            icon={<Moon className="w-3.5 h-3.5" />}
+          />
+          <CompactThemeOption
+            mode="light"
+            currentMode={themeMode}
+            onClick={() => onThemeModeChange('light')}
+            label="Light"
+            icon={<Sun className="w-3.5 h-3.5" />}
+          />
+          <CompactThemeOption
+            mode="medium-dark"
+            currentMode={themeMode}
+            onClick={() => onThemeModeChange('medium-dark')}
+            label="Medium"
+            icon={<Moon className="w-3.5 h-3.5" />}
+          />
+        </div>
+
+        {showDarkBgToggle && (
+          <div className="pt-1">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-[10px] font-medium text-slate-500">Dark BG</span>
+            </div>
+            <div className="flex gap-1.5">
+              <button
+                type="button"
+                onClick={() => onDarkBgChoiceChange?.('dark-bg1')}
+                className={`flex-1 py-1.5 rounded-md border text-[11px] font-medium transition-all cursor-pointer ${
+                  darkBgChoice === 'dark-bg1'
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                    : 'bg-slate-900/20 border-slate-700/50 text-slate-400 hover:ring-1 hover:ring-emerald-500'
+                }`}
+              >
+                Default
+              </button>
+              <button
+                type="button"
+                onClick={() => onDarkBgChoiceChange?.('dark-bg5')}
+                className={`flex-1 py-1.5 rounded-md border text-[11px] font-medium transition-all cursor-pointer ${
+                  darkBgChoice === 'dark-bg5'
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                    : 'bg-slate-900/20 border-slate-700/50 text-slate-400 hover:ring-1 hover:ring-emerald-500'
+                }`}
+              >
+                Red
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 interface FontSectionProps {
   font: FontChoice;
@@ -194,8 +257,8 @@ interface TransparencySectionProps {
 }
 
 const TRANSPARENCY_OPTIONS = [
-  { value: 'true' as const, label: 'On', description: 'Enable transparency effect in dark mode' },
-  { value: 'false' as const, label: 'Off', description: 'Solid background (default style)' },
+  { value: 'true' as const, label: 'On', description: 'Solid background (no image)' },
+  { value: 'false' as const, label: 'Off', description: 'Layered background (with image)' },
 ] as const;
 
 export const TransparencySection: React.FC<TransparencySectionProps> = ({
@@ -204,10 +267,10 @@ export const TransparencySection: React.FC<TransparencySectionProps> = ({
 }) => (
   <Select
     options={TRANSPARENCY_OPTIONS}
-    value={showTransparency ? 'true' : 'false'}
-    onChange={(v) => onShowTransparencyChange(v === 'true')}
-    label="Transparency"
-    subtitle="Toggle the background effect in dark mode"
+    value={showTransparency ? 'false' : 'true'}
+    onChange={(v) => onShowTransparencyChange(v !== 'true')}
+    label="Solid BG"
+    subtitle="Toggle solid versus layered background"
     icon={<Image className="w-3.5 h-3.5 text-slate-500" />}
   />
 );

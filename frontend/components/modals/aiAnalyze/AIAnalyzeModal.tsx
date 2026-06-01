@@ -5,6 +5,7 @@ import { ThemeMode } from '../../../utils/storage/localStorage';
 import { Tooltip, useTooltip } from '../../ui/Tooltip';
 import { AiAnalyzeModalView } from './AiAnalyzeModalView';
 import { useAiAnalyzeState } from './useAiAnalyzeState';
+import { useAppPreferences } from '../../../hooks/app';
 
 export interface AIAnalyzeModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export const AIAnalyzeModal: React.FC<AIAnalyzeModalProps> = ({
   themeMode,
 }) => {
   const isLightTheme = themeMode === 'light';
+  const { darkBgChoice, lightBgChoice } = useAppPreferences();
   const { tooltip, showTooltip, hideTooltip } = useTooltip();
 
   const {
@@ -56,6 +58,9 @@ export const AIAnalyzeModal: React.FC<AIAnalyzeModalProps> = ({
     <>
       <AiAnalyzeModalView
         isLightTheme={isLightTheme}
+        themeMode={themeMode}
+        darkBgChoice={darkBgChoice}
+        lightBgChoice={lightBgChoice}
         onClose={onClose}
         months={months}
         setMonths={setMonths}

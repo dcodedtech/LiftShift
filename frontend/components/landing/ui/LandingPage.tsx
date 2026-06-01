@@ -10,6 +10,8 @@ import LightRays from '../lightRays/LightRays';
 import { Flame, CalendarDays, Trophy, BarChart3, Activity } from 'lucide-react';
 import { FANCY_FONT } from '../../../utils/ui/uiConstants';
 import { assetPath } from '../../../constants';
+import lightBgImage from '../../../src/assets/images/misc/light-bg1.avif';
+import darkBgImage from '../../../src/assets/images/misc/dark-bg5.avif';
 
 interface LandingPageProps {
   onSelectPlatform: (source: DataSourceChoice) => void;
@@ -19,6 +21,13 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTryDemo }) => {
   const { mode } = useTheme();
   const isLight = mode === 'light';
+
+  React.useLayoutEffect(() => {
+    const root = document.documentElement;
+    root.dataset.showBg = 'true';
+    return () => { delete root.dataset.showBg; };
+  }, []);
+
   const [showScrollTop, setShowScrollTop] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -98,24 +107,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className={`fixed inset-0 z-50 overflow-y-auto overflow-x-hidden font-sans ${isLight ? 'bg-white text-slate-900' : 'text-slate-200'}`}
+      className={`overflow-y-auto overflow-x-hidden font-sans ${isLight ? 'text-slate-900' : 'text-slate-200'}`}
     >
-      {/* Light Rays Effect */}
-      <div className="fixed inset-0 z-[1] pointer-events-none">
-        <LightRays
-          raysOrigin="top-center"
-          raysColor="#10b981"
-          raysSpeed={0.8}
-          lightSpread={1.2}
-          rayLength={1.5}
-          followMouse={true}
-          mouseInfluence={0.08}
-          noiseAmount={0.05}
-          distortion={0.03}
-          fadeDistance={1.2}
-          saturation={0.9}
+      {/* Background image for light mode */}
+      {isLight && (
+        <img
+          src={lightBgImage}
+          alt=""
+          aria-hidden="true"
+          className="fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none"
+          loading="lazy"
         />
-      </div>
+      )}
+      {/* Background image for dark mode */}
+      {!isLight && (
+        <img
+          src={darkBgImage}
+          alt=""
+          aria-hidden="true"
+          className="fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none opacity-20"
+          loading="lazy"
+        />
+      )}
+
+      {/* Light Rays Effect - dark mode only */}
+      {!isLight && (
+        <div className="fixed inset-0 z-[1] pointer-events-none">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#ef4444"
+            raysSpeed={0.8}
+            lightSpread={1.2}
+            rayLength={1.5}
+            followMouse={true}
+            mouseInfluence={0.08}
+            noiseAmount={0.05}
+            distortion={0.03}
+            fadeDistance={1.2}
+            saturation={0.9}
+          />
+        </div>
+      )}
       {/* Navigation */}
       <div className="relative z-10 max-w-6xl mx-auto w-full pt-2">
         <Navigation

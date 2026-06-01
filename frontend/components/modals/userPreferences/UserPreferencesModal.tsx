@@ -2,7 +2,7 @@ import React from 'react';
 import { Settings, X } from 'lucide-react';
 import { FontChoice, WeightUnit, ThemeMode, ExerciseTrendMode } from '../../../utils/storage/localStorage';
 import { BodyMapGender } from '../../bodyMap/BodyMap';
-import bgImage from '../../../src/assets/images/misc/P15.avif';
+import { resolveDarkBgByMode, resolveLightBg } from '../../../src/assets/images/misc/bgConfig';
 import {
   BodyMapGenderSection,
   FontSection,
@@ -30,6 +30,10 @@ interface UserPreferencesModalProps {
   onFontChange: (font: FontChoice) => void;
   showTransparency: boolean;
   onShowTransparencyChange: (value: boolean) => void;
+  darkBgChoice: string;
+  onDarkBgChoiceChange: (value: string) => void;
+  lightBgChoice: string;
+  onLightBgChoiceChange: (value: string) => void;
 }
 
 export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
@@ -49,6 +53,10 @@ export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
   onFontChange,
   showTransparency,
   onShowTransparencyChange,
+  darkBgChoice,
+  onDarkBgChoiceChange,
+  lightBgChoice,
+  onLightBgChoiceChange,
 }) => {
   if (!isOpen) return null;
 
@@ -61,12 +69,19 @@ export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
           <div className="relative bg-slate-950 border border-slate-700/50 rounded-xl p-4 sm:p-5 overflow-hidden backdrop-blur-md shadow-lg">
             {!isLightTheme ? (
               <img
-                src={bgImage}
+                src={resolveDarkBgByMode(themeMode, darkBgChoice)}
                 alt=""
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
               />
-            ) : null}
+            ) : (
+              <img
+                src={resolveLightBg(lightBgChoice)}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
+              />
+            )}
 
             <div className="relative flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -109,7 +124,15 @@ export const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
                 <FontSection font={font} onFontChange={onFontChange} />
                 <TransparencySection showTransparency={showTransparency} onShowTransparencyChange={onShowTransparencyChange} />
               </div>
-              <ThemeSection themeMode={themeMode} onThemeModeChange={onThemeModeChange} />
+              <ThemeSection
+                themeMode={themeMode}
+                onThemeModeChange={onThemeModeChange}
+                showTransparency={showTransparency}
+                darkBgChoice={darkBgChoice}
+                onDarkBgChoiceChange={onDarkBgChoiceChange}
+                lightBgChoice={lightBgChoice}
+                onLightBgChoiceChange={onLightBgChoiceChange}
+              />
               <SecondarySetMultiplierSection
                 secondarySetMultiplier={secondarySetMultiplier}
                 onSecondarySetMultiplierChange={onSecondarySetMultiplierChange}
