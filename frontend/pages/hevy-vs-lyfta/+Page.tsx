@@ -7,8 +7,8 @@ import { assetPath } from '../../constants';
 function Page() {
   return (
     <InfoShell
-      title="Hevy vs Lyfta vs Strong vs LiftShift &mdash; which one should you use?"
-      subtitle="Hevy, Lyfta, and Strong are all excellent at logging workouts — but they all share the same gaps in analytics. Here's a practical comparison of the three most popular loggers, plus how LiftShift — a free and open source analytics add-on — fills every gap they leave behind."
+      title="Hevy vs Lyfta vs Strong &mdash; which workout tracker is right for you?"
+      subtitle="Hevy, Lyfta, and Strong are all excellent at logging workouts &mdash; but none of them tell you what your data actually means. Compare features, pricing, and complaints side-by-side, then see how LiftShift adds the analytics layer all three are missing."
       activeNav={null}
     >
       <div className="space-y-10">
