@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { TrendingUp, TrendingDown, Activity } from 'lucide-react';
 
 import CountUp from '../ui/CountUp';
+import { formatLargeNumber } from '../../utils/data/comparisonData';
 import type { DeltaResult, SparklinePoint } from '../../utils/analysis/insights';
 import { Sparkline } from './Sparkline';
 
@@ -126,6 +127,9 @@ export const KPICard: React.FC<KPICardProps> = ({
 
   const renderValue = () => {
     if (typeof value === 'number' && Number.isFinite(value)) {
+      if (value >= 1000) {
+        return <span className={valueClass}>{formatLargeNumber(value)}</span>;
+      }
       return (
         <CountUp
           from={0}

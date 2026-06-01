@@ -7,8 +7,8 @@ import { analyzeExerciseTrendCore } from '../exerciseTrend';
 import { isWarmupSet } from '../classification';
 import { getSessionKey } from '../../date/dateUtils';
 import { differenceInCalendarDays } from 'date-fns';
-import { formatNumber } from '../../format/formatters';
-import { formatDisplayVolume } from '../../format/volumeDisplay';
+import { formatDisplayVolume, getDisplayVolume } from '../../format/volumeDisplay';
+import { formatLargeNumber } from '../../data/comparisonData';
 import { convertWeight } from '../../format/units';
 import { stripExerciseSourceLabel } from '../../exercise/exerciseSourceLabel';
 
@@ -306,7 +306,7 @@ const pushWeeklyCandidates = (input: DashboardSummaryInput, candidates: SummaryC
       const isUp = rolling7d.sets.direction === 'up';
       const absPct = Math.abs(Math.round(rolling7d.sets.deltaPercent));
       const text = isUp
-        ? `Strong last 7 days: ${formatNumber(current.totalSets, { maxDecimals: 1 })} sets, up ${absPct}% from last week.`
+        ? `Strong last 7 days: ${formatLargeNumber(current.totalSets)} sets, up ${absPct}% from last week.`
         : ` Last week was lighter by ${absPct}% vs the previous week, so this is a good moment to rebuild momentum.`;
       candidates.push({
         category: 'weekly',
@@ -317,7 +317,7 @@ const pushWeeklyCandidates = (input: DashboardSummaryInput, candidates: SummaryC
     }
 
     if (rolling7d.volume && Math.abs(rolling7d.volume.deltaPercent) >= 8) {
-      const displayVolume = formatDisplayVolume(current.totalVolume, input.weightUnit, { round: 'int' });
+      const displayVolume = formatLargeNumber(getDisplayVolume(current.totalVolume, input.weightUnit, { round: 'int' }));
       const isUp = rolling7d.volume.direction === 'up';
       const absPct = Math.abs(Math.round(rolling7d.volume.deltaPercent));
       const text = isUp
@@ -342,7 +342,7 @@ const pushWeeklyCandidates = (input: DashboardSummaryInput, candidates: SummaryC
   }
 
   // Baseline weekly sentence — always include delta context if available
-  let baselineText = `Over the last 7 days: ${current.totalWorkouts} workout${current.totalWorkouts === 1 ? '' : 's'} and ${formatNumber(current.totalSets, { maxDecimals: 1 })} working sets`;
+  let baselineText = `Over the last 7 days: ${current.totalWorkouts} workout${current.totalWorkouts === 1 ? '' : 's'} and ${formatLargeNumber(current.totalSets)} working sets`;
 
   if (rolling7d.eligible && rolling7d.sets && Math.abs(rolling7d.sets.deltaPercent) >= 3) {
     baselineText += ` (${formatSignedPercent(rolling7d.sets.deltaPercent)} vs previous week)`;
