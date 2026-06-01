@@ -6,18 +6,7 @@ export type OnboardingStep =
   | 'platform'
   | 'add_source_platform'
   | 'demo_prefs'
-  | 'strong_prefs'
-  | 'strong_csv'
-  | 'lyfta_prefs'
-  | 'lyfta_csv'
-  | 'other_prefs'
-  | 'other_csv'
-  | 'lyfta_login'
-  | 'hevy_prefs'
-  | 'hevy_login'
-  | 'hevy_csv'
-  | 'motra_prefs'
-  | 'motra_csv';
+  | 'unified_modal';
 
 export type OnboardingFlow = {
   intent: OnboardingIntent;
