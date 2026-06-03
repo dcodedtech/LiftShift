@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { formatDeltaPercentage } from '../../../utils/format/deltaFormat';
 import { type BodyMapGender } from '../../bodyMap/BodyMap';
 import { ChartDescription, InsightLine, InsightText, TrendBadge, BadgeLabel } from '../insights/ChartBits';
-import { toHeadlessVolumeMap, HEADLESS_MUSCLE_NAMES } from '../../../utils/muscle/mapping';
+import { toHeadlessVolumeMap, HEADLESS_MUSCLE_NAMES, getMuscleIdForDetailedSvgId } from '../../../utils/muscle/mapping';
 import { getHeadlessRadarSeries } from '../../../utils/muscle/mapping';
 import { differenceInCalendarDays } from 'date-fns';
 import { isPlausibleDate } from '../../../utils/date/dateUtils';
@@ -81,14 +81,15 @@ export const WeeklySetsCard = ({
 
     setHeatmapHoveredMuscle(muscleId);
 
-    const rate = headlessVolumes.get(muscleId) || 0;
+    const mappedId = getMuscleIdForDetailedSvgId(muscleId) ?? muscleId;
+    const rate = headlessVolumes.get(mappedId) || 0;
     const stimulus = weeklyStimulusFromThresholds(rate, volumeThresholds);
     const zone = getVolumeZone(rate, volumeThresholds);
     const bodyText = `avg ${rate.toFixed(1)} sets/wk (${zone.label})\n${stimulus}% of wkly possible gains\n${zone.explanation}`;
 
     setHoverTooltip({
       rect,
-      title: (HEADLESS_MUSCLE_NAMES as any)[muscleId] ?? muscleId,
+      title: (HEADLESS_MUSCLE_NAMES as any)[mappedId] ?? mappedId,
       body: bodyText,
       status: rate > 0 ? 'success' : 'default',
     });
