@@ -59,6 +59,9 @@ export const ExerciseView: React.FC<ExerciseViewProps> = ({
   // Calculate user's training level for personalized volume thresholds
   const { trainingLevel } = useTrainingLevel(filteredData, effectiveNow);
 
+  const [assetsMap, setAssetsMap] = useState<Map<string, ExerciseAsset> | null>(null);
+  const [exerciseMuscleData, setExerciseMuscleData] = useState<Map<string, ExerciseMuscleData>>(new Map());
+
   const {
     searchTerm,
     setSearchTerm,
@@ -82,6 +85,7 @@ export const ExerciseView: React.FC<ExerciseViewProps> = ({
     weightUnit: weightUnit ?? 'kg',
     exerciseTrendMode,
     effectiveNow,
+    muscleDataMap: exerciseMuscleData,
   });
 
   const {
@@ -94,9 +98,6 @@ export const ExerciseView: React.FC<ExerciseViewProps> = ({
     onHighlightApplied,
     defaultExerciseName: filteredExercises[0]?.name ?? '',
   });
-
-  const [assetsMap, setAssetsMap] = useState<Map<string, ExerciseAsset> | null>(null);
-  const [exerciseMuscleData, setExerciseMuscleData] = useState<Map<string, ExerciseMuscleData>>(new Map());
 
   const assetLookup = useMemo<ExerciseAssetLookup | null>(() => {
     if (!assetsMap) return null;

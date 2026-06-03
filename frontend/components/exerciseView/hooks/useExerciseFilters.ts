@@ -3,6 +3,7 @@ import { ExerciseStats } from '../../../types';
 import { analyzeExerciseTrendCore, ExerciseTrendStatus, summarizeExerciseHistory } from '../../../utils/analysis/exerciseTrend';
 import type { ExerciseTrendMode } from '../../../utils/storage/localStorage';
 import { analyzeExerciseTrend, type StatusResult } from '../trend/exerciseTrendUi';
+import type { ExerciseMuscleData } from '../../../utils/muscle/mapping';
 
 export type ExerciseListSortMode = 'recent' | 'trend';
 
@@ -40,6 +41,7 @@ export interface UseExerciseFiltersProps {
   weightUnit: 'kg' | 'lbs';
   exerciseTrendMode: ExerciseTrendMode;
   effectiveNow: Date;
+  muscleDataMap?: Map<string, ExerciseMuscleData>;
 }
 
 export function useExerciseFilters({
@@ -47,6 +49,7 @@ export function useExerciseFilters({
   weightUnit,
   exerciseTrendMode,
   effectiveNow,
+  muscleDataMap,
 }: UseExerciseFiltersProps): UseExerciseFiltersReturn {
   const [searchTerm, setSearchTerm] = useState('');
   const [trendFilter, setTrendFilter] = useState<ExerciseTrendStatus | null>(null);
@@ -149,7 +152,16 @@ export function useExerciseFilters({
   // Filtered and sorted exercises
   const filteredExercises = useMemo(() =>
     stats
-      .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter(s => {
+        const term = searchTerm.toLowerCase();
+        if (s.name.toLowerCase().includes(term)) return true;
+        const m = muscleDataMap?.get(s.name.toLowerCase());
+        if (!m) return false;
+        return (
+          (m.primary_muscle && m.primary_muscle.toLowerCase().includes(term)) ||
+          (m.secondary_muscle && m.secondary_muscle.toLowerCase().includes(term))
+        );
+      })
       .filter(s => {
         if (!trendFilter) return true;
         if (!trainingStructure.eligibleNames.has(s.name)) return false;
