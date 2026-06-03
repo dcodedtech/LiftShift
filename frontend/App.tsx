@@ -601,7 +601,7 @@ const App: React.FC = () => {
             alt=""
             aria-hidden="true"
             onLoad={() => setBgLoaded(true)}
-            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgLoaded ? 'opacity-40' : 'opacity-0'}`}
+            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none filter brightness-50 transition-opacity duration-500 ${bgLoaded ? 'opacity-50' : 'opacity-0'}`}
           />
         )}
         {/* Light mode background */}
@@ -611,7 +611,7 @@ const App: React.FC = () => {
             alt=""
             aria-hidden="true"
             onLoad={() => setBgLoaded(true)}
-            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgLoaded ? 'opacity-60' : 'opacity-0'}`}
+            className={`fixed inset-0 w-full h-full object-cover z-[-1] pointer-events-none transition-opacity duration-500 ${bgLoaded ? 'opacity-50' : 'opacity-0'}`}
           />
         )}
         {onboarding?.step !== 'platform' && (
