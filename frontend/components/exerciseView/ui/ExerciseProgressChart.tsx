@@ -124,7 +124,7 @@ export const ExerciseProgressChart: React.FC<ExerciseProgressChartProps> = ({
   }, [chartData, isBodyweightLike]);
 
   return (
-    <div className="w-full bg-black/20 border border-slate-700/50 rounded-2xl p-1 sm:p-2 relative flex flex-col h-[280px] sm:h-[322px]">
+    <div className="w-full bg-black/50 border border-slate-700/50 rounded-2xl p-1 sm:p-2 relative flex flex-col h-[280px] sm:h-[322px]">
       {/* Mobile header - compact 2-line layout */}
       <div className="sm:hidden flex flex-col gap-1 mb-2 shrink-0">
         <div className="flex items-center justify-between gap-2">
