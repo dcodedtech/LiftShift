@@ -324,8 +324,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
           </section>
 
           {/* ========== REVIEWS SECTION ========== */}
-          <section id="reviews" className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-            <div className="max-w-6xl mx-auto">
+          <section id="reviews" className="relative z-10 py-16 sm:py-24 overflow-hidden">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <ReviewsCarousel />
             </div>
           </section>
