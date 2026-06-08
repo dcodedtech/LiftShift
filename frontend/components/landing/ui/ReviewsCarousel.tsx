@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Quote, ArrowBigUp, ArrowBigDown, Reply, Share2, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -92,30 +93,93 @@ function MarqueeRow({
   // Mobile auto-scroll state
   const scrollRef = useRef<HTMLDivElement>(null);
   const isInteractingRef = useRef(false);
+  const accumulatedRef = useRef(0);
+  const lastTsRef = useRef(0);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handleUpRef = useRef<(() => void) | null>(null);
+
+  const syncAccumulated = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const halfWidth = el.scrollWidth / 2;
+    if (halfWidth <= 0) return;
+    accumulatedRef.current =
+      ((el.scrollLeft % halfWidth) + halfWidth) % halfWidth;
+    lastTsRef.current = performance.now();
+  };
+
+  const onStartInteraction = () => {
+    isInteractingRef.current = true;
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current);
+      resumeTimerRef.current = null;
+    }
+
+    if (handleUpRef.current) {
+      document.removeEventListener('pointerup', handleUpRef.current);
+      document.removeEventListener('pointercancel', handleUpRef.current);
+    }
+
+    const handleUp = () => {
+      document.removeEventListener('pointerup', handleUp);
+      document.removeEventListener('pointercancel', handleUp);
+      handleUpRef.current = null;
+      resumeTimerRef.current = setTimeout(() => {
+        isInteractingRef.current = false;
+        syncAccumulated();
+        resumeTimerRef.current = null;
+      }, 1000);
+    };
+    handleUpRef.current = handleUp;
+    document.addEventListener('pointerup', handleUp);
+    document.addEventListener('pointercancel', handleUp);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      if (handleUpRef.current) {
+        document.removeEventListener('pointerup', handleUpRef.current);
+        document.removeEventListener('pointercancel', handleUpRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!isMobile) return;
     const el = scrollRef.current;
     if (!el) return;
     let rafId = 0;
-    let lastTs = performance.now();
+    lastTsRef.current = performance.now();
     const pxPerSec = 30;
+    const dir = direction === 'left' ? 1 : -1;
+
+    const halfWidth = el.scrollWidth / 2;
+    if (halfWidth > 0 && dir === -1) {
+      accumulatedRef.current = halfWidth;
+    }
+    el.scrollLeft = accumulatedRef.current;
 
     const tick = (ts: number) => {
-      const dt = (ts - lastTs) / 1000;
-      lastTs = ts;
       if (!isInteractingRef.current) {
-        const max = el.scrollWidth - el.clientWidth;
-        if (max > 0) {
-          el.scrollLeft += pxPerSec * dt;
-          if (el.scrollLeft >= max) el.scrollLeft = 0;
+        const hw = el.scrollWidth / 2;
+        if (hw > 0) {
+          const dt = (ts - lastTsRef.current) / 1000;
+          lastTsRef.current = ts;
+          accumulatedRef.current += dir * pxPerSec * dt;
+          if (accumulatedRef.current >= hw) {
+            accumulatedRef.current -= hw;
+          } else if (accumulatedRef.current < 0) {
+            accumulatedRef.current += hw;
+          }
+          el.scrollLeft = accumulatedRef.current;
         }
       }
       rafId = requestAnimationFrame(tick);
     };
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [isMobile]);
+  }, [isMobile, direction]);
 
   const card = (review: ReviewData, key: string) => {
     if (isMobile) {
@@ -170,22 +234,20 @@ function MarqueeRow({
 
   if (isMobile) {
     return (
-      <div
-        ref={scrollRef}
-        className="relative overflow-x-auto overflow-y-hidden"
-        onPointerDown={() => { isInteractingRef.current = true; }}
-        onPointerUp={() => { isInteractingRef.current = false; }}
-        onPointerLeave={() => { isInteractingRef.current = false; }}
-        onPointerCancel={() => { isInteractingRef.current = false; }}
-        style={{
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollPaddingLeft: '0.5rem',
-          touchAction: 'pan-x',
-        }}
-      >
-        <div className="flex w-max py-1 pr-4">
-          {items.map((r, i) => card(r, `${r.src}-${i}`))}
+      <div className="relative overflow-hidden">
+        <div
+          ref={scrollRef}
+          className="overflow-x-auto overflow-y-hidden"
+          onPointerDown={onStartInteraction}
+          style={{
+            scrollPaddingLeft: '0.5rem',
+            touchAction: 'pan-x',
+          }}
+        >
+          <div className="flex w-max py-1 pr-4">
+            {items.map((r, i) => card(r, `${r.src}-${i}`))}
+            {items.map((r, i) => card(r, `${r.src}-clone-${i}`))}
+          </div>
         </div>
       </div>
     );
@@ -234,7 +296,7 @@ const ExpandedCardOverlay: React.FC<{
       const vh = window.innerHeight;
       const scaleX = (vw * 0.6) / originalRect.width;
       const scaleY = (vh * 0.65) / originalRect.height;
-      const s = Math.max(2, Math.min(scaleX, scaleY, 3.5));
+      const s = Math.max(1.6, Math.min(scaleX, scaleY, 2.5));
       const ew = originalRect.width * s;
       const eh = originalRect.height * s;
       const cx = containerRect.left + containerRect.width / 2;
@@ -259,10 +321,10 @@ const ExpandedCardOverlay: React.FC<{
   );
 
   const expandedFaceClass = isLight
-    ? 'bg-white ring-1 ring-inset ring-slate-200/60 shadow-lg'
-    : 'bg-neutral-900 ring-1 ring-inset ring-neutral-700/60 shadow-lg shadow-black/40';
+    ? 'bg-white shadow-lg'
+    : 'bg-neutral-900 shadow-lg shadow-black/40';
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <motion.div
@@ -270,7 +332,7 @@ const ExpandedCardOverlay: React.FC<{
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md"
         onClick={onClose}
       />
 
@@ -308,11 +370,12 @@ const ExpandedCardOverlay: React.FC<{
         style={{
           perspective: '1200px',
           transformStyle: 'preserve-3d',
+          pointerEvents: 'none',
         }}
       >
         {/* ── Front face: Reddit comment ── */}
         <div
-          className={`absolute inset-0 rounded-xl flex flex-col px-4 py-3.5 gap-2 overflow-hidden bg-clip-padding ${expandedFaceClass}`}
+          className={`absolute inset-0 rounded-xl flex flex-col px-4 py-3.5 gap-2 overflow-hidden ${expandedFaceClass}`}
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex items-center gap-1.5 text-xs sm:text-sm">
@@ -380,7 +443,7 @@ const ExpandedCardOverlay: React.FC<{
 
         {/* ── Back face: screenshot ── */}
         <div
-          className={`absolute inset-0 rounded-xl overflow-hidden bg-clip-padding ${expandedFaceClass}`}
+          className={`absolute inset-0 rounded-xl overflow-hidden ${expandedFaceClass}`}
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
@@ -395,7 +458,8 @@ const ExpandedCardOverlay: React.FC<{
         </div>
 
       </motion.div>
-    </>
+    </>,
+    document.body,
   );
 };
 

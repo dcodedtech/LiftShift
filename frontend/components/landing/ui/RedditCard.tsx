@@ -20,7 +20,7 @@ export function getColor(username: string): string {
 }
 
 export function getUpvotes(username: string): number {
-  return 1 + (hashString(username + 'up') % 10);
+  return 2 + (hashString(username + 'up') % 9);
 }
 
 export function getSubreddit(username: string, quote: string): string {
@@ -55,8 +55,8 @@ export function SnooAvatar({ color, size = 16 }: { color: string; size?: number 
 // ── Shared card face styling ──
 export function cardFaceClass(isLight: boolean) {
   return isLight
-    ? 'bg-white/65 backdrop-blur-sm ring-1 ring-inset ring-slate-200/60 shadow-sm'
-    : 'bg-neutral-900/50 backdrop-blur-sm ring-1 ring-inset ring-neutral-800/50 shadow-md shadow-black/20';
+    ? 'bg-white/65 backdrop-blur-sm shadow-sm'
+    : 'bg-neutral-900/50 backdrop-blur-sm shadow-sm shadow-black/20';
 }
 
 interface RedditCardProps {
@@ -108,7 +108,7 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
       >
         {/* ── Front face: Reddit comment card ── */}
         <div
-          className={`absolute inset-0 rounded-xl overflow-hidden flex flex-col px-3.5 py-3 gap-2 bg-clip-padding ${cardFaceClass(isLight)}`}
+          className={`absolute inset-0 rounded-xl overflow-hidden flex flex-col px-3.5 py-3 gap-2 ${cardFaceClass(isLight)}`}
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
@@ -150,7 +150,7 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
 
         {/* ── Back face: screenshot ── */}
         <div
-          className={`absolute inset-0 rounded-xl overflow-hidden bg-clip-padding ${cardFaceClass(isLight)}`}
+          className={`absolute inset-0 rounded-xl overflow-hidden ${cardFaceClass(isLight)}`}
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
