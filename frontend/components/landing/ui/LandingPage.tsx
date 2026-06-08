@@ -210,7 +210,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               {/* Muscle heatmaps, image: 1.avif */}
               <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
                 <div className="lg:order-2 rounded-2xl overflow-hidden aspect-[1/1]">
-                  <img src={assetPath('/images/misc/weeklyset.avif')} alt="LiftShift interactive muscle heatmap with exercise drill-down" loading="lazy" className="w-full h-full object-contain" />
+                  <img src={assetPath('/images/misc/weeklyset.avif')} alt="LiftShift interactive muscle heatmap with exercise drill-down" loading="lazy" className={`w-full h-full object-contain ${isLight ? 'invert' : ''}`} />
                 </div>
                 <div className="lg:order-1">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
@@ -229,7 +229,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               {/* Plateau detection, image: 2.avif */}
               <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
                 <div className="lg:order-1 rounded-2xl overflow-hidden aspect-[4/3]">
-                  <img src={assetPath('/images/misc/plateau.avif')} alt="LiftShift exercise status: Getting stronger, Plateauing, Taking a dip" loading="lazy" className="w-full h-full object-contain" />
+                  <img src={assetPath('/images/misc/plateau.avif')} alt="LiftShift exercise status: Getting stronger, Plateauing, Taking a dip" loading="lazy" className={`w-full h-full object-contain ${isLight ? 'invert' : ''}`} />
                 </div>
                 <div className="lg:order-2">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
@@ -248,7 +248,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               {/* Set-by-set, image: 5.avif */}
               <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
                 <div className="lg:order-2 rounded-2xl overflow-hidden aspect-[4/3]">
-                  <img src={assetPath('/images/misc/setbyset.avif')} alt="LiftShift set-by-set coaching feedback on each set" loading="lazy" className="w-full h-full object-contain" />
+                  <img src={assetPath('/images/misc/setbyset.avif')} alt="LiftShift set-by-set coaching feedback on each set" loading="lazy" className={`w-full h-full object-contain ${isLight ? 'invert' : ''}`} />
                 </div>
                 <div className="lg:order-1">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
@@ -267,7 +267,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               {/* AI export, image: AI.avif */}
               <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
                 <div className="lg:order-2 rounded-2xl overflow-hidden aspect-[1/1]">
-                  <img src={assetPath('/images/misc/AI.avif')} alt="LiftShift AI analysis prompt generator" loading="lazy" className="w-full h-full object-contain" />
+                  <img src={assetPath('/images/misc/AI.avif')} alt="LiftShift AI analysis prompt generator" loading="lazy" className={`w-full h-full object-contain ${isLight ? 'invert' : ''}`} />
                 </div>
                 <div className="lg:order-1">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
@@ -286,7 +286,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               {/* Hypertrophy scatter, image: hypertrophy.avif */}
               <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
                 <div className="lg:order-1 rounded-2xl overflow-hidden aspect-[1/1]">
-                  <img src={assetPath('/images/misc/hypertrophy.avif')} alt="LiftShift hypertrophy scatter plot showing volume vs progressive overload by muscle" loading="lazy" className="w-full h-full object-contain" />
+                  <img src={assetPath('/images/misc/hypertrophy.avif')} alt="LiftShift hypertrophy scatter plot showing volume vs progressive overload by muscle" loading="lazy" className={`w-full h-full object-contain ${isLight ? 'invert' : ''}`} />
                 </div>
                 <div className="lg:order-2">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
@@ -305,7 +305,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
               {/* Calendar filtering, image: calender.avif */}
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div className="lg:order-2 rounded-2xl overflow-hidden aspect-[1/1]">
-                  <img src={assetPath('/images/misc/calender.avif')} alt="LiftShift calendar filtering with date range selection and filtered dashboard" loading="lazy" className="w-full h-full object-contain" />
+                  <img src={assetPath('/images/misc/calender.avif')} alt="LiftShift calendar filtering with date range selection and filtered dashboard" loading="lazy" className={`w-full h-full object-contain ${isLight ? 'invert' : ''}`} />
                 </div>
                 <div className="lg:order-1">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4">
