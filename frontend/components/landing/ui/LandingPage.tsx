@@ -157,7 +157,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       </div>
 
       {/* ========== HERO SECTION ========== */}
-          <section className="relative z-10 min-h-screen flex flex-col pt-2 pb-32">
+          <section className="relative z-10 flex flex-col pt-2 mb-30 sm:mb-55">
             <div className="max-w-6xl mx-auto w-full">
               {/* Hero Content */}
               <div className="text-center max-w-5xl mx-auto">
@@ -185,13 +185,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
                   <div className="mb-8">
                     <button
                       onClick={onTryDemo}
-                      className={`group cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold h-11 px-8 border transition-all duration-200 ${isLight ? 'border-emerald-300/40 text-slate-600 hover:border-emerald-600 hover:text-emerald-600' : 'border-emerald-400/30 text-slate-400 hover:border-emerald-400 hover:text-emerald-300'}`}
+                      className={`group cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold h-11 px-8 border transition-all duration-200 ${isLight ? 'bg-emerald-50/40 hover:bg-emerald-100/50 border-emerald-300/50 text-slate-600 hover:border-emerald-600 hover:text-emerald-600' : 'bg-emerald-950/30 hover:bg-emerald-950/50 border-emerald-400/30 text-slate-400 hover:border-emerald-400 hover:text-emerald-300'}`}
                     >
                       <span>Try it with sample data</span>
                     </button>
                   </div>
                 )}
               </div>
+            </div>
+          </section>
+
+          {/* ========== REVIEWS SECTION ========== */}
+          <section id="reviews" className="relative z-10 py-0 sm:py-0">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <ReviewsCarousel />
             </div>
           </section>
 
@@ -320,13 +327,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
                   </p>
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* ========== REVIEWS SECTION ========== */}
-          <section id="reviews" className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-            <div className="max-w-6xl mx-auto">
-              <ReviewsCarousel />
             </div>
           </section>
 
