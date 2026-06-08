@@ -1,14 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Quote } from 'lucide-react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { Quote, ArrowBigUp, ArrowBigDown, Reply, Share2, Award } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../../theme/ThemeProvider';
 import { FANCY_FONT } from '../../../utils/ui/uiConstants';
 import { assetPath } from '../../../constants';
-import { RedditCard } from './RedditCard';
+import {
+  RedditCard,
+  SnooAvatar,
+  getUpvotes,
+  getSubreddit,
+  getColor,
+  getTimeAgo,
+} from './RedditCard';
 
-interface ReviewsCarouselProps {
-  className?: string;
-}
-
+// ── Data ──
 interface ReviewData {
   src: string;
   label: string;
@@ -43,45 +48,148 @@ const REVIEWS: ReviewData[] = [
 });
 
 const ROWS_DESKTOP = [REVIEWS.slice(0, 6), REVIEWS.slice(6, 11), REVIEWS.slice(11)];
-const ROWS_MOBILE  = [REVIEWS.slice(0, 8), REVIEWS.slice(8)];
+const ROWS_MOBILE = [REVIEWS.slice(0, 8), REVIEWS.slice(8)];
 
-// ── CSS-keyframe marquee ──
-// Uses <style> with unique animation name per row. hardware-accelerated via translate3d.
-// CSS :hover pauses animation-play-state → no React state toggling → zero jerk.
+// ── Types ──
+interface ExpandedCardState {
+  review: ReviewData;
+  id: string;
+  originalRect: DOMRect;
+  containerRect: DOMRect;
+}
 
+// ── Marquee Row ──
 function MarqueeRow({
   direction,
   items,
   isLight,
   speed = 40,
+  expandedCardId,
+  isPaused,
+  onExpand,
+  isMobile,
   flippedId,
   onFlip,
+  isClosing,
 }: {
   direction: 'left' | 'right';
   items: ReviewData[];
   isLight: boolean;
   speed?: number;
+  expandedCardId: string | null;
+  isPaused: boolean;
+  onExpand: (id: string, review: ReviewData, rect: DOMRect) => void;
+  isMobile: boolean;
   flippedId: string | null;
   onFlip: (id: string) => void;
+  isClosing: boolean;
 }) {
   const uid = useRef(`mq-${Math.random().toString(36).slice(2, 8)}`).current;
   const from = direction === 'left' ? '0' : '-50';
-  const to   = direction === 'left' ? '-50' : '0';
+  const to = direction === 'left' ? '-50' : '0';
   const duration = `${Math.max(30, 110 - speed)}s`;
 
-  const card = (review: ReviewData, key: string) => (
-    <div key={key} className="mx-2 sm:mx-3 shrink-0">
-      <RedditCard
-        username={review.username}
-        quote={review.quote}
-        src={review.src}
-        isLight={isLight}
-        cardId={key}
-        isFlipped={flippedId === key}
-        onFlip={() => onFlip(key)}
-      />
-    </div>
-  );
+  // Mobile auto-scroll state
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isInteractingRef = useRef(false);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    let rafId = 0;
+    let lastTs = performance.now();
+    const pxPerSec = 30;
+
+    const tick = (ts: number) => {
+      const dt = (ts - lastTs) / 1000;
+      lastTs = ts;
+      if (!isInteractingRef.current) {
+        const max = el.scrollWidth - el.clientWidth;
+        if (max > 0) {
+          el.scrollLeft += pxPerSec * dt;
+          if (el.scrollLeft >= max) el.scrollLeft = 0;
+        }
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [isMobile]);
+
+  const card = (review: ReviewData, key: string) => {
+    if (isMobile) {
+      return (
+        <div key={key} className="mx-2 sm:mx-3 shrink-0">
+          <RedditCard
+            username={review.username}
+            quote={review.quote}
+            src={review.src}
+            isLight={isLight}
+            cardId={key}
+            isFlipped={flippedId === key}
+            onFlip={() => onFlip(key)}
+          />
+        </div>
+      );
+    }
+
+    const isHidden =
+      expandedCardId !== null &&
+      (key === expandedCardId || key === `${expandedCardId}-clone`);
+
+    const cardStyle: React.CSSProperties = isHidden
+      ? { opacity: 0, pointerEvents: 'none' }
+      : isClosing
+        ? { opacity: 1, transition: 'opacity 100ms ease 200ms' }
+        : { opacity: 1 };
+
+    return (
+      <div
+        key={key}
+        className="mx-2 sm:mx-3 shrink-0"
+        style={cardStyle}
+        onClickCapture={(e) => {
+          e.stopPropagation();
+          const rect = e.currentTarget.getBoundingClientRect();
+          onExpand(key, review, rect);
+        }}
+      >
+        <RedditCard
+          username={review.username}
+          quote={review.quote}
+          src={review.src}
+          isLight={isLight}
+          cardId={key}
+          isFlipped={false}
+          onFlip={() => {}}
+        />
+      </div>
+    );
+  };
+
+  if (isMobile) {
+    return (
+      <div
+        ref={scrollRef}
+        className="relative overflow-x-auto overflow-y-hidden"
+        onPointerDown={() => { isInteractingRef.current = true; }}
+        onPointerUp={() => { isInteractingRef.current = false; }}
+        onPointerLeave={() => { isInteractingRef.current = false; }}
+        onPointerCancel={() => { isInteractingRef.current = false; }}
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollPaddingLeft: '0.5rem',
+          touchAction: 'pan-x',
+        }}
+      >
+        <div className="flex w-max py-1 pr-4">
+          {items.map((r, i) => card(r, `${r.src}-${i}`))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative overflow-hidden">
@@ -101,7 +209,10 @@ function MarqueeRow({
           animation-play-state: paused;
         }
       `}</style>
-      <div className={uid}>
+      <div
+        className={uid}
+        style={isPaused ? { animationPlayState: 'paused' } : undefined}
+      >
         {items.map((r) => card(r, r.src))}
         {items.map((r) => card(r, `${r.src}-clone`))}
       </div>
@@ -109,28 +220,274 @@ function MarqueeRow({
   );
 }
 
-// ── Main component ──
+// ── Expanded Card Overlay ──
+const ExpandedCardOverlay: React.FC<{
+  expandedCard: ExpandedCardState;
+  isLight: boolean;
+  onClose: () => void;
+}> = ({ expandedCard, isLight, onClose }) => {
+  const { review, originalRect, containerRect } = expandedCard;
 
-export const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({ className = '' }) => {
+  const { targetLeft, targetTop, expandedWidth, expandedHeight } =
+    useMemo(() => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const scaleX = (vw * 0.6) / originalRect.width;
+      const scaleY = (vh * 0.65) / originalRect.height;
+      const s = Math.max(2, Math.min(scaleX, scaleY, 3.5));
+      const ew = originalRect.width * s;
+      const eh = originalRect.height * s;
+      const cx = containerRect.left + containerRect.width / 2;
+      const cy = containerRect.top + containerRect.height / 2;
+      return {
+        targetLeft: cx - ew / 2,
+        targetTop: cy - eh / 2,
+        expandedWidth: ew,
+        expandedHeight: eh,
+      };
+    }, [originalRect, containerRect]);
+
+  const upvotes = useMemo(() => getUpvotes(review.username), [review.username]);
+  const subreddit = useMemo(
+    () => getSubreddit(review.username, review.quote),
+    [review.username, review.quote],
+  );
+  const color = useMemo(() => getColor(review.username), [review.username]);
+  const timeAgo = useMemo(
+    () => getTimeAgo(review.username),
+    [review.username],
+  );
+
+  const expandedFaceClass = isLight
+    ? 'bg-white ring-1 ring-inset ring-slate-200/60 shadow-lg'
+    : 'bg-neutral-900 ring-1 ring-inset ring-neutral-700/60 shadow-lg shadow-black/40';
+
+  return (
+    <>
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Expanded card */}
+      <motion.div
+        initial={{
+          position: 'fixed',
+          left: originalRect.left,
+          top: originalRect.top,
+          width: originalRect.width,
+          height: originalRect.height,
+          rotateY: 0,
+          zIndex: 101,
+        }}
+        animate={{
+          left: targetLeft,
+          top: targetTop,
+          width: expandedWidth,
+          height: expandedHeight,
+          rotateY: 180,
+        }}
+        exit={{
+          left: originalRect.left,
+          top: originalRect.top,
+          width: originalRect.width,
+          height: originalRect.height,
+          rotateY: 0,
+          opacity: 0,
+          transition: {
+            opacity: { duration: 0.1, delay: 0.2 },
+            default: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
+          },
+        }}
+        transition={{ duration: 0.55, ease: [0.34, 1.56, 0.64, 1] }}
+        style={{
+          perspective: '1200px',
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        {/* ── Front face: Reddit comment ── */}
+        <div
+          className={`absolute inset-0 rounded-xl flex flex-col px-4 py-3.5 gap-2 overflow-hidden bg-clip-padding ${expandedFaceClass}`}
+          style={{ backfaceVisibility: 'hidden' }}
+        >
+          <div className="flex items-center gap-1.5 text-xs sm:text-sm">
+            <SnooAvatar color={color} size={20} />
+            <span
+              className={`font-medium ${isLight ? 'text-black/80' : 'text-neutral-200'}`}
+            >
+              r/{subreddit}
+            </span>
+            <span className={isLight ? 'text-slate-400' : 'text-neutral-600'}>
+              ·
+            </span>
+            <span className={isLight ? 'text-slate-500' : 'text-neutral-500'}>
+              u/{review.username}
+            </span>
+            <span className={isLight ? 'text-slate-400' : 'text-neutral-600'}>
+              ·
+            </span>
+            <span className={isLight ? 'text-slate-400' : 'text-neutral-500'}>
+              {timeAgo}
+            </span>
+          </div>
+
+          <p
+            className={`flex-1 text-sm sm:text-base leading-relaxed ${isLight ? 'text-slate-800' : 'text-neutral-300'}`}
+          >
+            {review.quote.split(' / ').map((part, i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <br />}
+                {part}
+              </React.Fragment>
+            ))}
+          </p>
+
+          <div className="flex items-center gap-1.5 text-xs sm:text-sm">
+            <ArrowBigUp
+              className="w-4 h-4 text-[#FF4500]"
+              fill="#FF4500"
+            />
+            <span
+              className={`font-bold tabular-nums -ml-0.5 ${isLight ? 'text-slate-700' : 'text-neutral-400'}`}
+            >
+              {upvotes}
+            </span>
+            <span
+              className={`ml-auto flex items-center gap-1 ${isLight ? 'text-slate-400' : 'text-neutral-600'}`}
+            >
+              <Reply className="w-3.5 h-3.5" />
+              Reply
+            </span>
+            <span
+              className={`flex items-center gap-1 ${isLight ? 'text-slate-400' : 'text-neutral-600'}`}
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              Share
+            </span>
+            <span
+              className={`flex items-center gap-1 ${isLight ? 'text-slate-400' : 'text-neutral-600'}`}
+            >
+              <Award className="w-3.5 h-3.5" />
+              Award
+            </span>
+          </div>
+        </div>
+
+        {/* ── Back face: screenshot ── */}
+        <div
+          className={`absolute inset-0 rounded-xl overflow-hidden bg-clip-padding ${expandedFaceClass}`}
+          style={{
+            backfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+          }}
+        >
+          <img
+            src={review.src}
+            alt={`Screenshot of ${review.username}'s Reddit comment`}
+            className="w-full h-full object-contain p-4"
+            draggable={false}
+          />
+        </div>
+
+      </motion.div>
+    </>
+  );
+};
+
+// ── Main component ──
+export const ReviewsCarousel: React.FC<{ className?: string }> = ({
+  className = '',
+}) => {
   const { mode } = useTheme();
   const isLight = mode === 'light';
   const [isMobile, setIsMobile] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<ExpandedCardState | null>(
+    null,
+  );
+  const [isMarqueePaused, setIsMarqueePaused] = useState(false);
   const [flippedId, setFlippedId] = useState<string | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const expandedCardRef = useRef(expandedCard);
+  expandedCardRef.current = expandedCard;
+
+  // Scroll lock while expanded
+  useEffect(() => {
+    if (!expandedCard) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const preventScroll = (e: WheelEvent | TouchEvent) => e.preventDefault();
+    document.addEventListener('wheel', preventScroll, { passive: false });
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('wheel', preventScroll);
+      document.removeEventListener('touchmove', preventScroll);
+    };
+  }, [expandedCard]);
+
+  // Pause marquee when any card is expanded
+  useEffect(() => {
+    if (expandedCard !== null) {
+      setIsMarqueePaused(true);
+    }
+  }, [expandedCard]);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 639px)');
-    const update = (e: MediaQueryListEvent | MediaQueryList) => setIsMobile(e.matches);
+    const update = (e: MediaQueryListEvent | MediaQueryList) =>
+      setIsMobile(e.matches);
     update(mq);
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
 
   const rows = isMobile ? ROWS_MOBILE : ROWS_DESKTOP;
-  const handleFlip = (id: string) => setFlippedId((prev) => (prev === id ? null : id));
+
+  const handleExpand = useCallback(
+    (id: string, review: ReviewData, rect: DOMRect) => {
+      setExpandedCard((prev) => {
+        if (prev?.id === id) return null;
+        const container = containerRef.current;
+        if (!container) return prev;
+        const containerRect = container.getBoundingClientRect();
+        return { review, id, originalRect: rect, containerRect };
+      });
+    },
+    [],
+  );
+
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+    setExpandedCard(null);
+  }, []);
+
+  const handleFlip = useCallback((id: string) => {
+    setFlippedId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const handleExitComplete = useCallback(() => {
+    if (!expandedCardRef.current) {
+      setIsMarqueePaused(false);
+      setIsClosing(false);
+    }
+  }, []);
 
   return (
-    <div className={`relative ${className}`}>
-      <section className="mb-9" aria-label="User reviews of LiftShift from Reddit">
+    <div ref={containerRef} className={`relative ${className}`}>
+      {/* Header section */}
+      <section
+        className="mb-9"
+        aria-label="User reviews of LiftShift from Reddit"
+      >
         <h2 className="sr-only">LiftShift reviews from Reddit users</h2>
         <ul className="sr-only">
           {REVIEWS.map((review, i) => (
@@ -143,26 +500,36 @@ export const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({ className = ''
         </ul>
 
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
-            <Quote className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-300">Community Feedback</span>
-          </div>
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 ${isLight ? 'text-slate-900' : ''}`}>
-            Loved by <span className="text-emerald-400" style={FANCY_FONT}>Lifters</span> Worldwide
+          
+          <h2
+            className={`text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 ${isLight ? 'text-slate-900' : ''}`}
+          >
+            Loved by{' '}
+            <span className="text-emerald-400" style={FANCY_FONT}>
+              Lifters
+            </span>{' '}
+            Worldwide
           </h2>
-          <p className={`text-lg max-w-2xl mx-auto ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+          <p
+            className={`text-lg max-w-2xl mx-auto ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+          >
             See what the fitness community is saying about LiftShift on Reddit
           </p>
         </div>
       </section>
 
-      {/* Full-width marquee — breaks out of parent container, masked fade on edges */}
-      <div className="relative" style={{
-        width: '100vw',
-        marginLeft: 'calc(-50vw + 50%)',
-        maskImage: 'linear-gradient(to right, transparent, black 18vw, black 82vw, transparent)',
-        WebkitMaskImage: 'linear-gradient(to right, transparent, black 18vw, black 82vw, transparent)',
-      }}>
+      {/* Full-width marquee */}
+      <div
+        className="relative"
+        style={{
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
+          maskImage:
+            'linear-gradient(to right, transparent, black 18vw, black 82vw, transparent)',
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent, black 18vw, black 82vw, transparent)',
+        }}
+      >
         <div className="space-y-3 sm:space-y-4">
           {rows.map((row, i) => (
             <MarqueeRow
@@ -171,12 +538,31 @@ export const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({ className = ''
               isLight={isLight}
               speed={25 + i * 5}
               items={row}
+              expandedCardId={expandedCard?.id ?? null}
+              isPaused={isMarqueePaused}
+              onExpand={handleExpand}
+              isMobile={isMobile}
               flippedId={flippedId}
               onFlip={handleFlip}
+              isClosing={isClosing}
             />
           ))}
         </div>
       </div>
+
+      {/* Expanded card overlay — desktop only */}
+      {!isMobile && (
+        <AnimatePresence onExitComplete={handleExitComplete}>
+          {expandedCard && (
+            <ExpandedCardOverlay
+              key={expandedCard.id}
+              expandedCard={expandedCard}
+              isLight={isLight}
+              onClose={handleClose}
+            />
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 };

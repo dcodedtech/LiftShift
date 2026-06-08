@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useRef } from 'react';
-import { ArrowUp, ArrowDown, Reply, Share2, Award } from 'lucide-react';
+import { ArrowBigUp, Reply, Share2, Award } from 'lucide-react';
 
 const AVATAR_COLORS = [
   '#FF4500', '#0079D3', '#46D160', '#DDBD37', '#FF585B',
@@ -15,15 +15,15 @@ function hashString(s: string): number {
   return Math.abs(h);
 }
 
-function getColor(username: string): string {
+export function getColor(username: string): string {
   return AVATAR_COLORS[hashString(username) % AVATAR_COLORS.length];
 }
 
-function getUpvotes(username: string): number {
-  return 10 + (hashString(username + 'up') % 140);
+export function getUpvotes(username: string): number {
+  return 1 + (hashString(username + 'up') % 10);
 }
 
-function getSubreddit(username: string, quote: string): string {
+export function getSubreddit(username: string, quote: string): string {
   const lower = `${username} ${quote}`.toLowerCase();
   if (lower.includes('hevy')) return 'Hevy';
   if (lower.includes('strong')) return 'Strong';
@@ -35,11 +35,11 @@ function getSubreddit(username: string, quote: string): string {
   return SUBREDDITS[hashString(username) % SUBREDDITS.length];
 }
 
-function getTimeAgo(username: string): string {
+export function getTimeAgo(username: string): string {
   return TIMES[hashString(username + 'time') % TIMES.length];
 }
 
-function SnooAvatar({ color, size = 16 }: { color: string; size?: number }) {
+export function SnooAvatar({ color, size = 16 }: { color: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
       <ellipse cx="12" cy="1.5" rx="1.5" ry="1.5" fill={color} />
@@ -53,10 +53,10 @@ function SnooAvatar({ color, size = 16 }: { color: string; size?: number }) {
 }
 
 // ── Shared card face styling ──
-function cardFaceClass(isLight: boolean) {
+export function cardFaceClass(isLight: boolean) {
   return isLight
-    ? 'bg-white/65 backdrop-blur-sm border-slate-200/60 shadow-sm'
-    : 'bg-neutral-900/50 backdrop-blur-sm border-neutral-800/40 shadow-md shadow-black/20';
+    ? 'bg-white/65 backdrop-blur-sm ring-1 ring-inset ring-slate-200/60 shadow-sm'
+    : 'bg-neutral-900/50 backdrop-blur-sm ring-1 ring-inset ring-neutral-800/50 shadow-md shadow-black/20';
 }
 
 interface RedditCardProps {
@@ -92,7 +92,7 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
 
   return (
     <div
-      className="w-[300px] sm:w-[340px] h-[130px] sm:h-[140px] cursor-pointer select-none"
+      className="w-[300px] sm:w-[340px] h-[160px] sm:h-[140px] cursor-pointer select-none"
       style={{ perspective: '800px' }}
       onClick={onFlip}
       onMouseEnter={() => { if (isFlipped) clearFlipTimer(); }}
@@ -108,7 +108,7 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
       >
         {/* ── Front face: Reddit comment card ── */}
         <div
-          className={`absolute inset-0 rounded-xl border flex flex-col px-3.5 py-3 gap-2 ${cardFaceClass(isLight)}`}
+          className={`absolute inset-0 rounded-xl overflow-hidden flex flex-col px-3.5 py-3 gap-2 bg-clip-padding ${cardFaceClass(isLight)}`}
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
@@ -134,10 +134,9 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
           </p>
 
           <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
-            <ArrowUp className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isLight ? 'text-slate-400' : 'text-neutral-500'}`} />
-            <span className={`font-bold tabular-nums ${isLight ? 'text-slate-700' : 'text-neutral-400'}`}>{upvotes}</span>
-            <ArrowDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isLight ? 'text-slate-400' : 'text-neutral-500'}`} />
-            <span className={`ml-2 flex items-center gap-1 ${isLight ? 'text-slate-400' : 'text-neutral-600'}`}>
+            <ArrowBigUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF4500]" fill="#FF4500" />
+            <span className={`font-bold tabular-nums -ml-0.5 ${isLight ? 'text-slate-700' : 'text-neutral-400'}`}>{upvotes}</span>
+            <span className={`ml-auto flex items-center gap-1 ${isLight ? 'text-slate-400' : 'text-neutral-600'}`}>
               <Reply className="w-3 h-3 sm:w-3.5 sm:h-3.5" />Reply
             </span>
             <span className={`flex items-center gap-1 ${isLight ? 'text-slate-400' : 'text-neutral-600'}`}>
@@ -151,7 +150,7 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
 
         {/* ── Back face: screenshot ── */}
         <div
-          className={`absolute inset-0 rounded-xl border overflow-hidden ${cardFaceClass(isLight)}`}
+          className={`absolute inset-0 rounded-xl overflow-hidden bg-clip-padding ${cardFaceClass(isLight)}`}
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',

@@ -157,7 +157,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       </div>
 
       {/* ========== HERO SECTION ========== */}
-          <section className="relative z-10 min-h-screen flex flex-col pt-2 pb-32">
+          <section className="relative z-10 flex flex-col pt-2 mb-30 sm:mb-55">
             <div className="max-w-6xl mx-auto w-full">
               {/* Hero Content */}
               <div className="text-center max-w-5xl mx-auto">
@@ -192,6 +192,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
                   </div>
                 )}
               </div>
+            </div>
+          </section>
+
+          {/* ========== REVIEWS SECTION ========== */}
+          <section id="reviews" className="relative z-10 py-0 sm:py-0 overflow-hidden">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <ReviewsCarousel />
             </div>
           </section>
 
@@ -320,13 +327,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
                   </p>
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* ========== REVIEWS SECTION ========== */}
-          <section id="reviews" className="relative z-10 py-16 sm:py-24 overflow-hidden">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <ReviewsCarousel />
             </div>
           </section>
 
