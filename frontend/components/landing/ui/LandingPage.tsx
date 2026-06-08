@@ -157,7 +157,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectPlatform, onTr
       </div>
 
       {/* ========== HERO SECTION ========== */}
-          <section className="relative z-10 flex flex-col pt-2 mb-30 sm:mb-55">
+          <section className="relative z-10 flex flex-col pt-2 mb-[7.5rem] sm:mb-[13.75rem]">
             <div className="max-w-6xl mx-auto w-full">
               {/* Hero Content */}
               <div className="text-center max-w-5xl mx-auto">

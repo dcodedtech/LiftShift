@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Quote, ArrowBigUp, ArrowBigDown, Reply, Share2, Award } from 'lucide-react';
+import { ArrowBigUp, Reply, Share2, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../../theme/ThemeProvider';
 import { FANCY_FONT } from '../../../utils/ui/uiConstants';
@@ -216,7 +216,7 @@ function MarqueeRow({
         onClickCapture={(e) => {
           e.stopPropagation();
           const rect = e.currentTarget.getBoundingClientRect();
-          onExpand(key, review, rect);
+          onExpand(review.src, review, rect);
         }}
       >
         <RedditCard

@@ -92,9 +92,17 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="Flip review card"
       className="w-[300px] sm:w-[340px] h-[160px] sm:h-[140px] cursor-pointer select-none"
       style={{ perspective: '800px' }}
       onClick={onFlip}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        onFlip();
+      }}
       onMouseEnter={() => { if (isFlipped) clearFlipTimer(); }}
       onMouseLeave={() => { if (isFlipped) startFlipTimer(); }}
     >
