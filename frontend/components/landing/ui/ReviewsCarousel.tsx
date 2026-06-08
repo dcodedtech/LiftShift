@@ -264,7 +264,6 @@ function MarqueeRow({
           display: flex;
           width: fit-content;
           animation: ${uid} ${duration} linear infinite;
-          will-change: transform;
           backface-visibility: hidden;
         }
         .${uid}:hover {
@@ -321,8 +320,8 @@ const ExpandedCardOverlay: React.FC<{
   );
 
   const expandedFaceClass = isLight
-    ? 'bg-white shadow-lg'
-    : 'bg-neutral-900 shadow-lg shadow-black/40';
+    ? 'bg-white/35 shadow-lg'
+    : 'bg-black/35 shadow-lg shadow-black/40';
 
   return createPortal(
     <>
@@ -332,7 +331,7 @@ const ExpandedCardOverlay: React.FC<{
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md"
+        className="fixed inset-0 z-[100] bg-black/70"
         onClick={onClose}
       />
 
@@ -454,6 +453,8 @@ const ExpandedCardOverlay: React.FC<{
             alt={`Screenshot of ${review.username}'s Reddit comment`}
             className="w-full h-full object-contain p-4"
             draggable={false}
+            loading="lazy"
+            decoding="async"
           />
         </div>
 

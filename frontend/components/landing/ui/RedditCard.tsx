@@ -55,8 +55,8 @@ export function SnooAvatar({ color, size = 16 }: { color: string; size?: number 
 // ── Shared card face styling ──
 export function cardFaceClass(isLight: boolean) {
   return isLight
-    ? 'bg-white/65 backdrop-blur-sm shadow-sm'
-    : 'bg-neutral-900/50 backdrop-blur-sm shadow-sm shadow-black/20';
+    ? 'bg-white/35'
+    : 'bg-black/35';
 }
 
 interface RedditCardProps {
@@ -161,6 +161,8 @@ export const RedditCard: React.FC<RedditCardProps> = React.memo(({ username, quo
             alt={`Screenshot of ${username}'s Reddit comment`}
             className="w-full h-full object-contain p-2"
             draggable={false}
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>
